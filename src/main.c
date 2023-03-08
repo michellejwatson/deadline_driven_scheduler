@@ -147,34 +147,40 @@ functionality.
 #include "../FreeRTOS_Source/include/task.h"
 #include "../FreeRTOS_Source/include/timers.h"
 
-
 /*-----------------------------------------------------------*/
 //#define mainQUEUE_LENGTH 100
 #define QUEUE_LENGTH 100
 
-#define red 1
-#define yellow 2
-#define green 3
 /*
-#define amber  	0
-#define green  	1
-#define red  	2
-#define blue  	3
-
 #define amber_led	LED3
 #define green_led	LED4
 #define red_led		LED5
 #define blue_led	LED6
+*/
 
-#define REG_CLOCK GPIO_Pin_7
-#define REG_RESET GPIO_Pin_8
-#define REG_DATA GPIO_Pin_6
+/* test bench 1 */
+#define TASK_1_EXECUTION_TIME 95
+#define TASK_1_PERIOD 500
+#define TASK_2_EXECUTION_TIME 150
+#define TASK_1_PERIOD 500
+#define TASK_3_EXECUTION_TIME 250
+#define TASK_1_PERIOD 750
 
-#define RED_LIGHT GPIO_Pin_0
-#define YELLOW_LIGHT GPIO_Pin_1
-#define GREEN_LIGHT GPIO_Pin_2
+/* test bench 2
+#define TASK_1_EXECUTION_TIME 95
+#define TASK_1_PERIOD 250
+#define TASK_2_EXECUTION_TIME 150
+#define TASK_1_PERIOD 500
+#define TASK_3_EXECUTION_TIME 250
+#define TASK_1_PERIOD 750 */
 
-#define POT_INPUT GPIO_Pin_3*/
+/* test bench 3 
+#define TASK_1_EXECUTION_TIME 100
+#define TASK_1_PERIOD 500
+#define TASK_2_EXECUTION_TIME 200
+#define TASK_1_PERIOD 500
+#define TASK_3_EXECUTION_TIME 200
+#define TASK_1_PERIOD 500 */
 
 /* Initializer functions for hardware */
 static void prvSetupHardware( void );
@@ -195,6 +201,14 @@ struct dd_task_list {
 	struct dd_task task;
 	struct dd_task_list *next_task;
 };
+
+enum message_type {release_dd_task, complete_dd_task, get_active_dd_task_list, get_completed_dd_task_list, get_overdue_dd_task_list}
+
+struct message {
+	enum message_type;
+	struct dd_task task_info;
+	uint32_t task_id;
+}
 
 /* helper functions */
 void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t task_id, uint32_t absolute_deadline);
@@ -222,6 +236,15 @@ static void Monitor_Task( void *pvParameters );
 /* queues */
 xQueueHandle xQueue_request_handle = 0;
 xQueueHandle xQueue_response_handle = 0;
+
+/* Initialize software timers */
+TimerHandle_t xGenerator1Timer;
+TimerHandle_t xGenerator2Timer;
+TimerHandle_t xGenerator3Timer;
+
+void vGenerator1CallbackFunction( TimerHandle_t xGenerator1Timer );
+void vGenerator2CallbackFunction( TimerHandle_t xGenerator2Timer );
+void vGenerator3CallbackFunction( TimerHandle_t xGenerator3Timer );
 
 /*-----------------------------------------------------------*/
 
@@ -251,6 +274,11 @@ int main(void)
 	xTaskCreate(DD_Task_Generator_1, "DD Task Generator 1", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(User_Task_1, "User Task", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
 	xTaskCreate(Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 1, NULL);
+
+	// create software timers for controlling traffic lights
+	xRedLightTimer = xTimerCreate("Generator 1", TASK_1_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator1CallbackFunction);
+	xYellowLightTimer = xTimerCreate("Generator 2", TASK_2_PERIOD  / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator2CallbackFunction);
+	xGreenLightTimer = xTimerCreate("Generator 3", TASK_3_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator3CallbackFunction);
 
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
@@ -312,32 +340,115 @@ static void DD_Scheduler_Task( void *pvParameters )
 	}
 }
 
-// task generator for DD_Task_1 (will have one for each DD task)
+// task generator for DD_User_Task_1 (will have one for each DD task)
 static void DD_Task_Generator_1( void *pvParameters )
 {
-	// normal state: suspended, resumed when software timer callback is triggered
+	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_1_PERIOD
 	// should reuse F-Task handles inside each DD task
-	while(1)
-	{
-		// periodically generate user tasks for DD_Scheduler
-		// make generated task periodic or aperiodic
-		// prepares all information needed for creating specific instance of DD-tasks
-		// calls release_dd_task
-	}
+	// periodically generate user tasks for DD_Scheduler 
+	xTaskCreate( User_Task_1, "User Task 1", configMINIMAL_STACK_SIZE, NULL, 1, &task_1_handle); // start it at lowest priority 
+	vTaskSuspend(task_1_handle); // DD scheduler will start it when it should be run 
+
+	// prepares all information needed for creating specific instance of DD-tasks
+	// calls release_dd_task 
+	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
+	release_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount( void ) + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS)
+
+	// needs to suspend itself (NULL means suspends itself)
+	vTaskSuspend( NULL );
+}
+
+// task generator for DD_User_Task_1 (will have one for each DD task)
+static void DD_Task_Generator_2( void *pvParameters )
+{
+	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_2_PERIOD
+	// should reuse F-Task handles inside each DD task
+	// periodically generate user tasks for DD_Scheduler 
+	xTaskCreate( User_Task_2, "User Task 2", configMINIMAL_STACK_SIZE, NULL, 1, &task_2_handle); // start it at lowest priority 
+	vTaskSuspend(task_2_handle); // DD scheduler will start it when it should be run 
+
+	// prepares all information needed for creating specific instance of DD-tasks
+	// calls release_dd_task 
+	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
+	release_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount( void ) + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS)
+
+	// needs to suspend itself (NULL means suspends itself)
+	vTaskSuspend( NULL );
+}
+
+// task generator for DD_User_Task_1 (will have one for each DD task)
+static void DD_Task_Generator_3( void *pvParameters )
+{
+	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_3_PERIOD
+	// should reuse F-Task handles inside each DD task
+	// periodically generate user tasks for DD_Scheduler 
+	xTaskCreate( User_Task_3, "User Task 3", configMINIMAL_STACK_SIZE, NULL, 1, &task_3_handle); // start it at lowest priority 
+	vTaskSuspend(task_3_handle); // DD scheduler will start it when it should be run 
+
+	// prepares all information needed for creating specific instance of DD-tasks
+	// calls release_dd_task 
+	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
+	release_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount( void ) + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS)
+
+	// needs to suspend itself (NULL means suspends itself)
+	vTaskSuspend( NULL );
 }
 
 static void User_Task_1( void *pvParameters )
 {
-	// cant rely on any communication with other tasks to complete its execution
-	// execute an empty loop for duration of execution time
-	// could use LED on discovery board to provide visual indication of what user-defined task is executing
-	// calls complete_dd_task when finished executing
-	for ( ; ; )
-	{
+	TickType_t start_time = xTaskGetTickCount( void );
+	TickType_t end_time = start_time + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS;
+	
+	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
 
+	// execute an empty loop for duration of execution time
+	while ( end_time > xTaskGetTickCount( void ))
+	{
+		// loop for TASK_1_EXECUTION_TIME 
 	}
 
-	create_dd_task();
+	// turn off LED here 
+
+	// execution time is done, delete task 
+	delete_dd_task(1);
+}
+
+static void User_Task_2( void *pvParameters )
+{
+	TickType_t start_time = xTaskGetTickCount( void );
+	TickType_t end_time = start_time + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS;
+	
+	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
+
+	// execute an empty loop for duration of execution time
+	while ( end_time > xTaskGetTickCount( void ))
+	{
+		// loop for TASK_2_EXECUTION_TIME 
+	}
+
+	// turn off LED here 
+
+	// execution time is done, delete task 
+	delete_dd_task(2);
+}
+
+static void User_Task_3( void *pvParameters )
+{
+	TickType_t start_time = xTaskGetTickCount( void );
+	TickType_t end_time = start_time + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS;
+	
+	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
+
+	// execute an empty loop for duration of execution time
+	while ( end_time > xTaskGetTickCount( void ))
+	{
+		// loop for TASK_3_EXECUTION_TIME 
+	}
+
+	// turn off LED here 
+
+	// execution time is done, delete task 
+	delete_dd_task(3);
 }
 
 static void Monitor_Task( void *pvParameters )
@@ -359,31 +470,89 @@ static void Monitor_Task( void *pvParameters )
 void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t task_id, uint32_t absolute_deadline)
 {
 	// receive information needed to create new dd_task struct (minus release time and completion time)
-	// struct is packaged as message and sends to queue (for DDS to receive)
-	// wait for reply from DDS (obtain reply message)
+	struct dd_task this_task;
+	this_task.t_handle = t_handle;
+	this_task.type = type;
+	this_task.task_id = task_id;
+	this_task.release_time = NULL;
+	this_task.absolute_deadline = absolute_deadline;
+	this_task.completion_time = NULL;
+
+	// struct is packaged as message and 
+	struct message this_message;
+	this_message.message_type = create_dd_task;
+	this_message.task_info = this_task;
+
+	// sends message struct  to queue (for DDS to receive)
+	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
+	{
+		// wait for reply from DDS (obtain reply message)
+		
+	}
 }
 
 void delete_dd_task(uint32_t task_id)
 {
-	// receive ID of DD-Task when it has completed its execution (from where?)
-	// packages ID as message and sends to queue (for DDS to receive)
+	// receive ID of DD-Task when it has completed its execution (from user task)
+	// packages ID as message 
+	// struct is packaged as message and 
+	struct message this_message;
+	this_message.message_type = delete_dd_task;
+	this_message.task_id = task_id;
+
+	//sends to queue (for DDS to receive)
+	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
+	{
+		// wait for reply from DDS (obtain reply message)
+		
+	}
 }
 
 struct dd_task_list** get_active_dd_task_list(void)
 {
 	// sends message to queue requesting Active Task list from DDS
+	struct message this_message;
+	this_message.message_type = get_active_dd_task_list;
+
+	//sends to queue (for DDS to receive)
+	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
+	{
+		// wait for reply from DDS (obtain reply message)
+		
+	}
+
 	// when response is received from DDS, function returns the list
 }
 
 struct dd_task_list** get_complete_dd_task_list(void)
 {
 	// sends message to queue requesting Complete Task list from DDS
+	struct message this_message;
+	this_message.message_type = get_complete_dd_task_list;
+
+	//sends to queue (for DDS to receive)
+	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
+	{
+		// wait for reply from DDS (obtain reply message)
+		
+	}
+
 	// when response is received from DDS, function returns the list
 }
 
 struct dd_task_list** get_overdue_dd_task_list(void)
 {
 	// sends message to queue requesting Overdue Task list from DDS
+	struct message this_message;
+	this_message.message_type = get_overdue_dd_task_list;
+
+	//sends to queue (for DDS to receive)
+	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
+	{
+		// wait for reply from DDS (obtain reply message)
+		
+	}
+
 	// when response is received from DDS, function returns the list
 }
 
@@ -392,7 +561,7 @@ struct dd_task_list** get_overdue_dd_task_list(void)
 void add_task( struct dd_task_list list_head, struct dd_task new_dd_task )
 {
 	struct dd_task_list temp;
-	temp->task = new_dd_task;
+	temp.task = new_dd_task;
 
 	struct dd_task_list p;
 
@@ -462,26 +631,22 @@ void assign_task_priorities ( struct dd_task_list dd_task_list_head )
 }
 
 /*------------------ software timer callbacks -----------------------------------------*/
-/*void vRedLightCallbackFunction( TimerHandle_t xTimer )
+void vGenerator1CallbackFunction( TimerHandle_t xGenerator1Timer )
 {
-	// this function gets called when red light timer done --> switch to green light
-	printf("RedLightCallback: Red light timer done");
-	GPIO_ResetBits(GPIOC, RED_LIGHT);
+	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
+	vTaskResume( /*task 1 generator task handle */);
+}
 
-	// need to update value in lights mutex
-	if (xSemaphoreTake( xSemaphore_lights, (TickType_t) 0))
-	{
-		GPIO_SetBits(GPIOC, GREEN_LIGHT);
-		light_status = green;
-		printf("RedLightCallback: Light status updated to green");
+void vGenerator2CallbackFunction( TimerHandle_t xGenerator2Timer )
+{
+	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
+	vTaskResume( /*task 2 generator task handle */);
+}
 
-		if (xSemaphoreGive(xSemaphore_lights) != pdTRUE)
-		{
-			printf("RedLightCallback: Giving semaphore failed");
-		}
-	}
-
-	xTimerStart(xGreenLightTimer, 0);
+void vGenerator2CallbackFunction( TimerHandle_t xGenerator3Timer )
+{
+	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
+	vTaskResume( /*task 3 generator task handle */);
 }
 
 /*-----------------------------------------------------------*/
