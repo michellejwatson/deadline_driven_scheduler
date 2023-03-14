@@ -162,9 +162,9 @@ functionality.
 #define TASK_1_EXECUTION_TIME 95
 #define TASK_1_PERIOD 500
 #define TASK_2_EXECUTION_TIME 150
-#define TASK_1_PERIOD 500
+#define TASK_2_PERIOD 500
 #define TASK_3_EXECUTION_TIME 250
-#define TASK_1_PERIOD 750
+#define TASK_3_PERIOD 750
 
 /* test bench 2
 #define TASK_1_EXECUTION_TIME 95
@@ -174,7 +174,7 @@ functionality.
 #define TASK_3_EXECUTION_TIME 250
 #define TASK_1_PERIOD 750 */
 
-/* test bench 3 
+/* test bench 3
 #define TASK_1_EXECUTION_TIME 100
 #define TASK_1_PERIOD 500
 #define TASK_2_EXECUTION_TIME 200
@@ -202,14 +202,14 @@ struct dd_task_list {
 	struct dd_task_list *next_task;
 };
 
-enum message_type {release_dd_task, complete_dd_task, get_active_dd_task_list, get_completed_dd_task_list, get_overdue_dd_task_list}
+enum message_type {create_dd, delete_dd, get_active_dd_list, get_completed_dd_list, get_overdue_dd_list};
 
 struct message {
-	enum message_type;
+	enum message_type type;
 	struct dd_task task_info;
 	uint32_t task_id;
 	struct dd_task_list task_list;
-}
+};
 
 /* helper functions */
 void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t task_id, uint32_t absolute_deadline);
@@ -224,11 +224,11 @@ struct dd_task_list *complete_list = NULL;
 struct dd_task_list *overdue_list = NULL;
 
 /* linked list functions */
-void add_task( struct dd_task_list list_head, struct dd_task new_dd_task );
-void delete_task ( TaskHandle_t t_handle );
-int print_count_of_list ( struct dd_task_list dd_task_list_head );
-void order_tasks_deadline_first( struct dd_task_list dd_task_list_head );
-void assign_task_priorities ( struct dd_task_list dd_task_list_head );
+void add_task( struct dd_task_list * list_head, struct dd_task * new_dd_task );
+void delete_task ( struct dd_task_list * list_head, struct dd_task * done_dd_task );
+int print_count_of_list ( struct dd_task_list* dd_task_list_head );
+void order_tasks_deadline_first( struct dd_task_list* dd_task_list_head );
+void assign_task_priorities ( struct dd_task_list* dd_task_list_head );
 
 /* tasks */
 static void DD_Scheduler_Task( void *pvParameters );
@@ -236,6 +236,8 @@ static void DD_Task_Generator_1( void *pvParameters );
 static void DD_Task_Generator_2( void *pvParameters );
 static void DD_Task_Generator_3( void *pvParameters );
 static void User_Task_1( void *pvParameters );
+static void User_Task_2( void *pvParameters );
+static void User_Task_3( void *pvParameters );
 static void Monitor_Task( void *pvParameters );
 
 /* task handlers */
@@ -279,9 +281,9 @@ int main(void)
 	xTaskCreate(Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, configMAX_PRIORITIES-3, NULL);
 
 	// create software timers for controlling traffic lights
-	xRedLightTimer = xTimerCreate("Generator 1", TASK_1_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator1CallbackFunction);
-	xYellowLightTimer = xTimerCreate("Generator 2", TASK_2_PERIOD  / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator2CallbackFunction);
-	xGreenLightTimer = xTimerCreate("Generator 3", TASK_3_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator3CallbackFunction);
+	xGenerator1Timer = xTimerCreate("Generator 1", TASK_1_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator1CallbackFunction);
+	xGenerator2Timer = xTimerCreate("Generator 2", TASK_2_PERIOD  / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator2CallbackFunction);
+	xGenerator3Timer = xTimerCreate("Generator 3", TASK_3_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator3CallbackFunction);
 
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
@@ -295,51 +297,53 @@ static void DD_Scheduler_Task( void *pvParameters )
 {
 	// waits for scheduling task (usually should be suspended until scheduling task exists)
 	// idk if this is correct for while loop
+	struct message received_message;
+
 	while(1)
 	{
 		// add check for overdue tasks (could use software timers instead, would be better to accomodate for aperiodic but kinda redundant for periodic)
 
 		// adjusts user task priorities  (Set earliest deadline task priority to high and the rest to low so first completes that and then so on)
-		while(xQueueReceive(xQueue_request_handle, &message, 500)){
+		while(xQueueReceive(xQueue_request_handle, &received_message, 500)){
 			// cases based on what message type is received
-			if (message.message_type == "release_dd_task")
+			if (received_message.type == create_dd)
 			{
 				// assign release time to new task
-				struct dd_task new_task = message.task_info;
-				new_task.release_time = xTaskGetTickCount( void );
+				struct dd_task new_task = received_message.task_info;
+				new_task.release_time = xTaskGetTickCount();
 
 				// add DD task to active task list
-				add_task(active_list, new_task);
+				add_task(active_list, &new_task);
 
 				// sort list by deadline
 				order_tasks_deadline_first(active_list);
 
 				// set priorities of user defined task according to sorted list
-				// head (first of list) set to high priority, rest set to low priority 
+				// head (first of list) set to high priority, rest set to low priority
 				assign_task_priorities(active_list);
 
 				// start task
-				vTaskResume(new_task);
-				
+				vTaskResume(new_task.t_handle);
+
 				// MAYBE: start software timer, callback function will be to check if overdue time is passed, when callback is called: send new message type (overdue_dd_task)
 			}
-			else if (message.message_type == "complete_dd_task")
+			else if (received_message.type == delete_dd)
 			{
 				// assign completion time to newly completed DD-task
-				struct dd_task done_task = message.task_info;
-				new_task.completion_time = xTaskGetTickCount( void );
+				struct dd_task done_task = received_message.task_info;
+				done_task.completion_time = xTaskGetTickCount();
 
 				// remove DD task from active task list
-				delete_task(active_list, done_task);
+				delete_task(active_list, &done_task);
 
 				// add DD task to complete task list
-				add_task(complete_list, done_task);
+				add_task(complete_list, &done_task);
 
 				// re-sort active task list by deadline
 				order_tasks_deadline_first(active_list);
 
 				// set priorities of user defined tasks accordingly
-				// head (first of list) set to high priority, rest set to low priority 
+				// head (first of list) set to high priority, rest set to low priority
 				assign_task_priorities(active_list);
 			}
 			/* else if (message.message_type = overdue_dd_task)
@@ -351,32 +355,30 @@ static void DD_Scheduler_Task( void *pvParameters )
 			* 		// set priorities of user defined tasks accordingly
 			* }
 			*/
-			else if (message.message_type == "get_active_dd_task_list")
+			else if (received_message.type == get_active_dd_list)
 			{
 				// get active task list and send to a queue
 
 
-				if (xQueueSend(xQueue_response_handle, &message, 500)){
-					// sent message successfully 
+				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
+					// sent message successfully
 				}
 			}
-			else if (message.message_type == "get_completed_dd_task_list")
+			else if (received_message.type == get_completed_dd_list)
 			{
 				// get complete task list and send to a queue
-				if (xQueueSend(xQueue_response_handle, &message, 500)){
-					// sent message successfully 
+				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
+					// sent message successfully
 				}
 			}
-			else if (message.message_type == "get_overdue_dd_task_list")
+			else if (received_message.type == get_overdue_dd_list)
 			{
 				// get overdue task list and send to a queue
 
-				if (xQueueSend(xQueue_response_handle, &message, 500)){
-					// sent message successfully 
+				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
+					// sent message successfully
 				}
 			}
-
-			// need to have it actually like resume the head task!!
 		}
 	}
 }
@@ -386,14 +388,15 @@ static void DD_Task_Generator_1( void *pvParameters )
 {
 	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_1_PERIOD
 	// should reuse F-Task handles inside each DD task
-	// periodically generate user tasks for DD_Scheduler 
-	xTaskCreate( User_Task_1, "User Task 1", configMINIMAL_STACK_SIZE, NULL, 1, &task_1_handle); // start it at lowest priority 
-	vTaskSuspend(task_1_handle); // DD scheduler will start it when it should be run 
+	// periodically generate user tasks for DD_Scheduler
+	TaskHandle_t task_1_handle;
+	xTaskCreate( User_Task_1, "User Task 1", configMINIMAL_STACK_SIZE, NULL, 1, &task_1_handle); // start it at lowest priority
+	vTaskSuspend(task_1_handle); // DD scheduler will start it when it should be run
 
 	// prepares all information needed for creating specific instance of DD-tasks
-	// calls release_dd_task 
+	// calls create_dd_task
 	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-	release_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount( void ) + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS)
+	create_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount() + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS);
 
 	// needs to suspend itself (NULL means suspends itself)
 	vTaskSuspend( NULL );
@@ -404,14 +407,15 @@ static void DD_Task_Generator_2( void *pvParameters )
 {
 	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_2_PERIOD
 	// should reuse F-Task handles inside each DD task
-	// periodically generate user tasks for DD_Scheduler 
-	xTaskCreate( User_Task_2, "User Task 2", configMINIMAL_STACK_SIZE, NULL, 1, &task_2_handle); // start it at lowest priority 
-	vTaskSuspend(task_2_handle); // DD scheduler will start it when it should be run 
+	// periodically generate user tasks for DD_Scheduler
+	TaskHandle_t task_2_handle;
+	xTaskCreate( User_Task_2, "User Task 2", configMINIMAL_STACK_SIZE, NULL, 1, &task_2_handle); // start it at lowest priority
+	vTaskSuspend(task_2_handle); // DD scheduler will start it when it should be run
 
 	// prepares all information needed for creating specific instance of DD-tasks
-	// calls release_dd_task 
+	// calls create_dd_task
 	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-	release_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount( void ) + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS)
+	create_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount() + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS);
 
 	// needs to suspend itself (NULL means suspends itself)
 	vTaskSuspend( NULL );
@@ -422,14 +426,15 @@ static void DD_Task_Generator_3( void *pvParameters )
 {
 	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_3_PERIOD
 	// should reuse F-Task handles inside each DD task
-	// periodically generate user tasks for DD_Scheduler 
-	xTaskCreate( User_Task_3, "User Task 3", configMINIMAL_STACK_SIZE, NULL, 1, &task_3_handle); // start it at lowest priority 
-	vTaskSuspend(task_3_handle); // DD scheduler will start it when it should be run 
+	// periodically generate user tasks for DD_Scheduler
+	TaskHandle_t task_3_handle;
+	xTaskCreate( User_Task_3, "User Task 3", configMINIMAL_STACK_SIZE, NULL, 1, &task_3_handle); // start it at lowest priority
+	vTaskSuspend(task_3_handle); // DD scheduler will start it when it should be run
 
 	// prepares all information needed for creating specific instance of DD-tasks
-	// calls release_dd_task 
+	// calls create_dd_task
 	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-	release_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount( void ) + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS)
+	create_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount() + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS);
 
 	// needs to suspend itself (NULL means suspends itself)
 	vTaskSuspend( NULL );
@@ -437,58 +442,58 @@ static void DD_Task_Generator_3( void *pvParameters )
 
 static void User_Task_1( void *pvParameters )
 {
-	TickType_t start_time = xTaskGetTickCount( void );
+	TickType_t start_time = xTaskGetTickCount();
 	TickType_t end_time = start_time + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS;
-	
+
 	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
 
 	// execute an empty loop for duration of execution time
-	while ( end_time > xTaskGetTickCount( void ))
+	while ( end_time > xTaskGetTickCount())
 	{
-		// loop for TASK_1_EXECUTION_TIME 
+		// loop for TASK_1_EXECUTION_TIME
 	}
 
-	// turn off LED here 
+	// turn off LED here
 
-	// execution time is done, delete task 
+	// execution time is done, delete task
 	delete_dd_task(1);
 }
 
 static void User_Task_2( void *pvParameters )
 {
-	TickType_t start_time = xTaskGetTickCount( void );
+	TickType_t start_time = xTaskGetTickCount();
 	TickType_t end_time = start_time + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS;
-	
+
 	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
 
 	// execute an empty loop for duration of execution time
-	while ( end_time > xTaskGetTickCount( void ))
+	while ( end_time > xTaskGetTickCount())
 	{
-		// loop for TASK_2_EXECUTION_TIME 
+		// loop for TASK_2_EXECUTION_TIME
 	}
 
-	// turn off LED here 
+	// turn off LED here
 
-	// execution time is done, delete task 
+	// execution time is done, delete task
 	delete_dd_task(2);
 }
 
 static void User_Task_3( void *pvParameters )
 {
-	TickType_t start_time = xTaskGetTickCount( void );
+	TickType_t start_time = xTaskGetTickCount();
 	TickType_t end_time = start_time + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS;
-	
+
 	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
 
 	// execute an empty loop for duration of execution time
-	while ( end_time > xTaskGetTickCount( void ))
+	while ( end_time > xTaskGetTickCount())
 	{
-		// loop for TASK_3_EXECUTION_TIME 
+		// loop for TASK_3_EXECUTION_TIME
 	}
 
-	// turn off LED here 
+	// turn off LED here
 
-	// execution time is done, delete task 
+	// execution time is done, delete task
 	delete_dd_task(3);
 }
 
@@ -500,16 +505,16 @@ static void Monitor_Task( void *pvParameters )
 		vTaskDelay(1000); // probably need to change delay later to appropriate amount
 
 		// call get_active_dd_task_list
-		int active_list_count = get_active_dd_task_list(active_list);
+		//int active_list_count = print_count_of_list (get_active_dd_task_list());
 		// call get_complete_dd_task_list
-		int complete_list_count = get_complete_dd_task_list(complete_list);
+		//int complete_list_count = print_count_of_list(get_complete_dd_task_list());
 		// call get_overdue_dd_task_list
-		int overdue_list_count = get_overdue_dd_task_list(overdue_list);
+		//int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
 
 		// print to console number of tasks in each list
-		printf("Active task list count: %d\n", active_list_count);
-		printf("Complete task list count: %d\n", complete_list_count);
-		printf("Overdue task list count: %d\n", overdue_list_count);
+		//printf("Active task list count: %d\n", active_list_count);
+		//printf("Complete task list count: %d\n", complete_list_count);
+		//printf("Overdue task list count: %d\n", overdue_list_count);
 
 		// additional challenge: measure and report processor utilization and system overhead (to do this check status and avilability of CPU using FreeRTOS APIs)
 
@@ -524,51 +529,50 @@ void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t task_i
 	this_task.t_handle = t_handle;
 	this_task.type = type;
 	this_task.task_id = task_id;
-	this_task.release_time = NULL;
+	//this_task.release_time = NULL;
 	this_task.absolute_deadline = absolute_deadline;
-	this_task.completion_time = NULL;
+	//this_task.completion_time = NULL;
 
-	// struct is packaged as message and 
+	// struct is packaged as message and
 	struct message this_message;
-	this_message.message_type = create_dd_task;
+	this_message.type = create_dd;
 	this_message.task_info = this_task;
 
 	// sends message struct  to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
 	{
 		// wait for reply from DDS (obtain reply message)
-		
+
 	}
 }
 
 void delete_dd_task(uint32_t task_id)
 {
 	// receive ID of DD-Task when it has completed its execution (from user task)
-	// packages ID as message 
-	// struct is packaged as message and 
+	// struct with id is packaged as message
 	struct message this_message;
-	this_message.message_type = delete_dd_task;
+	this_message.type = delete_dd;
 	this_message.task_id = task_id;
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
 	{
 		// wait for reply from DDS (obtain reply message)
-		
+
 	}
 }
 
-struct dd_task_list** get_active_dd_task_list(void)
+/*struct dd_task_list** get_active_dd_task_list(void)
 {
 	// sends message to queue requesting Active Task list from DDS
 	struct message this_message;
-	this_message.message_type = get_active_dd_task_list;
+	this_message.type = get_active_dd_list;
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
 	{
 		// wait for reply from DDS (obtain reply message)
-		
+
 	}
 
 	// wait for reply from DDS (obtain reply message)
@@ -577,16 +581,16 @@ struct dd_task_list** get_active_dd_task_list(void)
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
 	{
 		// check for message type
-		if (reply_message.message_type == get_active_dd_task_list)
+		if (reply_message.type == get_active_dd_list)
 		{
-			return reply_message.task_list;
+			return &reply_message.task_list;
 		}
 		else {
-			// if wrong message type, put back on queue 
+			// if wrong message type, put back on queue
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
 			{
 				// wait for reply from DDS (obtain reply message)
-				
+
 			}
 		}
 	}
@@ -598,13 +602,13 @@ struct dd_task_list** get_complete_dd_task_list(void)
 {
 	// sends message to queue requesting Complete Task list from DDS
 	struct message this_message;
-	this_message.message_type = get_complete_dd_task_list;
+	this_message.type = get_completed_dd_list;
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
 	{
 		// wait for reply from DDS (obtain reply message)
-		
+
 	}
 
 	// wait for reply from DDS (obtain reply message)
@@ -613,16 +617,16 @@ struct dd_task_list** get_complete_dd_task_list(void)
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
 	{
 		// check for message type
-		if (reply_message.message_type == get_complete_dd_task_list)
+		if (reply_message.type == get_completed_dd_list)
 		{
 			return reply_message.task_list;
 		}
 		else {
-			// if wrong message type, put back on queue 
+			// if wrong message type, put back on queue
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
 			{
 				// wait for reply from DDS (obtain reply message)
-				
+
 			}
 		}
 	}
@@ -634,12 +638,12 @@ struct dd_task_list** get_overdue_dd_task_list(void)
 {
 	// sends message to queue requesting Overdue Task list from DDS
 	struct message this_message;
-	this_message.message_type = get_overdue_dd_task_list;
+	this_message.type = get_overdue_dd_list;
 
 	// sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
 	{
-		// sent successfully 
+		// sent successfully
 	}
 
 	// wait for reply from DDS (obtain reply message)
@@ -648,29 +652,29 @@ struct dd_task_list** get_overdue_dd_task_list(void)
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
 	{
 		// check for message type
-		if (reply_message.message_type == get_overdue_dd_task_list)
+		if (reply_message.type == get_overdue_dd_list)
 		{
 			return reply_message.task_list;
 		}
 		else {
-			// if wrong message type, put back on queue 
+			// if wrong message type, put back on queue
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
 			{
 				// wait for reply from DDS (obtain reply message)
-				
+
 			}
 		}
 	}
 
-	return reply_message.task_list;
-}
+	return &reply_message.task_list;
+}*/
 
 /* linked list functions */
 // add new task
 void add_task( struct dd_task_list * list_head, struct dd_task * new_dd_task )
 {
-	struct dd_task_list *temp;
-	temp.task = new_dd_task;
+	struct dd_task_list *temp = NULL;
+	temp->task = *new_dd_task;
 
 	struct dd_task_list *p;
 
@@ -692,30 +696,30 @@ void add_task( struct dd_task_list * list_head, struct dd_task * new_dd_task )
 void delete_task ( struct dd_task_list * list_head, struct dd_task * done_dd_task )
 {
 	// Store head node
-    struct dd_task_list *temp = *list_head;
+    struct dd_task_list *temp = list_head;
 	struct dd_task_list *prev = NULL;
- 
+
     // If head node itself holds the key to be deleted
-    if (temp != NULL && temp->task.t_handle == done_dd_task.t_handle) {
-        *list_head = temp->next_task; // Changed head
+    if (temp != NULL && temp->task.t_handle == done_dd_task->t_handle) {
+        list_head = temp->next_task; // Changed head
         free(temp); // free old head
         return;
     }
- 
+
     // Search for the task to be deleted, keep track of the
     // previous node as we need to change 'prev->next'
-    while (temp != NULL && temp->task.t_handle != done_dd_task.t_handle) {
+    while (temp != NULL && temp->task.t_handle != done_dd_task->t_handle) {
         prev = temp;
-        temp = temp->next;
+        temp = temp->next_task;
     }
- 
+
     // If key was not present in linked list
     if (temp == NULL)
         return;
- 
+
     // Unlink the node from linked list
     prev->next_task = temp->next_task;
- 
+
     free(temp); // Free memory
 }
 
@@ -737,7 +741,7 @@ void order_tasks_deadline_first( struct dd_task_list * dd_task_list_head )
 {
 	struct dd_task_list *current = dd_task_list_head;
 	struct dd_task_list *index = NULL;
-	int temp;
+	struct dd_task temp;
 
 	if (dd_task_list_head == NULL){
 		return;
@@ -762,22 +766,28 @@ void order_tasks_deadline_first( struct dd_task_list * dd_task_list_head )
 // assign task priorities
 void assign_task_priorities ( struct dd_task_list * dd_task_list )
 {
-	int size = print_count_of_list(dd_task_list);
+	int size = configMAX_PRIORITIES-4;
 
 	if (dd_task_list == NULL){
 		return;
 	}
 	else {
-		struct dd_task_list temp = dd_task_list;
-		vTaskPrioritySet(dd_task_list->task.t_handle, size); // highest priority (but what happens if size is as big as max priority?)
-		size--;
+		struct dd_task_list *temp = dd_task_list;
+		vTaskPrioritySet(dd_task_list->task.t_handle, configMAX_PRIORITIES-4); // highest priority (but what happens if size is as big as max priority?)
+		if (size - 1 != 0)
+		{
+			size--; // can't make priority lower than one
+		}
 
-		// set the rest of tasks to low priority
+		// set the rest of tasks priorities
 		while(temp != NULL){
 			vTaskPrioritySet(temp->task.t_handle, size); // each task is 1 level priority lower than prev task
 			temp = temp->next_task;
-			size--;
-		} 
+			if (size - 1 != 0)
+			{
+				size--; // can't make priority lower than one
+			}
+		}
 	}
 }
 
@@ -799,6 +809,8 @@ void vGenerator3CallbackFunction( TimerHandle_t xGenerator3Timer )
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	vTaskResume(xGenerator3TaskHandle);
 }
+
+// could add another timer callback for overdue tasks (would be started each time a task is created?)
 
 /*-----------------------------------------------------------*/
 
