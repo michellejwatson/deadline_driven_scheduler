@@ -208,7 +208,7 @@ struct message {
 	enum message_type type;
 	struct dd_task task_info;
 	uint32_t task_id;
-	struct dd_task_list task_list;
+	struct dd_task_list *task_list;
 };
 
 /* helper functions */
@@ -311,6 +311,7 @@ static void DD_Scheduler_Task( void *pvParameters )
 				// assign release time to new task
 				struct dd_task new_task = received_message.task_info;
 				new_task.release_time = xTaskGetTickCount();
+				new_task.completion_time = 0;
 
 				// add DD task to active task list
 				add_task(active_list, &new_task);
@@ -366,16 +367,35 @@ static void DD_Scheduler_Task( void *pvParameters )
 			}
 			else if (received_message.type == get_completed_dd_list)
 			{
+				struct dd_task_list *completedList = NULL;
+				struct dd_task_list *currentList = active_list;
+				while (currentList != NULL) {
+					// if completion_time is 0, that means task hasn't been completed
+					if( currentList->task.completion_time != 0) {
+						add_task(completedList, &currentList->task);
+						currentList = currentList->next_task;
+					}
+				}
 				// get complete task list and send to a queue
-				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
+				if (xQueueSend(xQueue_response_handle, &completedList, 500)){
 					// sent message successfully
 				}
 			}
 			else if (received_message.type == get_overdue_dd_list)
 			{
-				// get overdue task list and send to a queue
+				struct dd_task_list *overdueTaskList = NULL;
+				struct dd_task_list *currentList = active_list;
+				uint32_t timeRightNow = xTaskGetTickCount();
 
-				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
+				while (currentList != NULL) {
+					// if completion_time is 0, that means task hasn't been completed
+					if( currentList->task.absolute_deadline >= timeRightNow) {
+						add_task(overdueTaskList, &overdueTaskList->task);
+						currentList = currentList->next_task;
+					}
+				}
+				// get complete task list and send to a queue
+				if (xQueueSend(xQueue_response_handle, &overdueTaskList, 500)){
 					// sent message successfully
 				}
 			}
@@ -504,10 +524,12 @@ static void Monitor_Task( void *pvParameters )
 		// periodically reports processor utilization
 		vTaskDelay(1000); // probably need to change delay later to appropriate amount
 
+//		get_complete_dd_task_list completedTaskList = get_complete_dd_task_list();
+
 		// call get_active_dd_task_list
-		//int active_list_count = print_count_of_list (get_active_dd_task_list());
+//		int active_list_count = print_count_of_list (get_active_dd_task_list());
 		// call get_complete_dd_task_list
-		//int complete_list_count = print_count_of_list(get_complete_dd_task_list());
+		int complete_list_count = print_count_of_list(get_complete_dd_task_list());
 		// call get_overdue_dd_task_list
 		//int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
 
@@ -562,41 +584,41 @@ void delete_dd_task(uint32_t task_id)
 	}
 }
 
-/*struct dd_task_list** get_active_dd_task_list(void)
-{
-	// sends message to queue requesting Active Task list from DDS
-	struct message this_message;
-	this_message.type = get_active_dd_list;
-
-	//sends to queue (for DDS to receive)
-	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
-	{
-		// wait for reply from DDS (obtain reply message)
-
-	}
-
-	// wait for reply from DDS (obtain reply message)
-	struct message reply_message;
-	// when response is received from DDS, function returns the list
-	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
-	{
-		// check for message type
-		if (reply_message.type == get_active_dd_list)
-		{
-			return &reply_message.task_list;
-		}
-		else {
-			// if wrong message type, put back on queue
-			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
-			{
-				// wait for reply from DDS (obtain reply message)
-
-			}
-		}
-	}
-
-	return reply_message.task_list;
-}
+//struct dd_task_list** get_active_dd_task_list(void)
+//{
+//	// sends message to queue requesting Active Task list from DDS
+//	struct message this_message;
+//	this_message.type = get_active_dd_list;
+//
+//	//sends to queue (for DDS to receive)
+//	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
+//	{
+//		// wait for reply from DDS (obtain reply message)
+//
+//	}
+//
+//	// wait for reply from DDS (obtain reply message)
+//	struct message reply_message;
+//	// when response is received from DDS, function returns the list
+//	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
+//	{
+//		// check for message type
+//		if (reply_message.type == get_active_dd_list)
+//		{
+//			return &reply_message.task_list;
+//		}
+//		else {
+//			// if wrong message type, put back on queue
+//			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
+//			{
+//				// wait for reply from DDS (obtain reply message)
+//
+//			}
+//		}
+//	}
+//
+//	return reply_message.task_list;
+//}
 
 struct dd_task_list** get_complete_dd_task_list(void)
 {
@@ -667,7 +689,7 @@ struct dd_task_list** get_overdue_dd_task_list(void)
 	}
 
 	return &reply_message.task_list;
-}*/
+}
 
 /* linked list functions */
 // add new task
