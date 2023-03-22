@@ -269,8 +269,8 @@ int main(void)
 	STM_EVAL_LEDInit(blue_led);
 
 	// create queue to send and receive potentiometer value
-	xQueue_request_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message *));
-	xQueue_response_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message *));
+	xQueue_request_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message));
+	xQueue_response_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message));
 
 	// add potentiometer queue to registry for debugging
 	vQueueAddToRegistry( xQueue_request_handle, "RequestQueue" );
@@ -307,20 +307,20 @@ static void DD_Scheduler_Task( void *pvParameters )
 
 	while(1)
 	{
-		struct message* received_message = (struct message *)pvPortMalloc(sizeof(struct message *));
-		this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-		this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
-		this_message->task_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
+		message received_message; //= (struct message *)pvPortMalloc(sizeof(struct message *));
+		//this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+		//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+		//this_message->task_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
 		// add check for overdue tasks (could use software timers instead, would be better to accomodate for aperiodic but kinda redundant for periodic)
 
 		// adjusts user task priorities  (Set earliest deadline task priority to high and the rest to low so first completes that and then so on)
 		while(xQueueReceive(xQueue_request_handle, &received_message, 500)){
 			// cases based on what message type is received
-			if (received_message->type == create_dd)
+			if (received_message.type == create_dd)
 			{
 				// assign release time to new task
 				struct dd_task *new_task = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-				new_task = received_message->task_info;
+				new_task = received_message.task_info;
 				new_task->release_time = xTaskGetTickCount();
 				new_task->completion_time = 0;
 
@@ -339,10 +339,10 @@ static void DD_Scheduler_Task( void *pvParameters )
 
 				// MAYBE: start software timer, callback function will be to check if overdue time is passed, when callback is called: send new message type (overdue_dd_task)
 			}
-			else if (received_message->type == delete_dd)
+			else if (received_message.type == delete_dd)
 			{
 				// assign completion time to newly completed DD-task
-				struct dd_task done_task = *received_message->task_info;
+				struct dd_task done_task = *received_message.task_info;
 				done_task.completion_time = xTaskGetTickCount();
 
 				// remove DD task from active task list
@@ -367,14 +367,14 @@ static void DD_Scheduler_Task( void *pvParameters )
 			* 		// set priorities of user defined tasks accordingly
 			* }
 			*/
-			else if (received_message->type == get_active_dd_list)
+			else if (received_message.type == get_active_dd_list)
 			{
 
 				if (xQueueSend(xQueue_response_handle, &active_list, 500)){
 					// sent message successfully
 				}
 			}
-			else if (received_message->type == get_completed_dd_list)
+			else if (received_message.type == get_completed_dd_list)
 			{
 				struct dd_task_list *currentList = active_list;
 				while (currentList != NULL) {
@@ -391,7 +391,7 @@ static void DD_Scheduler_Task( void *pvParameters )
 					// sent message successfully
 				}
 			}
-			else if (received_message->type == get_overdue_dd_list)
+			else if (received_message.type == get_overdue_dd_list)
 			{
 				struct dd_task_list *currentList = active_list;
 				uint32_t timeRightNow = xTaskGetTickCount();
@@ -571,20 +571,20 @@ void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t the_ta
 	this_task->completion_time = 0;*/
 
 	// struct is packaged as message and
-	message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
-	this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-	this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+	message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	//this_message.task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+	//this_message.type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 
-	this_message->type = create_dd;
+	this_message.type = create_dd;
 	//this_message->task_id = the_task_id;
 	//this_message->task_info = this_task;
-	this_message->task_info->t_handle = t_handle;
-	this_message->task_info->type = type;
-	this_message->task_info->task_id = the_task_id;
-	this_message->task_info->release_time = 0;
-	this_message->task_info->absolute_deadline = absolute_deadline;
-	this_message->task_info->completion_time = 0;
-	this_message->task_id = the_task_id;
+	this_message.task_info->t_handle = t_handle;
+	this_message.task_info->type = type;
+	this_message.task_info->task_id = the_task_id;
+	this_message.task_info->release_time = 0;
+	this_message.task_info->absolute_deadline = absolute_deadline;
+	this_message.task_info->completion_time = 0;
+	this_message.task_id = the_task_id;
 
 	// sends message struct  to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
@@ -600,9 +600,9 @@ void delete_dd_task(uint32_t task_id)
 {
 	// receive ID of DD-Task when it has completed its execution (from user task)
 	// struct with id is packaged as message
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
-	this_message->type = delete_dd;
-	this_message->task_id = task_id;
+	struct message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	this_message.type = delete_dd;
+	this_message.task_id = task_id;
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
@@ -615,10 +615,10 @@ void delete_dd_task(uint32_t task_id)
 struct dd_task_list* get_active_dd_task_list(void)
 {
 	// sends message to queue requesting Active Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
-	this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-	this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
-	this_message->type = get_active_dd_list;
+	struct message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	//this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+	//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+	this_message.type = get_active_dd_list;
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
@@ -628,14 +628,14 @@ struct dd_task_list* get_active_dd_task_list(void)
 	}
 
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	struct message reply_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
 	{
 		// check for message type
-		if (reply_message->type == get_active_dd_list)
+		if (reply_message.type == get_active_dd_list)
 		{
-			return reply_message->task_list;
+			return reply_message.task_list;
 		}
 		else {
 			// if wrong message type, put back on queue
@@ -647,14 +647,14 @@ struct dd_task_list* get_active_dd_task_list(void)
 		}
 	}
 
-	return reply_message->task_list;
+	return reply_message.task_list;
 }
 
 struct dd_task_list* get_complete_dd_task_list(void)
 {
 	// sends message to queue requesting Complete Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
-	this_message->type = get_completed_dd_list;
+	struct message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	this_message.type = get_completed_dd_list;
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
@@ -664,14 +664,14 @@ struct dd_task_list* get_complete_dd_task_list(void)
 	}
 
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	struct message reply_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
 	{
 		// check for message type
-		if (reply_message->type == get_completed_dd_list)
+		if (reply_message.type == get_completed_dd_list)
 		{
-			return reply_message->task_list;
+			return reply_message.task_list;
 		}
 		else {
 			// if wrong message type, put back on queue
@@ -683,14 +683,14 @@ struct dd_task_list* get_complete_dd_task_list(void)
 		}
 	}
 
-	return reply_message->task_list;
+	return reply_message.task_list;
 }
 
 struct dd_task_list* get_overdue_dd_task_list(void)
 {
 	// sends message to queue requesting Overdue Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
-	this_message->type = get_overdue_dd_list;
+	struct message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	this_message.type = get_overdue_dd_list;
 
 	// sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
@@ -699,14 +699,14 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 	}
 
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	struct message reply_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
 	{
 		// check for message type
-		if (reply_message->type == get_overdue_dd_list)
+		if (reply_message.type == get_overdue_dd_list)
 		{
-			return reply_message->task_list;
+			return reply_message.task_list;
 		}
 		else {
 			// if wrong message type, put back on queue
@@ -718,7 +718,7 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 		}
 	}
 
-	return reply_message->task_list;
+	return reply_message.task_list;
 }
 
 /* linked list functions */

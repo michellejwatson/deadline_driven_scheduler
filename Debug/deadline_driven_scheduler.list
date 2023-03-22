@@ -5,13 +5,13 @@ Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
   0 .isr_vector   00000188  08000000  08000000  00010000  2**0
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  1 .text         0000417c  08000190  08000190  00010190  2**4
+  1 .text         000040f4  08000190  08000190  00010190  2**4
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .init_array   00000004  0800430c  0800430c  0001430c  2**2
+  2 .init_array   00000004  08004284  08004284  00014284  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  3 .fini_array   00000004  08004310  08004310  00014310  2**2
+  3 .fini_array   00000004  08004288  08004288  00014288  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  4 .data         0000008c  20000000  08004314  00020000  2**2
+  4 .data         0000008c  20000000  0800428c  00020000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
   5 .ccmram       00000000  10000000  10000000  0002008c  2**0
                   CONTENTS
@@ -21,21 +21,21 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   8 .ARM.attributes 0000002e  00000000  00000000  0002008c  2**0
                   CONTENTS, READONLY
-  9 .debug_info   0000e8f9  00000000  00000000  000200ba  2**0
+  9 .debug_info   0000e908  00000000  00000000  000200ba  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_abbrev 0000252f  00000000  00000000  0002e9b3  2**0
+ 10 .debug_abbrev 0000252f  00000000  00000000  0002e9c2  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_aranges 00000cd0  00000000  00000000  00030ee8  2**3
+ 11 .debug_aranges 00000cd0  00000000  00000000  00030ef8  2**3
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000b98  00000000  00000000  00031bb8  2**3
+ 12 .debug_ranges 00000b98  00000000  00000000  00031bc8  2**3
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_line   00005a93  00000000  00000000  00032750  2**0
+ 13 .debug_line   00005a96  00000000  00000000  00032760  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_str    00004798  00000000  00000000  000381e3  2**0
+ 14 .debug_str    00004798  00000000  00000000  000381f6  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .comment      0000007c  00000000  00000000  0003c97b  2**0
+ 15 .comment      0000007c  00000000  00000000  0003c98e  2**0
                   CONTENTS, READONLY
- 16 .debug_frame  00003534  00000000  00000000  0003c9f8  2**2
+ 16 .debug_frame  00003530  00000000  00000000  0003ca0c  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -54,7 +54,7 @@ Disassembly of section .text:
  80001a6:	bd10      	pop	{r4, pc}
  80001a8:	2000008c 	.word	0x2000008c
  80001ac:	00000000 	.word	0x00000000
- 80001b0:	080042f4 	.word	0x080042f4
+ 80001b0:	0800426c 	.word	0x0800426c
 
 080001b4 <frame_dummy>:
  80001b4:	b508      	push	{r3, lr}
@@ -66,7 +66,7 @@ Disassembly of section .text:
  80001c2:	bd08      	pop	{r3, pc}
  80001c4:	00000000 	.word	0x00000000
  80001c8:	20000090 	.word	0x20000090
- 80001cc:	080042f4 	.word	0x080042f4
+ 80001cc:	0800426c 	.word	0x0800426c
 
 080001d0 <vListInitialise>:
 /*-----------------------------------------------------------
@@ -1197,7 +1197,7 @@ static uint8_t *pucAlignedHeap = NULL;
 		{
 			extern void vApplicationMallocFailedHook( void );
 			vApplicationMallocFailedHook();
- 80007da:	f003 f93d 	bl	8003a58 <vApplicationMallocFailedHook>
+ 80007da:	f003 f8f9 	bl	80039d0 <vApplicationMallocFailedHook>
 		}
 	}
 	#endif
@@ -2541,7 +2541,7 @@ UBaseType_t uxMessagesWaiting;
  8000f46:	6c1b      	ldr	r3, [r3, #64]	; 0x40
  8000f48:	461a      	mov	r2, r3
  8000f4a:	68b9      	ldr	r1, [r7, #8]
- 8000f4c:	f003 f8ca 	bl	80040e4 <memcpy>
+ 8000f4c:	f003 f886 	bl	800405c <memcpy>
 		pxQueue->pcWriteTo += pxQueue->uxItemSize;
  8000f50:	68fb      	ldr	r3, [r7, #12]
  8000f52:	689a      	ldr	r2, [r3, #8]
@@ -2576,7 +2576,7 @@ UBaseType_t uxMessagesWaiting;
  8000f7a:	6c1b      	ldr	r3, [r3, #64]	; 0x40
  8000f7c:	461a      	mov	r2, r3
  8000f7e:	68b9      	ldr	r1, [r7, #8]
- 8000f80:	f003 f8b0 	bl	80040e4 <memcpy>
+ 8000f80:	f003 f86c 	bl	800405c <memcpy>
 		pxQueue->u.pcReadFrom -= pxQueue->uxItemSize;
  8000f84:	68fb      	ldr	r3, [r7, #12]
  8000f86:	68da      	ldr	r2, [r3, #12]
@@ -2694,7 +2694,7 @@ static void prvCopyDataFromQueue( Queue_t * const pxQueue, void * const pvBuffer
  800100e:	6c1b      	ldr	r3, [r3, #64]	; 0x40
  8001010:	461a      	mov	r2, r3
  8001012:	6838      	ldr	r0, [r7, #0]
- 8001014:	f003 f866 	bl	80040e4 <memcpy>
+ 8001014:	f003 f822 	bl	800405c <memcpy>
 	}
 }
  8001018:	bf00      	nop
@@ -3207,7 +3207,7 @@ BaseType_t xReturn;
  800126e:	009b      	lsls	r3, r3, #2
  8001270:	461a      	mov	r2, r3
  8001272:	21a5      	movs	r1, #165	; 0xa5
- 8001274:	f002 ff41 	bl	80040fa <memset>
+ 8001274:	f002 fefd 	bl	8004072 <memset>
 	grows from high memory to low (as per the 80x86) or vice versa.
 	portSTACK_GROWTH is used to make the result positive or negative as required
 	by the port. */
@@ -4415,7 +4415,7 @@ void vTaskStartScheduler( void )
  80018b8:	bd80      	pop	{r7, pc}
  80018ba:	bf00      	nop
  80018bc:	20001db4 	.word	0x20001db4
- 80018c0:	080041ac 	.word	0x080041ac
+ 80018c0:	08004124 	.word	0x08004124
  80018c4:	08001f3d 	.word	0x08001f3d
  80018c8:	20001db0 	.word	0x20001db0
  80018cc:	20001d9c 	.word	0x20001d9c
@@ -5065,7 +5065,7 @@ void vTaskSwitchContext( void )
  8001c20:	3334      	adds	r3, #52	; 0x34
  8001c22:	4619      	mov	r1, r3
  8001c24:	4610      	mov	r0, r2
- 8001c26:	f001 ff1a 	bl	8003a5e <vApplicationStackOverflowHook>
+ 8001c26:	f001 fed6 	bl	80039d6 <vApplicationStackOverflowHook>
 		taskSELECT_HIGHEST_PRIORITY_TASK();
  8001c2a:	4b23      	ldr	r3, [pc, #140]	; (8001cb8 <vTaskSwitchContext+0xf8>)
  8001c2c:	681b      	ldr	r3, [r3, #0]
@@ -5610,7 +5610,7 @@ static portTASK_FUNCTION( prvIdleTask, pvParameters )
 			NOTE: vApplicationIdleHook() MUST NOT, UNDER ANY CIRCUMSTANCES,
 			CALL A FUNCTION THAT MIGHT BLOCK. */
 			vApplicationIdleHook();
- 8001f60:	f001 fd83 	bl	8003a6a <vApplicationIdleHook>
+ 8001f60:	f001 fd3f 	bl	80039e2 <vApplicationIdleHook>
 		prvCheckTasksWaitingTermination();
  8001f64:	e7ee      	b.n	8001f44 <prvIdleTask+0x8>
  8001f66:	bf00      	nop
@@ -6521,7 +6521,7 @@ BaseType_t xReturn = pdFAIL;
  800244a:	bf00      	nop
  800244c:	20001dec 	.word	0x20001dec
  8002450:	20001df0 	.word	0x20001df0
- 8002454:	080041b4 	.word	0x080041b4
+ 8002454:	0800412c 	.word	0x0800412c
  8002458:	08002611 	.word	0x08002611
 
 0800245c <xTimerCreate>:
@@ -7615,7 +7615,7 @@ static void prvCheckForValidListAndQueue( void )
  8002a1c:	20001dd0 	.word	0x20001dd0
  8002a20:	20001de4 	.word	0x20001de4
  8002a24:	20001de8 	.word	0x20001de8
- 8002a28:	080041bc 	.word	0x080041bc
+ 8002a28:	08004134 	.word	0x08004134
 
 08002a2c <DAC_SetChannel1Data>:
   *            @arg DAC_Align_12b_R: 12bit right data alignment selected
@@ -8469,8 +8469,8 @@ void STM_EVAL_LEDInit(Led_TypeDef Led)
  8002e4e:	3710      	adds	r7, #16
  8002e50:	46bd      	mov	sp, r7
  8002e52:	bd80      	pop	{r7, pc}
- 8002e54:	080042e4 	.word	0x080042e4
- 8002e58:	080042dc 	.word	0x080042dc
+ 8002e54:	0800425c 	.word	0x0800425c
+ 8002e58:	08004254 	.word	0x08004254
  8002e5c:	20000004 	.word	0x20000004
 
 08002e60 <STM_EVAL_LEDOn>:
@@ -8500,7 +8500,7 @@ void STM_EVAL_LEDOn(Led_TypeDef Led)
  8002e82:	f85d 7b04 	ldr.w	r7, [sp], #4
  8002e86:	4770      	bx	lr
  8002e88:	20000004 	.word	0x20000004
- 8002e8c:	080042dc 	.word	0x080042dc
+ 8002e8c:	08004254 	.word	0x08004254
 
 08002e90 <STM_EVAL_LEDOff>:
   *     @arg LED5
@@ -8529,7 +8529,7 @@ void STM_EVAL_LEDOff(Led_TypeDef Led)
  8002eb2:	f85d 7b04 	ldr.w	r7, [sp], #4
  8002eb6:	4770      	bx	lr
  8002eb8:	20000004 	.word	0x20000004
- 8002ebc:	080042dc 	.word	0x080042dc
+ 8002ebc:	08004254 	.word	0x08004254
 
 08002ec0 <Audio_MAL_IRQHandler>:
   * @brief  This function handles main Media layer interrupt. 
@@ -8874,7 +8874,7 @@ int main(void)
  8003090:	af02      	add	r7, sp, #8
 	/* Configure the system. */
 	prvSetupHardware();
- 8003092:	f000 fcf6 	bl	8003a82 <prvSetupHardware>
+ 8003092:	f000 fcb2 	bl	80039fa <prvSetupHardware>
 
 	//active_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
 	STM_EVAL_LEDInit(amber_led); // look into here for how to initialize the LEDs with GPIOC
@@ -8888,17 +8888,17 @@ int main(void)
  80030a4:	f7ff feae 	bl	8002e04 <STM_EVAL_LEDInit>
 
 	// create queue to send and receive potentiometer value
-	xQueue_request_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message *));
+	xQueue_request_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message));
  80030a8:	2200      	movs	r2, #0
- 80030aa:	2104      	movs	r1, #4
+ 80030aa:	2110      	movs	r1, #16
  80030ac:	2064      	movs	r0, #100	; 0x64
  80030ae:	f7fd fc2f 	bl	8000910 <xQueueGenericCreate>
  80030b2:	4602      	mov	r2, r0
  80030b4:	4b3a      	ldr	r3, [pc, #232]	; (80031a0 <main+0x114>)
  80030b6:	601a      	str	r2, [r3, #0]
-	xQueue_response_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message *));
+	xQueue_response_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message));
  80030b8:	2200      	movs	r2, #0
- 80030ba:	2104      	movs	r1, #4
+ 80030ba:	2110      	movs	r1, #16
  80030bc:	2064      	movs	r0, #100	; 0x64
  80030be:	f7fd fc27 	bl	8000910 <xQueueGenericCreate>
  80030c2:	4602      	mov	r2, r0
@@ -9022,29 +9022,29 @@ int main(void)
  800319e:	bf00      	nop
  80031a0:	20001e04 	.word	0x20001e04
  80031a4:	20001e08 	.word	0x20001e08
- 80031a8:	080041c4 	.word	0x080041c4
- 80031ac:	080041d4 	.word	0x080041d4
- 80031b0:	080041e4 	.word	0x080041e4
+ 80031a8:	0800413c 	.word	0x0800413c
+ 80031ac:	0800414c 	.word	0x0800414c
+ 80031b0:	0800415c 	.word	0x0800415c
  80031b4:	08003209 	.word	0x08003209
  80031b8:	20001df8 	.word	0x20001df8
- 80031bc:	080041f4 	.word	0x080041f4
- 80031c0:	080033d9 	.word	0x080033d9
+ 80031bc:	0800416c 	.word	0x0800416c
+ 80031c0:	080033c9 	.word	0x080033c9
  80031c4:	20001dfc 	.word	0x20001dfc
- 80031c8:	08004208 	.word	0x08004208
- 80031cc:	08003429 	.word	0x08003429
+ 80031c8:	08004180 	.word	0x08004180
+ 80031cc:	08003419 	.word	0x08003419
  80031d0:	20001e00 	.word	0x20001e00
- 80031d4:	0800421c 	.word	0x0800421c
- 80031d8:	08003479 	.word	0x08003479
- 80031dc:	08004230 	.word	0x08004230
- 80031e0:	0800357d 	.word	0x0800357d
- 80031e4:	080039f9 	.word	0x080039f9
- 80031e8:	08004238 	.word	0x08004238
+ 80031d4:	08004194 	.word	0x08004194
+ 80031d8:	08003469 	.word	0x08003469
+ 80031dc:	080041a8 	.word	0x080041a8
+ 80031e0:	0800356d 	.word	0x0800356d
+ 80031e4:	08003971 	.word	0x08003971
+ 80031e8:	080041b0 	.word	0x080041b0
  80031ec:	20001ed4 	.word	0x20001ed4
- 80031f0:	08003a19 	.word	0x08003a19
- 80031f4:	08004244 	.word	0x08004244
+ 80031f0:	08003991 	.word	0x08003991
+ 80031f4:	080041bc 	.word	0x080041bc
  80031f8:	20001ecc 	.word	0x20001ecc
- 80031fc:	08003a39 	.word	0x08003a39
- 8003200:	08004250 	.word	0x08004250
+ 80031fc:	080039b1 	.word	0x080039b1
+ 8003200:	080041c8 	.word	0x080041c8
  8003204:	20001ed0 	.word	0x20001ed0
 
 08003208 <DD_Scheduler_Task>:
@@ -9054,2911 +9054,2838 @@ int main(void)
 static void DD_Scheduler_Task( void *pvParameters )
 {
  8003208:	b5b0      	push	{r4, r5, r7, lr}
- 800320a:	b090      	sub	sp, #64	; 0x40
+ 800320a:	b094      	sub	sp, #80	; 0x50
  800320c:	af00      	add	r7, sp, #0
  800320e:	6078      	str	r0, [r7, #4]
 	// waits for scheduling task (usually should be suspended until scheduling task exists)
 	// idk if this is correct for while loop
-	struct message* received_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 8003210:	2004      	movs	r0, #4
- 8003212:	f7fd faa5 	bl	8000760 <pvPortMalloc>
- 8003216:	4603      	mov	r3, r0
- 8003218:	62fb      	str	r3, [r7, #44]	; 0x2c
+
 	struct dd_task_list* active_list = NULL;
- 800321a:	2300      	movs	r3, #0
- 800321c:	62bb      	str	r3, [r7, #40]	; 0x28
+ 8003210:	2300      	movs	r3, #0
+ 8003212:	63fb      	str	r3, [r7, #60]	; 0x3c
 	struct dd_task_list* complete_list = NULL;
- 800321e:	2300      	movs	r3, #0
- 8003220:	627b      	str	r3, [r7, #36]	; 0x24
+ 8003214:	2300      	movs	r3, #0
+ 8003216:	63bb      	str	r3, [r7, #56]	; 0x38
 	struct dd_task_list* overdue_list = NULL;
- 8003222:	2300      	movs	r3, #0
- 8003224:	623b      	str	r3, [r7, #32]
-	while(1)
-	{
+ 8003218:	2300      	movs	r3, #0
+ 800321a:	637b      	str	r3, [r7, #52]	; 0x34
+		//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+		//this_message->task_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
 		// add check for overdue tasks (could use software timers instead, would be better to accomodate for aperiodic but kinda redundant for periodic)
 
 		// adjusts user task priorities  (Set earliest deadline task priority to high and the rest to low so first completes that and then so on)
 		while(xQueueReceive(xQueue_request_handle, &received_message, 500)){
- 8003226:	e0c4      	b.n	80033b2 <DD_Scheduler_Task+0x1aa>
+ 800321c:	e0c2      	b.n	80033a4 <DD_Scheduler_Task+0x19c>
 			// cases based on what message type is received
-			if (received_message->type == create_dd)
- 8003228:	6afb      	ldr	r3, [r7, #44]	; 0x2c
- 800322a:	781b      	ldrb	r3, [r3, #0]
- 800322c:	2b00      	cmp	r3, #0
- 800322e:	d127      	bne.n	8003280 <DD_Scheduler_Task+0x78>
+			if (received_message.type == create_dd)
+ 800321e:	f897 3024 	ldrb.w	r3, [r7, #36]	; 0x24
+ 8003222:	2b00      	cmp	r3, #0
+ 8003224:	d126      	bne.n	8003274 <DD_Scheduler_Task+0x6c>
 			{
 				// assign release time to new task
 				struct dd_task *new_task = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
- 8003230:	2004      	movs	r0, #4
- 8003232:	f7fd fa95 	bl	8000760 <pvPortMalloc>
- 8003236:	6378      	str	r0, [r7, #52]	; 0x34
-				new_task = received_message->task_info;
- 8003238:	6afb      	ldr	r3, [r7, #44]	; 0x2c
- 800323a:	685b      	ldr	r3, [r3, #4]
- 800323c:	637b      	str	r3, [r7, #52]	; 0x34
+ 8003226:	2004      	movs	r0, #4
+ 8003228:	f7fd fa9a 	bl	8000760 <pvPortMalloc>
+ 800322c:	6478      	str	r0, [r7, #68]	; 0x44
+				new_task = received_message.task_info;
+ 800322e:	6abb      	ldr	r3, [r7, #40]	; 0x28
+ 8003230:	647b      	str	r3, [r7, #68]	; 0x44
 				new_task->release_time = xTaskGetTickCount();
- 800323e:	f7fe fbf3 	bl	8001a28 <xTaskGetTickCount>
- 8003242:	4602      	mov	r2, r0
- 8003244:	6b7b      	ldr	r3, [r7, #52]	; 0x34
- 8003246:	60da      	str	r2, [r3, #12]
+ 8003232:	f7fe fbf9 	bl	8001a28 <xTaskGetTickCount>
+ 8003236:	4602      	mov	r2, r0
+ 8003238:	6c7b      	ldr	r3, [r7, #68]	; 0x44
+ 800323a:	60da      	str	r2, [r3, #12]
 				new_task->completion_time = 0;
- 8003248:	6b7b      	ldr	r3, [r7, #52]	; 0x34
- 800324a:	2200      	movs	r2, #0
- 800324c:	615a      	str	r2, [r3, #20]
+ 800323c:	6c7b      	ldr	r3, [r7, #68]	; 0x44
+ 800323e:	2200      	movs	r2, #0
+ 8003240:	615a      	str	r2, [r3, #20]
 
 				// add DD task to active task list
 				active_list = add_task(active_list, new_task);
- 800324e:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 8003250:	6b79      	ldr	r1, [r7, #52]	; 0x34
- 8003252:	4618      	mov	r0, r3
- 8003254:	f000 fad4 	bl	8003800 <add_task>
- 8003258:	4603      	mov	r3, r0
- 800325a:	62bb      	str	r3, [r7, #40]	; 0x28
+ 8003242:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8003244:	6c79      	ldr	r1, [r7, #68]	; 0x44
+ 8003246:	4618      	mov	r0, r3
+ 8003248:	f000 fa96 	bl	8003778 <add_task>
+ 800324c:	4603      	mov	r3, r0
+ 800324e:	63fb      	str	r3, [r7, #60]	; 0x3c
 
 				// sort list by deadline
 				active_list = order_tasks_deadline_first(active_list);
- 800325c:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 800325e:	4618      	mov	r0, r3
- 8003260:	f000 fb57 	bl	8003912 <order_tasks_deadline_first>
- 8003264:	4603      	mov	r3, r0
- 8003266:	62bb      	str	r3, [r7, #40]	; 0x28
+ 8003250:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8003252:	4618      	mov	r0, r3
+ 8003254:	f000 fb19 	bl	800388a <order_tasks_deadline_first>
+ 8003258:	4603      	mov	r3, r0
+ 800325a:	63fb      	str	r3, [r7, #60]	; 0x3c
 
 				// set priorities of user defined task according to sorted list
 				// head (first of list) set to high priority, rest set to low priority
 				active_list = assign_task_priorities(active_list);
- 8003268:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 800326a:	4618      	mov	r0, r3
- 800326c:	f000 fb98 	bl	80039a0 <assign_task_priorities>
- 8003270:	4603      	mov	r3, r0
- 8003272:	62bb      	str	r3, [r7, #40]	; 0x28
+ 800325c:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 800325e:	4618      	mov	r0, r3
+ 8003260:	f000 fb5a 	bl	8003918 <assign_task_priorities>
+ 8003264:	4603      	mov	r3, r0
+ 8003266:	63fb      	str	r3, [r7, #60]	; 0x3c
 
 				// start task
 				vTaskResume(new_task->t_handle);
- 8003274:	6b7b      	ldr	r3, [r7, #52]	; 0x34
- 8003276:	681b      	ldr	r3, [r3, #0]
- 8003278:	4618      	mov	r0, r3
- 800327a:	f7fe fa83 	bl	8001784 <vTaskResume>
- 800327e:	e098      	b.n	80033b2 <DD_Scheduler_Task+0x1aa>
+ 8003268:	6c7b      	ldr	r3, [r7, #68]	; 0x44
+ 800326a:	681b      	ldr	r3, [r3, #0]
+ 800326c:	4618      	mov	r0, r3
+ 800326e:	f7fe fa89 	bl	8001784 <vTaskResume>
+ 8003272:	e097      	b.n	80033a4 <DD_Scheduler_Task+0x19c>
 
 				// MAYBE: start software timer, callback function will be to check if overdue time is passed, when callback is called: send new message type (overdue_dd_task)
 			}
-			else if (received_message->type == delete_dd)
- 8003280:	6afb      	ldr	r3, [r7, #44]	; 0x2c
- 8003282:	781b      	ldrb	r3, [r3, #0]
- 8003284:	2b01      	cmp	r3, #1
- 8003286:	d12d      	bne.n	80032e4 <DD_Scheduler_Task+0xdc>
+			else if (received_message.type == delete_dd)
+ 8003274:	f897 3024 	ldrb.w	r3, [r7, #36]	; 0x24
+ 8003278:	2b01      	cmp	r3, #1
+ 800327a:	d12c      	bne.n	80032d6 <DD_Scheduler_Task+0xce>
 			{
 				// assign completion time to newly completed DD-task
-				struct dd_task done_task = *received_message->task_info;
- 8003288:	6afb      	ldr	r3, [r7, #44]	; 0x2c
- 800328a:	685b      	ldr	r3, [r3, #4]
- 800328c:	f107 0408 	add.w	r4, r7, #8
- 8003290:	461d      	mov	r5, r3
- 8003292:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
- 8003294:	c40f      	stmia	r4!, {r0, r1, r2, r3}
- 8003296:	e895 0003 	ldmia.w	r5, {r0, r1}
- 800329a:	e884 0003 	stmia.w	r4, {r0, r1}
+				struct dd_task done_task = *received_message.task_info;
+ 800327c:	6abb      	ldr	r3, [r7, #40]	; 0x28
+ 800327e:	f107 040c 	add.w	r4, r7, #12
+ 8003282:	461d      	mov	r5, r3
+ 8003284:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
+ 8003286:	c40f      	stmia	r4!, {r0, r1, r2, r3}
+ 8003288:	e895 0003 	ldmia.w	r5, {r0, r1}
+ 800328c:	e884 0003 	stmia.w	r4, {r0, r1}
 				done_task.completion_time = xTaskGetTickCount();
- 800329e:	f7fe fbc3 	bl	8001a28 <xTaskGetTickCount>
- 80032a2:	4603      	mov	r3, r0
- 80032a4:	61fb      	str	r3, [r7, #28]
+ 8003290:	f7fe fbca 	bl	8001a28 <xTaskGetTickCount>
+ 8003294:	4603      	mov	r3, r0
+ 8003296:	623b      	str	r3, [r7, #32]
 
 				// remove DD task from active task list
 				active_list = delete_task(active_list, &done_task);
- 80032a6:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 80032a8:	f107 0208 	add.w	r2, r7, #8
- 80032ac:	4611      	mov	r1, r2
- 80032ae:	4618      	mov	r0, r3
- 80032b0:	f000 fae3 	bl	800387a <delete_task>
- 80032b4:	4603      	mov	r3, r0
- 80032b6:	62bb      	str	r3, [r7, #40]	; 0x28
+ 8003298:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 800329a:	f107 020c 	add.w	r2, r7, #12
+ 800329e:	4611      	mov	r1, r2
+ 80032a0:	4618      	mov	r0, r3
+ 80032a2:	f000 faa6 	bl	80037f2 <delete_task>
+ 80032a6:	4603      	mov	r3, r0
+ 80032a8:	63fb      	str	r3, [r7, #60]	; 0x3c
 
 				// add DD task to complete task list
 				complete_list = add_task(complete_list, &done_task);
- 80032b8:	6a7b      	ldr	r3, [r7, #36]	; 0x24
- 80032ba:	f107 0208 	add.w	r2, r7, #8
- 80032be:	4611      	mov	r1, r2
- 80032c0:	4618      	mov	r0, r3
- 80032c2:	f000 fa9d 	bl	8003800 <add_task>
- 80032c6:	4603      	mov	r3, r0
- 80032c8:	627b      	str	r3, [r7, #36]	; 0x24
+ 80032aa:	6bbb      	ldr	r3, [r7, #56]	; 0x38
+ 80032ac:	f107 020c 	add.w	r2, r7, #12
+ 80032b0:	4611      	mov	r1, r2
+ 80032b2:	4618      	mov	r0, r3
+ 80032b4:	f000 fa60 	bl	8003778 <add_task>
+ 80032b8:	4603      	mov	r3, r0
+ 80032ba:	63bb      	str	r3, [r7, #56]	; 0x38
 
 				// re-sort active task list by deadline
 				active_list = order_tasks_deadline_first(active_list);
- 80032ca:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 80032cc:	4618      	mov	r0, r3
- 80032ce:	f000 fb20 	bl	8003912 <order_tasks_deadline_first>
- 80032d2:	4603      	mov	r3, r0
- 80032d4:	62bb      	str	r3, [r7, #40]	; 0x28
+ 80032bc:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 80032be:	4618      	mov	r0, r3
+ 80032c0:	f000 fae3 	bl	800388a <order_tasks_deadline_first>
+ 80032c4:	4603      	mov	r3, r0
+ 80032c6:	63fb      	str	r3, [r7, #60]	; 0x3c
 
 				// set priorities of user defined tasks accordingly
 				// head (first of list) set to high priority, rest set to low priority
 				active_list = assign_task_priorities(active_list);
- 80032d6:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 80032d8:	4618      	mov	r0, r3
- 80032da:	f000 fb61 	bl	80039a0 <assign_task_priorities>
- 80032de:	4603      	mov	r3, r0
- 80032e0:	62bb      	str	r3, [r7, #40]	; 0x28
- 80032e2:	e066      	b.n	80033b2 <DD_Scheduler_Task+0x1aa>
+ 80032c8:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 80032ca:	4618      	mov	r0, r3
+ 80032cc:	f000 fb24 	bl	8003918 <assign_task_priorities>
+ 80032d0:	4603      	mov	r3, r0
+ 80032d2:	63fb      	str	r3, [r7, #60]	; 0x3c
+ 80032d4:	e066      	b.n	80033a4 <DD_Scheduler_Task+0x19c>
 			* 		// add DD task to overdue task list
 			* 		// re-sort overdue task list by deadline
 			* 		// set priorities of user defined tasks accordingly
 			* }
 			*/
-			else if (received_message->type == get_active_dd_list)
- 80032e4:	6afb      	ldr	r3, [r7, #44]	; 0x2c
- 80032e6:	781b      	ldrb	r3, [r3, #0]
- 80032e8:	2b02      	cmp	r3, #2
- 80032ea:	d109      	bne.n	8003300 <DD_Scheduler_Task+0xf8>
+			else if (received_message.type == get_active_dd_list)
+ 80032d6:	f897 3024 	ldrb.w	r3, [r7, #36]	; 0x24
+ 80032da:	2b02      	cmp	r3, #2
+ 80032dc:	d109      	bne.n	80032f2 <DD_Scheduler_Task+0xea>
 			{
 
 				if (xQueueSend(xQueue_response_handle, &active_list, 500)){
- 80032ec:	4b38      	ldr	r3, [pc, #224]	; (80033d0 <DD_Scheduler_Task+0x1c8>)
- 80032ee:	6818      	ldr	r0, [r3, #0]
- 80032f0:	f107 0128 	add.w	r1, r7, #40	; 0x28
- 80032f4:	2300      	movs	r3, #0
- 80032f6:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
- 80032fa:	f7fd fb61 	bl	80009c0 <xQueueGenericSend>
- 80032fe:	e058      	b.n	80033b2 <DD_Scheduler_Task+0x1aa>
+ 80032de:	4b38      	ldr	r3, [pc, #224]	; (80033c0 <DD_Scheduler_Task+0x1b8>)
+ 80032e0:	6818      	ldr	r0, [r3, #0]
+ 80032e2:	f107 013c 	add.w	r1, r7, #60	; 0x3c
+ 80032e6:	2300      	movs	r3, #0
+ 80032e8:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
+ 80032ec:	f7fd fb68 	bl	80009c0 <xQueueGenericSend>
+ 80032f0:	e058      	b.n	80033a4 <DD_Scheduler_Task+0x19c>
 					// sent message successfully
 				}
 			}
-			else if (received_message->type == get_completed_dd_list)
- 8003300:	6afb      	ldr	r3, [r7, #44]	; 0x2c
- 8003302:	781b      	ldrb	r3, [r3, #0]
- 8003304:	2b03      	cmp	r3, #3
- 8003306:	d126      	bne.n	8003356 <DD_Scheduler_Task+0x14e>
+			else if (received_message.type == get_completed_dd_list)
+ 80032f2:	f897 3024 	ldrb.w	r3, [r7, #36]	; 0x24
+ 80032f6:	2b03      	cmp	r3, #3
+ 80032f8:	d126      	bne.n	8003348 <DD_Scheduler_Task+0x140>
 			{
 				struct dd_task_list *currentList = active_list;
- 8003308:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 800330a:	63fb      	str	r3, [r7, #60]	; 0x3c
+ 80032fa:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 80032fc:	64fb      	str	r3, [r7, #76]	; 0x4c
 				while (currentList != NULL) {
- 800330c:	e016      	b.n	800333c <DD_Scheduler_Task+0x134>
+ 80032fe:	e016      	b.n	800332e <DD_Scheduler_Task+0x126>
 					// if completion_time is 0, that means task hasn't been completed
 					if( currentList->task.completion_time != 0) {
- 800330e:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8003310:	695b      	ldr	r3, [r3, #20]
- 8003312:	2b00      	cmp	r3, #0
- 8003314:	d012      	beq.n	800333c <DD_Scheduler_Task+0x134>
+ 8003300:	6cfb      	ldr	r3, [r7, #76]	; 0x4c
+ 8003302:	695b      	ldr	r3, [r3, #20]
+ 8003304:	2b00      	cmp	r3, #0
+ 8003306:	d012      	beq.n	800332e <DD_Scheduler_Task+0x126>
 						complete_list = add_task(complete_list, &currentList->task);
- 8003316:	6a7b      	ldr	r3, [r7, #36]	; 0x24
- 8003318:	6bfa      	ldr	r2, [r7, #60]	; 0x3c
- 800331a:	4611      	mov	r1, r2
- 800331c:	4618      	mov	r0, r3
- 800331e:	f000 fa6f 	bl	8003800 <add_task>
- 8003322:	4603      	mov	r3, r0
- 8003324:	627b      	str	r3, [r7, #36]	; 0x24
+ 8003308:	6bbb      	ldr	r3, [r7, #56]	; 0x38
+ 800330a:	6cfa      	ldr	r2, [r7, #76]	; 0x4c
+ 800330c:	4611      	mov	r1, r2
+ 800330e:	4618      	mov	r0, r3
+ 8003310:	f000 fa32 	bl	8003778 <add_task>
+ 8003314:	4603      	mov	r3, r0
+ 8003316:	63bb      	str	r3, [r7, #56]	; 0x38
 						// delete the completed task from active task list
 						active_list = delete_task(active_list, &currentList->task);
- 8003326:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 8003328:	6bfa      	ldr	r2, [r7, #60]	; 0x3c
- 800332a:	4611      	mov	r1, r2
- 800332c:	4618      	mov	r0, r3
- 800332e:	f000 faa4 	bl	800387a <delete_task>
- 8003332:	4603      	mov	r3, r0
- 8003334:	62bb      	str	r3, [r7, #40]	; 0x28
+ 8003318:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 800331a:	6cfa      	ldr	r2, [r7, #76]	; 0x4c
+ 800331c:	4611      	mov	r1, r2
+ 800331e:	4618      	mov	r0, r3
+ 8003320:	f000 fa67 	bl	80037f2 <delete_task>
+ 8003324:	4603      	mov	r3, r0
+ 8003326:	63fb      	str	r3, [r7, #60]	; 0x3c
 						currentList = currentList->next_task;
- 8003336:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 8003338:	699b      	ldr	r3, [r3, #24]
- 800333a:	63fb      	str	r3, [r7, #60]	; 0x3c
+ 8003328:	6cfb      	ldr	r3, [r7, #76]	; 0x4c
+ 800332a:	699b      	ldr	r3, [r3, #24]
+ 800332c:	64fb      	str	r3, [r7, #76]	; 0x4c
 				while (currentList != NULL) {
- 800333c:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
- 800333e:	2b00      	cmp	r3, #0
- 8003340:	d1e5      	bne.n	800330e <DD_Scheduler_Task+0x106>
+ 800332e:	6cfb      	ldr	r3, [r7, #76]	; 0x4c
+ 8003330:	2b00      	cmp	r3, #0
+ 8003332:	d1e5      	bne.n	8003300 <DD_Scheduler_Task+0xf8>
 					}
 				}
 				// get complete task list and send to a queue
 				if (xQueueSend(xQueue_response_handle, &complete_list, 500)){
- 8003342:	4b23      	ldr	r3, [pc, #140]	; (80033d0 <DD_Scheduler_Task+0x1c8>)
- 8003344:	6818      	ldr	r0, [r3, #0]
- 8003346:	f107 0124 	add.w	r1, r7, #36	; 0x24
- 800334a:	2300      	movs	r3, #0
- 800334c:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
- 8003350:	f7fd fb36 	bl	80009c0 <xQueueGenericSend>
- 8003354:	e02d      	b.n	80033b2 <DD_Scheduler_Task+0x1aa>
+ 8003334:	4b22      	ldr	r3, [pc, #136]	; (80033c0 <DD_Scheduler_Task+0x1b8>)
+ 8003336:	6818      	ldr	r0, [r3, #0]
+ 8003338:	f107 0138 	add.w	r1, r7, #56	; 0x38
+ 800333c:	2300      	movs	r3, #0
+ 800333e:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
+ 8003342:	f7fd fb3d 	bl	80009c0 <xQueueGenericSend>
+ 8003346:	e02d      	b.n	80033a4 <DD_Scheduler_Task+0x19c>
 					// sent message successfully
 				}
 			}
-			else if (received_message->type == get_overdue_dd_list)
- 8003356:	6afb      	ldr	r3, [r7, #44]	; 0x2c
- 8003358:	781b      	ldrb	r3, [r3, #0]
- 800335a:	2b04      	cmp	r3, #4
- 800335c:	d129      	bne.n	80033b2 <DD_Scheduler_Task+0x1aa>
+			else if (received_message.type == get_overdue_dd_list)
+ 8003348:	f897 3024 	ldrb.w	r3, [r7, #36]	; 0x24
+ 800334c:	2b04      	cmp	r3, #4
+ 800334e:	d129      	bne.n	80033a4 <DD_Scheduler_Task+0x19c>
 			{
 				struct dd_task_list *currentList = active_list;
- 800335e:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 8003360:	63bb      	str	r3, [r7, #56]	; 0x38
+ 8003350:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8003352:	64bb      	str	r3, [r7, #72]	; 0x48
 				uint32_t timeRightNow = xTaskGetTickCount();
- 8003362:	f7fe fb61 	bl	8001a28 <xTaskGetTickCount>
- 8003366:	6338      	str	r0, [r7, #48]	; 0x30
+ 8003354:	f7fe fb68 	bl	8001a28 <xTaskGetTickCount>
+ 8003358:	6438      	str	r0, [r7, #64]	; 0x40
 
 				while (currentList != NULL) {
- 8003368:	e017      	b.n	800339a <DD_Scheduler_Task+0x192>
+ 800335a:	e017      	b.n	800338c <DD_Scheduler_Task+0x184>
 					// if completion_time is 0, that means task hasn't been completed
 					if( currentList->task.absolute_deadline <= timeRightNow) {
- 800336a:	6bbb      	ldr	r3, [r7, #56]	; 0x38
- 800336c:	691a      	ldr	r2, [r3, #16]
- 800336e:	6b3b      	ldr	r3, [r7, #48]	; 0x30
- 8003370:	429a      	cmp	r2, r3
- 8003372:	d812      	bhi.n	800339a <DD_Scheduler_Task+0x192>
+ 800335c:	6cbb      	ldr	r3, [r7, #72]	; 0x48
+ 800335e:	691a      	ldr	r2, [r3, #16]
+ 8003360:	6c3b      	ldr	r3, [r7, #64]	; 0x40
+ 8003362:	429a      	cmp	r2, r3
+ 8003364:	d812      	bhi.n	800338c <DD_Scheduler_Task+0x184>
 						overdue_list = add_task(overdue_list, &currentList->task);
- 8003374:	6a3b      	ldr	r3, [r7, #32]
- 8003376:	6bba      	ldr	r2, [r7, #56]	; 0x38
- 8003378:	4611      	mov	r1, r2
- 800337a:	4618      	mov	r0, r3
- 800337c:	f000 fa40 	bl	8003800 <add_task>
- 8003380:	4603      	mov	r3, r0
- 8003382:	623b      	str	r3, [r7, #32]
+ 8003366:	6b7b      	ldr	r3, [r7, #52]	; 0x34
+ 8003368:	6cba      	ldr	r2, [r7, #72]	; 0x48
+ 800336a:	4611      	mov	r1, r2
+ 800336c:	4618      	mov	r0, r3
+ 800336e:	f000 fa03 	bl	8003778 <add_task>
+ 8003372:	4603      	mov	r3, r0
+ 8003374:	637b      	str	r3, [r7, #52]	; 0x34
 						// delete overdue task from active task list
 						active_list = delete_task(active_list, &currentList->task);
- 8003384:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 8003386:	6bba      	ldr	r2, [r7, #56]	; 0x38
- 8003388:	4611      	mov	r1, r2
- 800338a:	4618      	mov	r0, r3
- 800338c:	f000 fa75 	bl	800387a <delete_task>
- 8003390:	4603      	mov	r3, r0
- 8003392:	62bb      	str	r3, [r7, #40]	; 0x28
+ 8003376:	6bfb      	ldr	r3, [r7, #60]	; 0x3c
+ 8003378:	6cba      	ldr	r2, [r7, #72]	; 0x48
+ 800337a:	4611      	mov	r1, r2
+ 800337c:	4618      	mov	r0, r3
+ 800337e:	f000 fa38 	bl	80037f2 <delete_task>
+ 8003382:	4603      	mov	r3, r0
+ 8003384:	63fb      	str	r3, [r7, #60]	; 0x3c
 						currentList = currentList->next_task;
- 8003394:	6bbb      	ldr	r3, [r7, #56]	; 0x38
- 8003396:	699b      	ldr	r3, [r3, #24]
- 8003398:	63bb      	str	r3, [r7, #56]	; 0x38
+ 8003386:	6cbb      	ldr	r3, [r7, #72]	; 0x48
+ 8003388:	699b      	ldr	r3, [r3, #24]
+ 800338a:	64bb      	str	r3, [r7, #72]	; 0x48
 				while (currentList != NULL) {
- 800339a:	6bbb      	ldr	r3, [r7, #56]	; 0x38
- 800339c:	2b00      	cmp	r3, #0
- 800339e:	d1e4      	bne.n	800336a <DD_Scheduler_Task+0x162>
+ 800338c:	6cbb      	ldr	r3, [r7, #72]	; 0x48
+ 800338e:	2b00      	cmp	r3, #0
+ 8003390:	d1e4      	bne.n	800335c <DD_Scheduler_Task+0x154>
 					}
 				}
 				// get complete task list and send to a queue
 				if (xQueueSend(xQueue_response_handle, &overdue_list, 500)){
- 80033a0:	4b0b      	ldr	r3, [pc, #44]	; (80033d0 <DD_Scheduler_Task+0x1c8>)
- 80033a2:	6818      	ldr	r0, [r3, #0]
- 80033a4:	f107 0120 	add.w	r1, r7, #32
- 80033a8:	2300      	movs	r3, #0
- 80033aa:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
- 80033ae:	f7fd fb07 	bl	80009c0 <xQueueGenericSend>
+ 8003392:	4b0b      	ldr	r3, [pc, #44]	; (80033c0 <DD_Scheduler_Task+0x1b8>)
+ 8003394:	6818      	ldr	r0, [r3, #0]
+ 8003396:	f107 0134 	add.w	r1, r7, #52	; 0x34
+ 800339a:	2300      	movs	r3, #0
+ 800339c:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
+ 80033a0:	f7fd fb0e 	bl	80009c0 <xQueueGenericSend>
 		while(xQueueReceive(xQueue_request_handle, &received_message, 500)){
- 80033b2:	4b08      	ldr	r3, [pc, #32]	; (80033d4 <DD_Scheduler_Task+0x1cc>)
- 80033b4:	6818      	ldr	r0, [r3, #0]
- 80033b6:	f107 012c 	add.w	r1, r7, #44	; 0x2c
- 80033ba:	2300      	movs	r3, #0
- 80033bc:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
- 80033c0:	f7fd fc8c 	bl	8000cdc <xQueueGenericReceive>
- 80033c4:	4603      	mov	r3, r0
- 80033c6:	2b00      	cmp	r3, #0
- 80033c8:	f47f af2e 	bne.w	8003228 <DD_Scheduler_Task+0x20>
- 80033cc:	e7f1      	b.n	80033b2 <DD_Scheduler_Task+0x1aa>
- 80033ce:	bf00      	nop
- 80033d0:	20001e08 	.word	0x20001e08
- 80033d4:	20001e04 	.word	0x20001e04
+ 80033a4:	4b07      	ldr	r3, [pc, #28]	; (80033c4 <DD_Scheduler_Task+0x1bc>)
+ 80033a6:	6818      	ldr	r0, [r3, #0]
+ 80033a8:	f107 0124 	add.w	r1, r7, #36	; 0x24
+ 80033ac:	2300      	movs	r3, #0
+ 80033ae:	f44f 72fa 	mov.w	r2, #500	; 0x1f4
+ 80033b2:	f7fd fc93 	bl	8000cdc <xQueueGenericReceive>
+ 80033b6:	4603      	mov	r3, r0
+ 80033b8:	2b00      	cmp	r3, #0
+ 80033ba:	f47f af30 	bne.w	800321e <DD_Scheduler_Task+0x16>
+	{
+ 80033be:	e72d      	b.n	800321c <DD_Scheduler_Task+0x14>
+ 80033c0:	20001e08 	.word	0x20001e08
+ 80033c4:	20001e04 	.word	0x20001e04
 
-080033d8 <DD_Task_Generator_1>:
+080033c8 <DD_Task_Generator_1>:
 	}
 }
 
 // task generator for DD_User_Task_1 (will have one for each DD task)
 static void DD_Task_Generator_1( void *pvParameters )
 {
- 80033d8:	b590      	push	{r4, r7, lr}
- 80033da:	b087      	sub	sp, #28
- 80033dc:	af02      	add	r7, sp, #8
- 80033de:	6078      	str	r0, [r7, #4]
+ 80033c8:	b590      	push	{r4, r7, lr}
+ 80033ca:	b087      	sub	sp, #28
+ 80033cc:	af02      	add	r7, sp, #8
+ 80033ce:	6078      	str	r0, [r7, #4]
 	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_1_PERIOD
 	// should reuse F-Task handles inside each DD task
 	// periodically generate user tasks for DD_Scheduler
 	TaskHandle_t task_1_handle;
 	xTaskCreate( User_Task_1, "User Task 1", configMINIMAL_STACK_SIZE, NULL, 1, &task_1_handle); // start it at lowest priority
- 80033e0:	f107 030c 	add.w	r3, r7, #12
- 80033e4:	9301      	str	r3, [sp, #4]
- 80033e6:	2301      	movs	r3, #1
- 80033e8:	9300      	str	r3, [sp, #0]
- 80033ea:	2300      	movs	r3, #0
- 80033ec:	2282      	movs	r2, #130	; 0x82
- 80033ee:	490c      	ldr	r1, [pc, #48]	; (8003420 <DD_Task_Generator_1+0x48>)
- 80033f0:	480c      	ldr	r0, [pc, #48]	; (8003424 <DD_Task_Generator_1+0x4c>)
- 80033f2:	f7fd fef1 	bl	80011d8 <xTaskCreate>
+ 80033d0:	f107 030c 	add.w	r3, r7, #12
+ 80033d4:	9301      	str	r3, [sp, #4]
+ 80033d6:	2301      	movs	r3, #1
+ 80033d8:	9300      	str	r3, [sp, #0]
+ 80033da:	2300      	movs	r3, #0
+ 80033dc:	2282      	movs	r2, #130	; 0x82
+ 80033de:	490c      	ldr	r1, [pc, #48]	; (8003410 <DD_Task_Generator_1+0x48>)
+ 80033e0:	480c      	ldr	r0, [pc, #48]	; (8003414 <DD_Task_Generator_1+0x4c>)
+ 80033e2:	f7fd fef9 	bl	80011d8 <xTaskCreate>
 	vTaskSuspend(task_1_handle); // DD scheduler will start it when it should be run
- 80033f6:	68fb      	ldr	r3, [r7, #12]
- 80033f8:	4618      	mov	r0, r3
- 80033fa:	f7fe f901 	bl	8001600 <vTaskSuspend>
+ 80033e6:	68fb      	ldr	r3, [r7, #12]
+ 80033e8:	4618      	mov	r0, r3
+ 80033ea:	f7fe f909 	bl	8001600 <vTaskSuspend>
 
 	// prepares all information needed for creating specific instance of DD-tasks
 	// calls create_dd_task
 	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
 	create_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount() + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS);
- 80033fe:	68fc      	ldr	r4, [r7, #12]
- 8003400:	f7fe fb12 	bl	8001a28 <xTaskGetTickCount>
- 8003404:	4603      	mov	r3, r0
- 8003406:	335f      	adds	r3, #95	; 0x5f
- 8003408:	2201      	movs	r2, #1
- 800340a:	2100      	movs	r1, #0
- 800340c:	4620      	mov	r0, r4
- 800340e:	f000 f8e5 	bl	80035dc <create_dd_task>
+ 80033ee:	68fc      	ldr	r4, [r7, #12]
+ 80033f0:	f7fe fb1a 	bl	8001a28 <xTaskGetTickCount>
+ 80033f4:	4603      	mov	r3, r0
+ 80033f6:	335f      	adds	r3, #95	; 0x5f
+ 80033f8:	2201      	movs	r2, #1
+ 80033fa:	2100      	movs	r1, #0
+ 80033fc:	4620      	mov	r0, r4
+ 80033fe:	f000 f8e5 	bl	80035cc <create_dd_task>
 
 	// needs to suspend itself (NULL means suspends itself)
 	vTaskSuspend( NULL );
- 8003412:	2000      	movs	r0, #0
- 8003414:	f7fe f8f4 	bl	8001600 <vTaskSuspend>
+ 8003402:	2000      	movs	r0, #0
+ 8003404:	f7fe f8fc 	bl	8001600 <vTaskSuspend>
 }
- 8003418:	bf00      	nop
- 800341a:	3714      	adds	r7, #20
- 800341c:	46bd      	mov	sp, r7
- 800341e:	bd90      	pop	{r4, r7, pc}
- 8003420:	0800425c 	.word	0x0800425c
- 8003424:	080034c9 	.word	0x080034c9
+ 8003408:	bf00      	nop
+ 800340a:	3714      	adds	r7, #20
+ 800340c:	46bd      	mov	sp, r7
+ 800340e:	bd90      	pop	{r4, r7, pc}
+ 8003410:	080041d4 	.word	0x080041d4
+ 8003414:	080034b9 	.word	0x080034b9
 
-08003428 <DD_Task_Generator_2>:
+08003418 <DD_Task_Generator_2>:
 
 // task generator for DD_User_Task_1 (will have one for each DD task)
 static void DD_Task_Generator_2( void *pvParameters )
 {
- 8003428:	b590      	push	{r4, r7, lr}
- 800342a:	b087      	sub	sp, #28
- 800342c:	af02      	add	r7, sp, #8
- 800342e:	6078      	str	r0, [r7, #4]
+ 8003418:	b590      	push	{r4, r7, lr}
+ 800341a:	b087      	sub	sp, #28
+ 800341c:	af02      	add	r7, sp, #8
+ 800341e:	6078      	str	r0, [r7, #4]
 	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_2_PERIOD
 	// should reuse F-Task handles inside each DD task
 	// periodically generate user tasks for DD_Scheduler
 	TaskHandle_t task_2_handle;
 	xTaskCreate( User_Task_2, "User Task 2", configMINIMAL_STACK_SIZE, NULL, 1, &task_2_handle); // start it at lowest priority
- 8003430:	f107 030c 	add.w	r3, r7, #12
- 8003434:	9301      	str	r3, [sp, #4]
- 8003436:	2301      	movs	r3, #1
- 8003438:	9300      	str	r3, [sp, #0]
- 800343a:	2300      	movs	r3, #0
- 800343c:	2282      	movs	r2, #130	; 0x82
- 800343e:	490c      	ldr	r1, [pc, #48]	; (8003470 <DD_Task_Generator_2+0x48>)
- 8003440:	480c      	ldr	r0, [pc, #48]	; (8003474 <DD_Task_Generator_2+0x4c>)
- 8003442:	f7fd fec9 	bl	80011d8 <xTaskCreate>
+ 8003420:	f107 030c 	add.w	r3, r7, #12
+ 8003424:	9301      	str	r3, [sp, #4]
+ 8003426:	2301      	movs	r3, #1
+ 8003428:	9300      	str	r3, [sp, #0]
+ 800342a:	2300      	movs	r3, #0
+ 800342c:	2282      	movs	r2, #130	; 0x82
+ 800342e:	490c      	ldr	r1, [pc, #48]	; (8003460 <DD_Task_Generator_2+0x48>)
+ 8003430:	480c      	ldr	r0, [pc, #48]	; (8003464 <DD_Task_Generator_2+0x4c>)
+ 8003432:	f7fd fed1 	bl	80011d8 <xTaskCreate>
 	vTaskSuspend(task_2_handle); // DD scheduler will start it when it should be run
- 8003446:	68fb      	ldr	r3, [r7, #12]
- 8003448:	4618      	mov	r0, r3
- 800344a:	f7fe f8d9 	bl	8001600 <vTaskSuspend>
+ 8003436:	68fb      	ldr	r3, [r7, #12]
+ 8003438:	4618      	mov	r0, r3
+ 800343a:	f7fe f8e1 	bl	8001600 <vTaskSuspend>
 
 	// prepares all information needed for creating specific instance of DD-tasks
 	// calls create_dd_task
 	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
 	create_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount() + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS);
- 800344e:	68fc      	ldr	r4, [r7, #12]
- 8003450:	f7fe faea 	bl	8001a28 <xTaskGetTickCount>
- 8003454:	4603      	mov	r3, r0
- 8003456:	3396      	adds	r3, #150	; 0x96
- 8003458:	2202      	movs	r2, #2
- 800345a:	2100      	movs	r1, #0
- 800345c:	4620      	mov	r0, r4
- 800345e:	f000 f8bd 	bl	80035dc <create_dd_task>
+ 800343e:	68fc      	ldr	r4, [r7, #12]
+ 8003440:	f7fe faf2 	bl	8001a28 <xTaskGetTickCount>
+ 8003444:	4603      	mov	r3, r0
+ 8003446:	3396      	adds	r3, #150	; 0x96
+ 8003448:	2202      	movs	r2, #2
+ 800344a:	2100      	movs	r1, #0
+ 800344c:	4620      	mov	r0, r4
+ 800344e:	f000 f8bd 	bl	80035cc <create_dd_task>
 
 	// needs to suspend itself (NULL means suspends itself)
 	vTaskSuspend( NULL );
- 8003462:	2000      	movs	r0, #0
- 8003464:	f7fe f8cc 	bl	8001600 <vTaskSuspend>
+ 8003452:	2000      	movs	r0, #0
+ 8003454:	f7fe f8d4 	bl	8001600 <vTaskSuspend>
 }
- 8003468:	bf00      	nop
- 800346a:	3714      	adds	r7, #20
- 800346c:	46bd      	mov	sp, r7
- 800346e:	bd90      	pop	{r4, r7, pc}
- 8003470:	08004268 	.word	0x08004268
- 8003474:	08003505 	.word	0x08003505
+ 8003458:	bf00      	nop
+ 800345a:	3714      	adds	r7, #20
+ 800345c:	46bd      	mov	sp, r7
+ 800345e:	bd90      	pop	{r4, r7, pc}
+ 8003460:	080041e0 	.word	0x080041e0
+ 8003464:	080034f5 	.word	0x080034f5
 
-08003478 <DD_Task_Generator_3>:
+08003468 <DD_Task_Generator_3>:
 
 // task generator for DD_User_Task_1 (will have one for each DD task)
 static void DD_Task_Generator_3( void *pvParameters )
 {
- 8003478:	b590      	push	{r4, r7, lr}
- 800347a:	b087      	sub	sp, #28
- 800347c:	af02      	add	r7, sp, #8
- 800347e:	6078      	str	r0, [r7, #4]
+ 8003468:	b590      	push	{r4, r7, lr}
+ 800346a:	b087      	sub	sp, #28
+ 800346c:	af02      	add	r7, sp, #8
+ 800346e:	6078      	str	r0, [r7, #4]
 	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_3_PERIOD
 	// should reuse F-Task handles inside each DD task
 	// periodically generate user tasks for DD_Scheduler
 	TaskHandle_t task_3_handle;
 	xTaskCreate( User_Task_3, "User Task 3", configMINIMAL_STACK_SIZE, NULL, 1, &task_3_handle); // start it at lowest priority
- 8003480:	f107 030c 	add.w	r3, r7, #12
- 8003484:	9301      	str	r3, [sp, #4]
- 8003486:	2301      	movs	r3, #1
- 8003488:	9300      	str	r3, [sp, #0]
- 800348a:	2300      	movs	r3, #0
- 800348c:	2282      	movs	r2, #130	; 0x82
- 800348e:	490c      	ldr	r1, [pc, #48]	; (80034c0 <DD_Task_Generator_3+0x48>)
- 8003490:	480c      	ldr	r0, [pc, #48]	; (80034c4 <DD_Task_Generator_3+0x4c>)
- 8003492:	f7fd fea1 	bl	80011d8 <xTaskCreate>
+ 8003470:	f107 030c 	add.w	r3, r7, #12
+ 8003474:	9301      	str	r3, [sp, #4]
+ 8003476:	2301      	movs	r3, #1
+ 8003478:	9300      	str	r3, [sp, #0]
+ 800347a:	2300      	movs	r3, #0
+ 800347c:	2282      	movs	r2, #130	; 0x82
+ 800347e:	490c      	ldr	r1, [pc, #48]	; (80034b0 <DD_Task_Generator_3+0x48>)
+ 8003480:	480c      	ldr	r0, [pc, #48]	; (80034b4 <DD_Task_Generator_3+0x4c>)
+ 8003482:	f7fd fea9 	bl	80011d8 <xTaskCreate>
 	vTaskSuspend(task_3_handle); // DD scheduler will start it when it should be run
- 8003496:	68fb      	ldr	r3, [r7, #12]
- 8003498:	4618      	mov	r0, r3
- 800349a:	f7fe f8b1 	bl	8001600 <vTaskSuspend>
+ 8003486:	68fb      	ldr	r3, [r7, #12]
+ 8003488:	4618      	mov	r0, r3
+ 800348a:	f7fe f8b9 	bl	8001600 <vTaskSuspend>
 
 	// prepares all information needed for creating specific instance of DD-tasks
 	// calls create_dd_task
 	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
 	create_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount() + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS);
- 800349e:	68fc      	ldr	r4, [r7, #12]
- 80034a0:	f7fe fac2 	bl	8001a28 <xTaskGetTickCount>
- 80034a4:	4603      	mov	r3, r0
- 80034a6:	33fa      	adds	r3, #250	; 0xfa
- 80034a8:	2203      	movs	r2, #3
- 80034aa:	2100      	movs	r1, #0
- 80034ac:	4620      	mov	r0, r4
- 80034ae:	f000 f895 	bl	80035dc <create_dd_task>
+ 800348e:	68fc      	ldr	r4, [r7, #12]
+ 8003490:	f7fe faca 	bl	8001a28 <xTaskGetTickCount>
+ 8003494:	4603      	mov	r3, r0
+ 8003496:	33fa      	adds	r3, #250	; 0xfa
+ 8003498:	2203      	movs	r2, #3
+ 800349a:	2100      	movs	r1, #0
+ 800349c:	4620      	mov	r0, r4
+ 800349e:	f000 f895 	bl	80035cc <create_dd_task>
 
 	// needs to suspend itself (NULL means suspends itself)
 	vTaskSuspend( NULL );
- 80034b2:	2000      	movs	r0, #0
- 80034b4:	f7fe f8a4 	bl	8001600 <vTaskSuspend>
+ 80034a2:	2000      	movs	r0, #0
+ 80034a4:	f7fe f8ac 	bl	8001600 <vTaskSuspend>
 }
- 80034b8:	bf00      	nop
- 80034ba:	3714      	adds	r7, #20
- 80034bc:	46bd      	mov	sp, r7
- 80034be:	bd90      	pop	{r4, r7, pc}
- 80034c0:	08004274 	.word	0x08004274
- 80034c4:	08003541 	.word	0x08003541
+ 80034a8:	bf00      	nop
+ 80034aa:	3714      	adds	r7, #20
+ 80034ac:	46bd      	mov	sp, r7
+ 80034ae:	bd90      	pop	{r4, r7, pc}
+ 80034b0:	080041ec 	.word	0x080041ec
+ 80034b4:	08003531 	.word	0x08003531
 
-080034c8 <User_Task_1>:
+080034b8 <User_Task_1>:
 
 static void User_Task_1( void *pvParameters )
 {
- 80034c8:	b580      	push	{r7, lr}
- 80034ca:	b084      	sub	sp, #16
- 80034cc:	af00      	add	r7, sp, #0
- 80034ce:	6078      	str	r0, [r7, #4]
+ 80034b8:	b580      	push	{r7, lr}
+ 80034ba:	b084      	sub	sp, #16
+ 80034bc:	af00      	add	r7, sp, #0
+ 80034be:	6078      	str	r0, [r7, #4]
 	TickType_t start_time = xTaskGetTickCount();
- 80034d0:	f7fe faaa 	bl	8001a28 <xTaskGetTickCount>
- 80034d4:	60f8      	str	r0, [r7, #12]
+ 80034c0:	f7fe fab2 	bl	8001a28 <xTaskGetTickCount>
+ 80034c4:	60f8      	str	r0, [r7, #12]
 	TickType_t end_time = start_time + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS;
- 80034d6:	68fb      	ldr	r3, [r7, #12]
- 80034d8:	335f      	adds	r3, #95	; 0x5f
- 80034da:	60bb      	str	r3, [r7, #8]
+ 80034c6:	68fb      	ldr	r3, [r7, #12]
+ 80034c8:	335f      	adds	r3, #95	; 0x5f
+ 80034ca:	60bb      	str	r3, [r7, #8]
 
 	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
 	STM_EVAL_LEDOn(amber_led);
- 80034dc:	2001      	movs	r0, #1
- 80034de:	f7ff fcbf 	bl	8002e60 <STM_EVAL_LEDOn>
+ 80034cc:	2001      	movs	r0, #1
+ 80034ce:	f7ff fcc7 	bl	8002e60 <STM_EVAL_LEDOn>
 
 	// execute an empty loop for duration of execution time
 	while ( end_time > xTaskGetTickCount())
- 80034e2:	bf00      	nop
- 80034e4:	f7fe faa0 	bl	8001a28 <xTaskGetTickCount>
- 80034e8:	4602      	mov	r2, r0
- 80034ea:	68bb      	ldr	r3, [r7, #8]
- 80034ec:	429a      	cmp	r2, r3
- 80034ee:	d3f9      	bcc.n	80034e4 <User_Task_1+0x1c>
+ 80034d2:	bf00      	nop
+ 80034d4:	f7fe faa8 	bl	8001a28 <xTaskGetTickCount>
+ 80034d8:	4602      	mov	r2, r0
+ 80034da:	68bb      	ldr	r3, [r7, #8]
+ 80034dc:	429a      	cmp	r2, r3
+ 80034de:	d3f9      	bcc.n	80034d4 <User_Task_1+0x1c>
 	{
 		// loop for TASK_1_EXECUTION_TIME
 	}
 
 	// turn off LED here
 	STM_EVAL_LEDOff(amber_led);
- 80034f0:	2001      	movs	r0, #1
- 80034f2:	f7ff fccd 	bl	8002e90 <STM_EVAL_LEDOff>
+ 80034e0:	2001      	movs	r0, #1
+ 80034e2:	f7ff fcd5 	bl	8002e90 <STM_EVAL_LEDOff>
 
 	// execution time is done, delete task
 	delete_dd_task(1);
- 80034f6:	2001      	movs	r0, #1
- 80034f8:	f000 f8b0 	bl	800365c <delete_dd_task>
+ 80034e6:	2001      	movs	r0, #1
+ 80034e8:	f000 f89e 	bl	8003628 <delete_dd_task>
 }
- 80034fc:	bf00      	nop
- 80034fe:	3710      	adds	r7, #16
- 8003500:	46bd      	mov	sp, r7
- 8003502:	bd80      	pop	{r7, pc}
+ 80034ec:	bf00      	nop
+ 80034ee:	3710      	adds	r7, #16
+ 80034f0:	46bd      	mov	sp, r7
+ 80034f2:	bd80      	pop	{r7, pc}
 
-08003504 <User_Task_2>:
+080034f4 <User_Task_2>:
 
 static void User_Task_2( void *pvParameters )
 {
- 8003504:	b580      	push	{r7, lr}
- 8003506:	b084      	sub	sp, #16
- 8003508:	af00      	add	r7, sp, #0
- 800350a:	6078      	str	r0, [r7, #4]
+ 80034f4:	b580      	push	{r7, lr}
+ 80034f6:	b084      	sub	sp, #16
+ 80034f8:	af00      	add	r7, sp, #0
+ 80034fa:	6078      	str	r0, [r7, #4]
 	TickType_t start_time = xTaskGetTickCount();
- 800350c:	f7fe fa8c 	bl	8001a28 <xTaskGetTickCount>
- 8003510:	60f8      	str	r0, [r7, #12]
+ 80034fc:	f7fe fa94 	bl	8001a28 <xTaskGetTickCount>
+ 8003500:	60f8      	str	r0, [r7, #12]
 	TickType_t end_time = start_time + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS;
- 8003512:	68fb      	ldr	r3, [r7, #12]
- 8003514:	3396      	adds	r3, #150	; 0x96
- 8003516:	60bb      	str	r3, [r7, #8]
+ 8003502:	68fb      	ldr	r3, [r7, #12]
+ 8003504:	3396      	adds	r3, #150	; 0x96
+ 8003506:	60bb      	str	r3, [r7, #8]
 
 	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
 	STM_EVAL_LEDOn(green_led);
- 8003518:	2000      	movs	r0, #0
- 800351a:	f7ff fca1 	bl	8002e60 <STM_EVAL_LEDOn>
+ 8003508:	2000      	movs	r0, #0
+ 800350a:	f7ff fca9 	bl	8002e60 <STM_EVAL_LEDOn>
 
 	// execute an empty loop for duration of execution time
 	while ( end_time > xTaskGetTickCount())
- 800351e:	bf00      	nop
- 8003520:	f7fe fa82 	bl	8001a28 <xTaskGetTickCount>
- 8003524:	4602      	mov	r2, r0
- 8003526:	68bb      	ldr	r3, [r7, #8]
- 8003528:	429a      	cmp	r2, r3
- 800352a:	d3f9      	bcc.n	8003520 <User_Task_2+0x1c>
+ 800350e:	bf00      	nop
+ 8003510:	f7fe fa8a 	bl	8001a28 <xTaskGetTickCount>
+ 8003514:	4602      	mov	r2, r0
+ 8003516:	68bb      	ldr	r3, [r7, #8]
+ 8003518:	429a      	cmp	r2, r3
+ 800351a:	d3f9      	bcc.n	8003510 <User_Task_2+0x1c>
 	{
 		// loop for TASK_2_EXECUTION_TIME
 	}
 
 	// turn off LED here
 	STM_EVAL_LEDOff(green_led);
- 800352c:	2000      	movs	r0, #0
- 800352e:	f7ff fcaf 	bl	8002e90 <STM_EVAL_LEDOff>
+ 800351c:	2000      	movs	r0, #0
+ 800351e:	f7ff fcb7 	bl	8002e90 <STM_EVAL_LEDOff>
 
 	// execution time is done, delete task
 	delete_dd_task(2);
- 8003532:	2002      	movs	r0, #2
- 8003534:	f000 f892 	bl	800365c <delete_dd_task>
+ 8003522:	2002      	movs	r0, #2
+ 8003524:	f000 f880 	bl	8003628 <delete_dd_task>
 }
- 8003538:	bf00      	nop
- 800353a:	3710      	adds	r7, #16
- 800353c:	46bd      	mov	sp, r7
- 800353e:	bd80      	pop	{r7, pc}
+ 8003528:	bf00      	nop
+ 800352a:	3710      	adds	r7, #16
+ 800352c:	46bd      	mov	sp, r7
+ 800352e:	bd80      	pop	{r7, pc}
 
-08003540 <User_Task_3>:
+08003530 <User_Task_3>:
 
 static void User_Task_3( void *pvParameters )
 {
- 8003540:	b580      	push	{r7, lr}
- 8003542:	b084      	sub	sp, #16
- 8003544:	af00      	add	r7, sp, #0
- 8003546:	6078      	str	r0, [r7, #4]
+ 8003530:	b580      	push	{r7, lr}
+ 8003532:	b084      	sub	sp, #16
+ 8003534:	af00      	add	r7, sp, #0
+ 8003536:	6078      	str	r0, [r7, #4]
 	TickType_t start_time = xTaskGetTickCount();
- 8003548:	f7fe fa6e 	bl	8001a28 <xTaskGetTickCount>
- 800354c:	60f8      	str	r0, [r7, #12]
+ 8003538:	f7fe fa76 	bl	8001a28 <xTaskGetTickCount>
+ 800353c:	60f8      	str	r0, [r7, #12]
 	TickType_t end_time = start_time + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS;
- 800354e:	68fb      	ldr	r3, [r7, #12]
- 8003550:	33fa      	adds	r3, #250	; 0xfa
- 8003552:	60bb      	str	r3, [r7, #8]
+ 800353e:	68fb      	ldr	r3, [r7, #12]
+ 8003540:	33fa      	adds	r3, #250	; 0xfa
+ 8003542:	60bb      	str	r3, [r7, #8]
 
 	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
 	STM_EVAL_LEDOn(blue_led);
- 8003554:	2003      	movs	r0, #3
- 8003556:	f7ff fc83 	bl	8002e60 <STM_EVAL_LEDOn>
+ 8003544:	2003      	movs	r0, #3
+ 8003546:	f7ff fc8b 	bl	8002e60 <STM_EVAL_LEDOn>
 
 	// execute an empty loop for duration of execution time
 	while ( end_time > xTaskGetTickCount())
- 800355a:	bf00      	nop
- 800355c:	f7fe fa64 	bl	8001a28 <xTaskGetTickCount>
- 8003560:	4602      	mov	r2, r0
- 8003562:	68bb      	ldr	r3, [r7, #8]
- 8003564:	429a      	cmp	r2, r3
- 8003566:	d3f9      	bcc.n	800355c <User_Task_3+0x1c>
+ 800354a:	bf00      	nop
+ 800354c:	f7fe fa6c 	bl	8001a28 <xTaskGetTickCount>
+ 8003550:	4602      	mov	r2, r0
+ 8003552:	68bb      	ldr	r3, [r7, #8]
+ 8003554:	429a      	cmp	r2, r3
+ 8003556:	d3f9      	bcc.n	800354c <User_Task_3+0x1c>
 	{
 		// loop for TASK_3_EXECUTION_TIME
 	}
 
 	// turn off LED here
 	STM_EVAL_LEDOff(blue_led);
- 8003568:	2003      	movs	r0, #3
- 800356a:	f7ff fc91 	bl	8002e90 <STM_EVAL_LEDOff>
+ 8003558:	2003      	movs	r0, #3
+ 800355a:	f7ff fc99 	bl	8002e90 <STM_EVAL_LEDOff>
 
 	// execution time is done, delete task
 	delete_dd_task(3);
- 800356e:	2003      	movs	r0, #3
- 8003570:	f000 f874 	bl	800365c <delete_dd_task>
+ 800355e:	2003      	movs	r0, #3
+ 8003560:	f000 f862 	bl	8003628 <delete_dd_task>
 }
- 8003574:	bf00      	nop
- 8003576:	3710      	adds	r7, #16
- 8003578:	46bd      	mov	sp, r7
- 800357a:	bd80      	pop	{r7, pc}
+ 8003564:	bf00      	nop
+ 8003566:	3710      	adds	r7, #16
+ 8003568:	46bd      	mov	sp, r7
+ 800356a:	bd80      	pop	{r7, pc}
 
-0800357c <Monitor_Task>:
+0800356c <Monitor_Task>:
 
 static void Monitor_Task( void *pvParameters )
 {
- 800357c:	b580      	push	{r7, lr}
- 800357e:	b086      	sub	sp, #24
- 8003580:	af00      	add	r7, sp, #0
- 8003582:	6078      	str	r0, [r7, #4]
+ 800356c:	b580      	push	{r7, lr}
+ 800356e:	b086      	sub	sp, #24
+ 8003570:	af00      	add	r7, sp, #0
+ 8003572:	6078      	str	r0, [r7, #4]
 	while(1)
 	{
 		// periodically reports processor utilization
 		vTaskDelay(1000); // probably need to change delay later to appropriate amount
- 8003584:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
- 8003588:	f7fd ff58 	bl	800143c <vTaskDelay>
+ 8003574:	f44f 707a 	mov.w	r0, #1000	; 0x3e8
+ 8003578:	f7fd ff60 	bl	800143c <vTaskDelay>
 
 		// call get_active_dd_task_list
 		int active_list_count = print_count_of_list (get_active_dd_task_list());
- 800358c:	f000 f884 	bl	8003698 <get_active_dd_task_list>
- 8003590:	4603      	mov	r3, r0
- 8003592:	4618      	mov	r0, r3
- 8003594:	f000 f9a4 	bl	80038e0 <print_count_of_list>
- 8003598:	6178      	str	r0, [r7, #20]
+ 800357c:	f000 f86c 	bl	8003658 <get_active_dd_task_list>
+ 8003580:	4603      	mov	r3, r0
+ 8003582:	4618      	mov	r0, r3
+ 8003584:	f000 f968 	bl	8003858 <print_count_of_list>
+ 8003588:	6178      	str	r0, [r7, #20]
 		// call get_complete_dd_task_list
 		int complete_list_count = print_count_of_list(get_complete_dd_task_list());
- 800359a:	f000 f8b9 	bl	8003710 <get_complete_dd_task_list>
- 800359e:	4603      	mov	r3, r0
- 80035a0:	4618      	mov	r0, r3
- 80035a2:	f000 f99d 	bl	80038e0 <print_count_of_list>
- 80035a6:	6138      	str	r0, [r7, #16]
+ 800358a:	f000 f895 	bl	80036b8 <get_complete_dd_task_list>
+ 800358e:	4603      	mov	r3, r0
+ 8003590:	4618      	mov	r0, r3
+ 8003592:	f000 f961 	bl	8003858 <print_count_of_list>
+ 8003596:	6138      	str	r0, [r7, #16]
 		// call get_overdue_dd_task_list
 		int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
- 80035a8:	f000 f8ee 	bl	8003788 <get_overdue_dd_task_list>
- 80035ac:	4603      	mov	r3, r0
- 80035ae:	4618      	mov	r0, r3
- 80035b0:	f000 f996 	bl	80038e0 <print_count_of_list>
- 80035b4:	60f8      	str	r0, [r7, #12]
+ 8003598:	f000 f8be 	bl	8003718 <get_overdue_dd_task_list>
+ 800359c:	4603      	mov	r3, r0
+ 800359e:	4618      	mov	r0, r3
+ 80035a0:	f000 f95a 	bl	8003858 <print_count_of_list>
+ 80035a4:	60f8      	str	r0, [r7, #12]
 
 		// print to console number of tasks in each list
 		printf("Active task list count: %d\n", active_list_count);
- 80035b6:	6979      	ldr	r1, [r7, #20]
- 80035b8:	4805      	ldr	r0, [pc, #20]	; (80035d0 <Monitor_Task+0x54>)
- 80035ba:	f000 fd1d 	bl	8003ff8 <printf>
+ 80035a6:	6979      	ldr	r1, [r7, #20]
+ 80035a8:	4805      	ldr	r0, [pc, #20]	; (80035c0 <Monitor_Task+0x54>)
+ 80035aa:	f000 fce1 	bl	8003f70 <printf>
 		printf("Complete task list count: %d\n", complete_list_count);
- 80035be:	6939      	ldr	r1, [r7, #16]
- 80035c0:	4804      	ldr	r0, [pc, #16]	; (80035d4 <Monitor_Task+0x58>)
- 80035c2:	f000 fd19 	bl	8003ff8 <printf>
+ 80035ae:	6939      	ldr	r1, [r7, #16]
+ 80035b0:	4804      	ldr	r0, [pc, #16]	; (80035c4 <Monitor_Task+0x58>)
+ 80035b2:	f000 fcdd 	bl	8003f70 <printf>
 		printf("Overdue task list count: %d\n", overdue_list_count);
- 80035c6:	68f9      	ldr	r1, [r7, #12]
- 80035c8:	4803      	ldr	r0, [pc, #12]	; (80035d8 <Monitor_Task+0x5c>)
- 80035ca:	f000 fd15 	bl	8003ff8 <printf>
+ 80035b6:	68f9      	ldr	r1, [r7, #12]
+ 80035b8:	4803      	ldr	r0, [pc, #12]	; (80035c8 <Monitor_Task+0x5c>)
+ 80035ba:	f000 fcd9 	bl	8003f70 <printf>
 	{
- 80035ce:	e7d9      	b.n	8003584 <Monitor_Task+0x8>
- 80035d0:	08004280 	.word	0x08004280
- 80035d4:	0800429c 	.word	0x0800429c
- 80035d8:	080042bc 	.word	0x080042bc
+ 80035be:	e7d9      	b.n	8003574 <Monitor_Task+0x8>
+ 80035c0:	080041f8 	.word	0x080041f8
+ 80035c4:	08004214 	.word	0x08004214
+ 80035c8:	08004234 	.word	0x08004234
 
-080035dc <create_dd_task>:
+080035cc <create_dd_task>:
 	}
 }
 
 /*------------------ helper functions -----------------------------------------*/
 void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t the_task_id, uint32_t absolute_deadline)
 {
- 80035dc:	b590      	push	{r4, r7, lr}
- 80035de:	b087      	sub	sp, #28
- 80035e0:	af00      	add	r7, sp, #0
- 80035e2:	60f8      	str	r0, [r7, #12]
- 80035e4:	607a      	str	r2, [r7, #4]
- 80035e6:	603b      	str	r3, [r7, #0]
- 80035e8:	460b      	mov	r3, r1
- 80035ea:	72fb      	strb	r3, [r7, #11]
-	this_task->release_time = 0;
-	this_task->absolute_deadline = absolute_deadline;
-	this_task->completion_time = 0;*/
-
+ 80035cc:	b580      	push	{r7, lr}
+ 80035ce:	b088      	sub	sp, #32
+ 80035d0:	af00      	add	r7, sp, #0
+ 80035d2:	60f8      	str	r0, [r7, #12]
+ 80035d4:	607a      	str	r2, [r7, #4]
+ 80035d6:	603b      	str	r3, [r7, #0]
+ 80035d8:	460b      	mov	r3, r1
+ 80035da:	72fb      	strb	r3, [r7, #11]
 	// struct is packaged as message and
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 80035ec:	2004      	movs	r0, #4
- 80035ee:	f7fd f8b7 	bl	8000760 <pvPortMalloc>
- 80035f2:	4603      	mov	r3, r0
- 80035f4:	617b      	str	r3, [r7, #20]
-	this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
- 80035f6:	697c      	ldr	r4, [r7, #20]
- 80035f8:	2004      	movs	r0, #4
- 80035fa:	f7fd f8b1 	bl	8000760 <pvPortMalloc>
- 80035fe:	4603      	mov	r3, r0
- 8003600:	6063      	str	r3, [r4, #4]
-//	this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+	message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	//this_message.task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+	//this_message.type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 
-	this_message->type = create_dd;
- 8003602:	697b      	ldr	r3, [r7, #20]
- 8003604:	2200      	movs	r2, #0
- 8003606:	701a      	strb	r2, [r3, #0]
+	this_message.type = create_dd;
+ 80035dc:	2300      	movs	r3, #0
+ 80035de:	743b      	strb	r3, [r7, #16]
 	//this_message->task_id = the_task_id;
 	//this_message->task_info = this_task;
-	this_message->task_info->t_handle = t_handle;
- 8003608:	697b      	ldr	r3, [r7, #20]
- 800360a:	685b      	ldr	r3, [r3, #4]
- 800360c:	68fa      	ldr	r2, [r7, #12]
- 800360e:	601a      	str	r2, [r3, #0]
-	this_message->task_info->type = type;
- 8003610:	697b      	ldr	r3, [r7, #20]
- 8003612:	685b      	ldr	r3, [r3, #4]
- 8003614:	7afa      	ldrb	r2, [r7, #11]
- 8003616:	711a      	strb	r2, [r3, #4]
-	this_message->task_info->task_id = the_task_id;
- 8003618:	697b      	ldr	r3, [r7, #20]
- 800361a:	685b      	ldr	r3, [r3, #4]
- 800361c:	687a      	ldr	r2, [r7, #4]
- 800361e:	609a      	str	r2, [r3, #8]
-	this_message->task_info->release_time = 0;
- 8003620:	697b      	ldr	r3, [r7, #20]
- 8003622:	685b      	ldr	r3, [r3, #4]
- 8003624:	2200      	movs	r2, #0
- 8003626:	60da      	str	r2, [r3, #12]
-	this_message->task_info->absolute_deadline = absolute_deadline;
- 8003628:	697b      	ldr	r3, [r7, #20]
- 800362a:	685b      	ldr	r3, [r3, #4]
- 800362c:	683a      	ldr	r2, [r7, #0]
- 800362e:	611a      	str	r2, [r3, #16]
-	this_message->task_info->completion_time = 0;
- 8003630:	697b      	ldr	r3, [r7, #20]
- 8003632:	685b      	ldr	r3, [r3, #4]
- 8003634:	2200      	movs	r2, #0
- 8003636:	615a      	str	r2, [r3, #20]
-	this_message->task_id = the_task_id;
- 8003638:	697b      	ldr	r3, [r7, #20]
- 800363a:	687a      	ldr	r2, [r7, #4]
- 800363c:	609a      	str	r2, [r3, #8]
+	this_message.task_info->t_handle = t_handle;
+ 80035e0:	697b      	ldr	r3, [r7, #20]
+ 80035e2:	68fa      	ldr	r2, [r7, #12]
+ 80035e4:	601a      	str	r2, [r3, #0]
+	this_message.task_info->type = type;
+ 80035e6:	697b      	ldr	r3, [r7, #20]
+ 80035e8:	7afa      	ldrb	r2, [r7, #11]
+ 80035ea:	711a      	strb	r2, [r3, #4]
+	this_message.task_info->task_id = the_task_id;
+ 80035ec:	697b      	ldr	r3, [r7, #20]
+ 80035ee:	687a      	ldr	r2, [r7, #4]
+ 80035f0:	609a      	str	r2, [r3, #8]
+	this_message.task_info->release_time = 0;
+ 80035f2:	697b      	ldr	r3, [r7, #20]
+ 80035f4:	2200      	movs	r2, #0
+ 80035f6:	60da      	str	r2, [r3, #12]
+	this_message.task_info->absolute_deadline = absolute_deadline;
+ 80035f8:	697b      	ldr	r3, [r7, #20]
+ 80035fa:	683a      	ldr	r2, [r7, #0]
+ 80035fc:	611a      	str	r2, [r3, #16]
+	this_message.task_info->completion_time = 0;
+ 80035fe:	697b      	ldr	r3, [r7, #20]
+ 8003600:	2200      	movs	r2, #0
+ 8003602:	615a      	str	r2, [r3, #20]
+	this_message.task_id = the_task_id;
+ 8003604:	687b      	ldr	r3, [r7, #4]
+ 8003606:	61bb      	str	r3, [r7, #24]
 
 	// sends message struct  to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
- 800363e:	4b06      	ldr	r3, [pc, #24]	; (8003658 <create_dd_task+0x7c>)
- 8003640:	6818      	ldr	r0, [r3, #0]
- 8003642:	f107 0114 	add.w	r1, r7, #20
- 8003646:	2300      	movs	r3, #0
- 8003648:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 800364c:	f7fd f9b8 	bl	80009c0 <xQueueGenericSend>
+ 8003608:	4b06      	ldr	r3, [pc, #24]	; (8003624 <create_dd_task+0x58>)
+ 800360a:	6818      	ldr	r0, [r3, #0]
+ 800360c:	f107 0110 	add.w	r1, r7, #16
+ 8003610:	2300      	movs	r3, #0
+ 8003612:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 8003616:	f7fd f9d3 	bl	80009c0 <xQueueGenericSend>
 		// wait for reply from DDS (obtain reply message)
 
 	}
 
 	//vPortFree(this_task);
 }
- 8003650:	bf00      	nop
- 8003652:	371c      	adds	r7, #28
- 8003654:	46bd      	mov	sp, r7
- 8003656:	bd90      	pop	{r4, r7, pc}
- 8003658:	20001e04 	.word	0x20001e04
+ 800361a:	bf00      	nop
+ 800361c:	3720      	adds	r7, #32
+ 800361e:	46bd      	mov	sp, r7
+ 8003620:	bd80      	pop	{r7, pc}
+ 8003622:	bf00      	nop
+ 8003624:	20001e04 	.word	0x20001e04
 
-0800365c <delete_dd_task>:
+08003628 <delete_dd_task>:
 
 void delete_dd_task(uint32_t task_id)
 {
- 800365c:	b580      	push	{r7, lr}
- 800365e:	b084      	sub	sp, #16
- 8003660:	af00      	add	r7, sp, #0
- 8003662:	6078      	str	r0, [r7, #4]
+ 8003628:	b580      	push	{r7, lr}
+ 800362a:	b086      	sub	sp, #24
+ 800362c:	af00      	add	r7, sp, #0
+ 800362e:	6078      	str	r0, [r7, #4]
 	// receive ID of DD-Task when it has completed its execution (from user task)
 	// struct with id is packaged as message
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 8003664:	2004      	movs	r0, #4
- 8003666:	f7fd f87b 	bl	8000760 <pvPortMalloc>
- 800366a:	4603      	mov	r3, r0
- 800366c:	60fb      	str	r3, [r7, #12]
-	this_message->type = delete_dd;
- 800366e:	68fb      	ldr	r3, [r7, #12]
- 8003670:	2201      	movs	r2, #1
- 8003672:	701a      	strb	r2, [r3, #0]
-	this_message->task_id = task_id;
- 8003674:	68fb      	ldr	r3, [r7, #12]
- 8003676:	687a      	ldr	r2, [r7, #4]
- 8003678:	609a      	str	r2, [r3, #8]
+	struct message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	this_message.type = delete_dd;
+ 8003630:	2301      	movs	r3, #1
+ 8003632:	723b      	strb	r3, [r7, #8]
+	this_message.task_id = task_id;
+ 8003634:	687b      	ldr	r3, [r7, #4]
+ 8003636:	613b      	str	r3, [r7, #16]
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
- 800367a:	4b06      	ldr	r3, [pc, #24]	; (8003694 <delete_dd_task+0x38>)
- 800367c:	6818      	ldr	r0, [r3, #0]
- 800367e:	f107 010c 	add.w	r1, r7, #12
- 8003682:	2300      	movs	r3, #0
- 8003684:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 8003688:	f7fd f99a 	bl	80009c0 <xQueueGenericSend>
+ 8003638:	4b06      	ldr	r3, [pc, #24]	; (8003654 <delete_dd_task+0x2c>)
+ 800363a:	6818      	ldr	r0, [r3, #0]
+ 800363c:	f107 0108 	add.w	r1, r7, #8
+ 8003640:	2300      	movs	r3, #0
+ 8003642:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 8003646:	f7fd f9bb 	bl	80009c0 <xQueueGenericSend>
 	{
 		// wait for reply from DDS (obtain reply message)
 
 	}
 }
- 800368c:	bf00      	nop
- 800368e:	3710      	adds	r7, #16
- 8003690:	46bd      	mov	sp, r7
- 8003692:	bd80      	pop	{r7, pc}
- 8003694:	20001e04 	.word	0x20001e04
+ 800364a:	bf00      	nop
+ 800364c:	3718      	adds	r7, #24
+ 800364e:	46bd      	mov	sp, r7
+ 8003650:	bd80      	pop	{r7, pc}
+ 8003652:	bf00      	nop
+ 8003654:	20001e04 	.word	0x20001e04
 
-08003698 <get_active_dd_task_list>:
+08003658 <get_active_dd_task_list>:
 
 struct dd_task_list* get_active_dd_task_list(void)
 {
- 8003698:	b580      	push	{r7, lr}
- 800369a:	b082      	sub	sp, #8
- 800369c:	af00      	add	r7, sp, #0
+ 8003658:	b580      	push	{r7, lr}
+ 800365a:	b088      	sub	sp, #32
+ 800365c:	af00      	add	r7, sp, #0
 	// sends message to queue requesting Active Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 800369e:	2004      	movs	r0, #4
- 80036a0:	f7fd f85e 	bl	8000760 <pvPortMalloc>
- 80036a4:	4603      	mov	r3, r0
- 80036a6:	607b      	str	r3, [r7, #4]
-	this_message->type = get_active_dd_list;
- 80036a8:	687b      	ldr	r3, [r7, #4]
- 80036aa:	2202      	movs	r2, #2
- 80036ac:	701a      	strb	r2, [r3, #0]
+	struct message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	//this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+	//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+	this_message.type = get_active_dd_list;
+ 800365e:	2302      	movs	r3, #2
+ 8003660:	743b      	strb	r3, [r7, #16]
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
- 80036ae:	4b16      	ldr	r3, [pc, #88]	; (8003708 <get_active_dd_task_list+0x70>)
- 80036b0:	6818      	ldr	r0, [r3, #0]
- 80036b2:	1d39      	adds	r1, r7, #4
- 80036b4:	2300      	movs	r3, #0
- 80036b6:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 80036ba:	f7fd f981 	bl	80009c0 <xQueueGenericSend>
-		// wait for reply from DDS (obtain reply message)
-
+ 8003662:	4b13      	ldr	r3, [pc, #76]	; (80036b0 <get_active_dd_task_list+0x58>)
+ 8003664:	6818      	ldr	r0, [r3, #0]
+ 8003666:	f107 0110 	add.w	r1, r7, #16
+ 800366a:	2300      	movs	r3, #0
+ 800366c:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 8003670:	f7fd f9a6 	bl	80009c0 <xQueueGenericSend>
 	}
 
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 80036be:	2004      	movs	r0, #4
- 80036c0:	f7fd f84e 	bl	8000760 <pvPortMalloc>
- 80036c4:	4603      	mov	r3, r0
- 80036c6:	603b      	str	r3, [r7, #0]
+	struct message reply_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
- 80036c8:	4b10      	ldr	r3, [pc, #64]	; (800370c <get_active_dd_task_list+0x74>)
- 80036ca:	6818      	ldr	r0, [r3, #0]
- 80036cc:	4639      	mov	r1, r7
- 80036ce:	2300      	movs	r3, #0
- 80036d0:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 80036d4:	f7fd fb02 	bl	8000cdc <xQueueGenericReceive>
- 80036d8:	4603      	mov	r3, r0
- 80036da:	2b00      	cmp	r3, #0
- 80036dc:	d00e      	beq.n	80036fc <get_active_dd_task_list+0x64>
+ 8003674:	4b0f      	ldr	r3, [pc, #60]	; (80036b4 <get_active_dd_task_list+0x5c>)
+ 8003676:	6818      	ldr	r0, [r3, #0]
+ 8003678:	4639      	mov	r1, r7
+ 800367a:	2300      	movs	r3, #0
+ 800367c:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 8003680:	f7fd fb2c 	bl	8000cdc <xQueueGenericReceive>
+ 8003684:	4603      	mov	r3, r0
+ 8003686:	2b00      	cmp	r3, #0
+ 8003688:	d00c      	beq.n	80036a4 <get_active_dd_task_list+0x4c>
 	{
 		// check for message type
-		if (reply_message->type == get_active_dd_list)
- 80036de:	683b      	ldr	r3, [r7, #0]
- 80036e0:	781b      	ldrb	r3, [r3, #0]
- 80036e2:	2b02      	cmp	r3, #2
- 80036e4:	d102      	bne.n	80036ec <get_active_dd_task_list+0x54>
+		if (reply_message.type == get_active_dd_list)
+ 800368a:	783b      	ldrb	r3, [r7, #0]
+ 800368c:	2b02      	cmp	r3, #2
+ 800368e:	d101      	bne.n	8003694 <get_active_dd_task_list+0x3c>
 		{
-			return reply_message->task_list;
- 80036e6:	683b      	ldr	r3, [r7, #0]
- 80036e8:	68db      	ldr	r3, [r3, #12]
- 80036ea:	e009      	b.n	8003700 <get_active_dd_task_list+0x68>
+			return reply_message.task_list;
+ 8003690:	68fb      	ldr	r3, [r7, #12]
+ 8003692:	e008      	b.n	80036a6 <get_active_dd_task_list+0x4e>
 		}
 		else {
 			// if wrong message type, put back on queue
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
- 80036ec:	4b07      	ldr	r3, [pc, #28]	; (800370c <get_active_dd_task_list+0x74>)
- 80036ee:	6818      	ldr	r0, [r3, #0]
- 80036f0:	4639      	mov	r1, r7
- 80036f2:	2300      	movs	r3, #0
- 80036f4:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 80036f8:	f7fd f962 	bl	80009c0 <xQueueGenericSend>
+ 8003694:	4b07      	ldr	r3, [pc, #28]	; (80036b4 <get_active_dd_task_list+0x5c>)
+ 8003696:	6818      	ldr	r0, [r3, #0]
+ 8003698:	4639      	mov	r1, r7
+ 800369a:	2300      	movs	r3, #0
+ 800369c:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 80036a0:	f7fd f98e 	bl	80009c0 <xQueueGenericSend>
 
 			}
 		}
 	}
 
-	return reply_message->task_list;
- 80036fc:	683b      	ldr	r3, [r7, #0]
- 80036fe:	68db      	ldr	r3, [r3, #12]
+	return reply_message.task_list;
+ 80036a4:	68fb      	ldr	r3, [r7, #12]
 }
- 8003700:	4618      	mov	r0, r3
- 8003702:	3708      	adds	r7, #8
- 8003704:	46bd      	mov	sp, r7
- 8003706:	bd80      	pop	{r7, pc}
- 8003708:	20001e04 	.word	0x20001e04
- 800370c:	20001e08 	.word	0x20001e08
+ 80036a6:	4618      	mov	r0, r3
+ 80036a8:	3720      	adds	r7, #32
+ 80036aa:	46bd      	mov	sp, r7
+ 80036ac:	bd80      	pop	{r7, pc}
+ 80036ae:	bf00      	nop
+ 80036b0:	20001e04 	.word	0x20001e04
+ 80036b4:	20001e08 	.word	0x20001e08
 
-08003710 <get_complete_dd_task_list>:
+080036b8 <get_complete_dd_task_list>:
 
 struct dd_task_list* get_complete_dd_task_list(void)
 {
- 8003710:	b580      	push	{r7, lr}
- 8003712:	b082      	sub	sp, #8
- 8003714:	af00      	add	r7, sp, #0
+ 80036b8:	b580      	push	{r7, lr}
+ 80036ba:	b088      	sub	sp, #32
+ 80036bc:	af00      	add	r7, sp, #0
 	// sends message to queue requesting Complete Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 8003716:	2004      	movs	r0, #4
- 8003718:	f7fd f822 	bl	8000760 <pvPortMalloc>
- 800371c:	4603      	mov	r3, r0
- 800371e:	607b      	str	r3, [r7, #4]
-	this_message->type = get_completed_dd_list;
- 8003720:	687b      	ldr	r3, [r7, #4]
- 8003722:	2203      	movs	r2, #3
- 8003724:	701a      	strb	r2, [r3, #0]
+	struct message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	this_message.type = get_completed_dd_list;
+ 80036be:	2303      	movs	r3, #3
+ 80036c0:	743b      	strb	r3, [r7, #16]
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
- 8003726:	4b16      	ldr	r3, [pc, #88]	; (8003780 <get_complete_dd_task_list+0x70>)
- 8003728:	6818      	ldr	r0, [r3, #0]
- 800372a:	1d39      	adds	r1, r7, #4
- 800372c:	2300      	movs	r3, #0
- 800372e:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 8003732:	f7fd f945 	bl	80009c0 <xQueueGenericSend>
-		// wait for reply from DDS (obtain reply message)
-
+ 80036c2:	4b13      	ldr	r3, [pc, #76]	; (8003710 <get_complete_dd_task_list+0x58>)
+ 80036c4:	6818      	ldr	r0, [r3, #0]
+ 80036c6:	f107 0110 	add.w	r1, r7, #16
+ 80036ca:	2300      	movs	r3, #0
+ 80036cc:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 80036d0:	f7fd f976 	bl	80009c0 <xQueueGenericSend>
 	}
 
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 8003736:	2004      	movs	r0, #4
- 8003738:	f7fd f812 	bl	8000760 <pvPortMalloc>
- 800373c:	4603      	mov	r3, r0
- 800373e:	603b      	str	r3, [r7, #0]
+	struct message reply_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
- 8003740:	4b10      	ldr	r3, [pc, #64]	; (8003784 <get_complete_dd_task_list+0x74>)
- 8003742:	6818      	ldr	r0, [r3, #0]
- 8003744:	4639      	mov	r1, r7
- 8003746:	2300      	movs	r3, #0
- 8003748:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 800374c:	f7fd fac6 	bl	8000cdc <xQueueGenericReceive>
- 8003750:	4603      	mov	r3, r0
- 8003752:	2b00      	cmp	r3, #0
- 8003754:	d00e      	beq.n	8003774 <get_complete_dd_task_list+0x64>
+ 80036d4:	4b0f      	ldr	r3, [pc, #60]	; (8003714 <get_complete_dd_task_list+0x5c>)
+ 80036d6:	6818      	ldr	r0, [r3, #0]
+ 80036d8:	4639      	mov	r1, r7
+ 80036da:	2300      	movs	r3, #0
+ 80036dc:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 80036e0:	f7fd fafc 	bl	8000cdc <xQueueGenericReceive>
+ 80036e4:	4603      	mov	r3, r0
+ 80036e6:	2b00      	cmp	r3, #0
+ 80036e8:	d00c      	beq.n	8003704 <get_complete_dd_task_list+0x4c>
 	{
 		// check for message type
-		if (reply_message->type == get_completed_dd_list)
- 8003756:	683b      	ldr	r3, [r7, #0]
- 8003758:	781b      	ldrb	r3, [r3, #0]
- 800375a:	2b03      	cmp	r3, #3
- 800375c:	d102      	bne.n	8003764 <get_complete_dd_task_list+0x54>
+		if (reply_message.type == get_completed_dd_list)
+ 80036ea:	783b      	ldrb	r3, [r7, #0]
+ 80036ec:	2b03      	cmp	r3, #3
+ 80036ee:	d101      	bne.n	80036f4 <get_complete_dd_task_list+0x3c>
 		{
-			return reply_message->task_list;
- 800375e:	683b      	ldr	r3, [r7, #0]
- 8003760:	68db      	ldr	r3, [r3, #12]
- 8003762:	e009      	b.n	8003778 <get_complete_dd_task_list+0x68>
+			return reply_message.task_list;
+ 80036f0:	68fb      	ldr	r3, [r7, #12]
+ 80036f2:	e008      	b.n	8003706 <get_complete_dd_task_list+0x4e>
 		}
 		else {
 			// if wrong message type, put back on queue
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
- 8003764:	4b07      	ldr	r3, [pc, #28]	; (8003784 <get_complete_dd_task_list+0x74>)
- 8003766:	6818      	ldr	r0, [r3, #0]
- 8003768:	4639      	mov	r1, r7
- 800376a:	2300      	movs	r3, #0
- 800376c:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 8003770:	f7fd f926 	bl	80009c0 <xQueueGenericSend>
+ 80036f4:	4b07      	ldr	r3, [pc, #28]	; (8003714 <get_complete_dd_task_list+0x5c>)
+ 80036f6:	6818      	ldr	r0, [r3, #0]
+ 80036f8:	4639      	mov	r1, r7
+ 80036fa:	2300      	movs	r3, #0
+ 80036fc:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 8003700:	f7fd f95e 	bl	80009c0 <xQueueGenericSend>
 
 			}
 		}
 	}
 
-	return reply_message->task_list;
- 8003774:	683b      	ldr	r3, [r7, #0]
- 8003776:	68db      	ldr	r3, [r3, #12]
+	return reply_message.task_list;
+ 8003704:	68fb      	ldr	r3, [r7, #12]
 }
- 8003778:	4618      	mov	r0, r3
- 800377a:	3708      	adds	r7, #8
- 800377c:	46bd      	mov	sp, r7
- 800377e:	bd80      	pop	{r7, pc}
- 8003780:	20001e04 	.word	0x20001e04
- 8003784:	20001e08 	.word	0x20001e08
+ 8003706:	4618      	mov	r0, r3
+ 8003708:	3720      	adds	r7, #32
+ 800370a:	46bd      	mov	sp, r7
+ 800370c:	bd80      	pop	{r7, pc}
+ 800370e:	bf00      	nop
+ 8003710:	20001e04 	.word	0x20001e04
+ 8003714:	20001e08 	.word	0x20001e08
 
-08003788 <get_overdue_dd_task_list>:
+08003718 <get_overdue_dd_task_list>:
 
 struct dd_task_list* get_overdue_dd_task_list(void)
 {
- 8003788:	b580      	push	{r7, lr}
- 800378a:	b082      	sub	sp, #8
- 800378c:	af00      	add	r7, sp, #0
+ 8003718:	b580      	push	{r7, lr}
+ 800371a:	b088      	sub	sp, #32
+ 800371c:	af00      	add	r7, sp, #0
 	// sends message to queue requesting Overdue Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 800378e:	2004      	movs	r0, #4
- 8003790:	f7fc ffe6 	bl	8000760 <pvPortMalloc>
- 8003794:	4603      	mov	r3, r0
- 8003796:	607b      	str	r3, [r7, #4]
-	this_message->type = get_overdue_dd_list;
- 8003798:	687b      	ldr	r3, [r7, #4]
- 800379a:	2204      	movs	r2, #4
- 800379c:	701a      	strb	r2, [r3, #0]
+	struct message this_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
+	this_message.type = get_overdue_dd_list;
+ 800371e:	2304      	movs	r3, #4
+ 8003720:	743b      	strb	r3, [r7, #16]
 
 	// sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
- 800379e:	4b16      	ldr	r3, [pc, #88]	; (80037f8 <get_overdue_dd_task_list+0x70>)
- 80037a0:	6818      	ldr	r0, [r3, #0]
- 80037a2:	1d39      	adds	r1, r7, #4
- 80037a4:	2300      	movs	r3, #0
- 80037a6:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 80037aa:	f7fd f909 	bl	80009c0 <xQueueGenericSend>
-	{
-		// sent successfully
+ 8003722:	4b13      	ldr	r3, [pc, #76]	; (8003770 <get_overdue_dd_task_list+0x58>)
+ 8003724:	6818      	ldr	r0, [r3, #0]
+ 8003726:	f107 0110 	add.w	r1, r7, #16
+ 800372a:	2300      	movs	r3, #0
+ 800372c:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 8003730:	f7fd f946 	bl	80009c0 <xQueueGenericSend>
 	}
 
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
- 80037ae:	2004      	movs	r0, #4
- 80037b0:	f7fc ffd6 	bl	8000760 <pvPortMalloc>
- 80037b4:	4603      	mov	r3, r0
- 80037b6:	603b      	str	r3, [r7, #0]
+	struct message reply_message;// = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
- 80037b8:	4b10      	ldr	r3, [pc, #64]	; (80037fc <get_overdue_dd_task_list+0x74>)
- 80037ba:	6818      	ldr	r0, [r3, #0]
- 80037bc:	4639      	mov	r1, r7
- 80037be:	2300      	movs	r3, #0
- 80037c0:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 80037c4:	f7fd fa8a 	bl	8000cdc <xQueueGenericReceive>
- 80037c8:	4603      	mov	r3, r0
- 80037ca:	2b00      	cmp	r3, #0
- 80037cc:	d00e      	beq.n	80037ec <get_overdue_dd_task_list+0x64>
+ 8003734:	4b0f      	ldr	r3, [pc, #60]	; (8003774 <get_overdue_dd_task_list+0x5c>)
+ 8003736:	6818      	ldr	r0, [r3, #0]
+ 8003738:	4639      	mov	r1, r7
+ 800373a:	2300      	movs	r3, #0
+ 800373c:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 8003740:	f7fd facc 	bl	8000cdc <xQueueGenericReceive>
+ 8003744:	4603      	mov	r3, r0
+ 8003746:	2b00      	cmp	r3, #0
+ 8003748:	d00c      	beq.n	8003764 <get_overdue_dd_task_list+0x4c>
 	{
 		// check for message type
-		if (reply_message->type == get_overdue_dd_list)
- 80037ce:	683b      	ldr	r3, [r7, #0]
- 80037d0:	781b      	ldrb	r3, [r3, #0]
- 80037d2:	2b04      	cmp	r3, #4
- 80037d4:	d102      	bne.n	80037dc <get_overdue_dd_task_list+0x54>
+		if (reply_message.type == get_overdue_dd_list)
+ 800374a:	783b      	ldrb	r3, [r7, #0]
+ 800374c:	2b04      	cmp	r3, #4
+ 800374e:	d101      	bne.n	8003754 <get_overdue_dd_task_list+0x3c>
 		{
-			return reply_message->task_list;
- 80037d6:	683b      	ldr	r3, [r7, #0]
- 80037d8:	68db      	ldr	r3, [r3, #12]
- 80037da:	e009      	b.n	80037f0 <get_overdue_dd_task_list+0x68>
+			return reply_message.task_list;
+ 8003750:	68fb      	ldr	r3, [r7, #12]
+ 8003752:	e008      	b.n	8003766 <get_overdue_dd_task_list+0x4e>
 		}
 		else {
 			// if wrong message type, put back on queue
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
- 80037dc:	4b07      	ldr	r3, [pc, #28]	; (80037fc <get_overdue_dd_task_list+0x74>)
- 80037de:	6818      	ldr	r0, [r3, #0]
- 80037e0:	4639      	mov	r1, r7
- 80037e2:	2300      	movs	r3, #0
- 80037e4:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
- 80037e8:	f7fd f8ea 	bl	80009c0 <xQueueGenericSend>
+ 8003754:	4b07      	ldr	r3, [pc, #28]	; (8003774 <get_overdue_dd_task_list+0x5c>)
+ 8003756:	6818      	ldr	r0, [r3, #0]
+ 8003758:	4639      	mov	r1, r7
+ 800375a:	2300      	movs	r3, #0
+ 800375c:	f44f 727a 	mov.w	r2, #1000	; 0x3e8
+ 8003760:	f7fd f92e 	bl	80009c0 <xQueueGenericSend>
 
 			}
 		}
 	}
 
-	return reply_message->task_list;
- 80037ec:	683b      	ldr	r3, [r7, #0]
- 80037ee:	68db      	ldr	r3, [r3, #12]
+	return reply_message.task_list;
+ 8003764:	68fb      	ldr	r3, [r7, #12]
 }
- 80037f0:	4618      	mov	r0, r3
- 80037f2:	3708      	adds	r7, #8
- 80037f4:	46bd      	mov	sp, r7
- 80037f6:	bd80      	pop	{r7, pc}
- 80037f8:	20001e04 	.word	0x20001e04
- 80037fc:	20001e08 	.word	0x20001e08
+ 8003766:	4618      	mov	r0, r3
+ 8003768:	3720      	adds	r7, #32
+ 800376a:	46bd      	mov	sp, r7
+ 800376c:	bd80      	pop	{r7, pc}
+ 800376e:	bf00      	nop
+ 8003770:	20001e04 	.word	0x20001e04
+ 8003774:	20001e08 	.word	0x20001e08
 
-08003800 <add_task>:
+08003778 <add_task>:
 
 /* linked list functions */
 // add new task
 dd_task_list * add_task( dd_task_list * list_head, struct dd_task * new_dd_task )
 {
- 8003800:	b5b0      	push	{r4, r5, r7, lr}
- 8003802:	b084      	sub	sp, #16
- 8003804:	af00      	add	r7, sp, #0
- 8003806:	6078      	str	r0, [r7, #4]
- 8003808:	6039      	str	r1, [r7, #0]
+ 8003778:	b5b0      	push	{r4, r5, r7, lr}
+ 800377a:	b084      	sub	sp, #16
+ 800377c:	af00      	add	r7, sp, #0
+ 800377e:	6078      	str	r0, [r7, #4]
+ 8003780:	6039      	str	r1, [r7, #0]
 	dd_task_list *temp = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
- 800380a:	2004      	movs	r0, #4
- 800380c:	f7fc ffa8 	bl	8000760 <pvPortMalloc>
- 8003810:	60b8      	str	r0, [r7, #8]
+ 8003782:	2004      	movs	r0, #4
+ 8003784:	f7fc ffec 	bl	8000760 <pvPortMalloc>
+ 8003788:	60b8      	str	r0, [r7, #8]
 	temp->task = *new_dd_task;
- 8003812:	68ba      	ldr	r2, [r7, #8]
- 8003814:	683b      	ldr	r3, [r7, #0]
- 8003816:	4614      	mov	r4, r2
- 8003818:	461d      	mov	r5, r3
- 800381a:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
- 800381c:	c40f      	stmia	r4!, {r0, r1, r2, r3}
- 800381e:	e895 0003 	ldmia.w	r5, {r0, r1}
- 8003822:	e884 0003 	stmia.w	r4, {r0, r1}
+ 800378a:	68ba      	ldr	r2, [r7, #8]
+ 800378c:	683b      	ldr	r3, [r7, #0]
+ 800378e:	4614      	mov	r4, r2
+ 8003790:	461d      	mov	r5, r3
+ 8003792:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
+ 8003794:	c40f      	stmia	r4!, {r0, r1, r2, r3}
+ 8003796:	e895 0003 	ldmia.w	r5, {r0, r1}
+ 800379a:	e884 0003 	stmia.w	r4, {r0, r1}
 	temp->next_task = NULL;
- 8003826:	68bb      	ldr	r3, [r7, #8]
- 8003828:	2200      	movs	r2, #0
- 800382a:	619a      	str	r2, [r3, #24]
+ 800379e:	68bb      	ldr	r3, [r7, #8]
+ 80037a0:	2200      	movs	r2, #0
+ 80037a2:	619a      	str	r2, [r3, #24]
 
 	struct dd_task_list *p;
 
 	if (list_head == NULL)
- 800382c:	687b      	ldr	r3, [r7, #4]
- 800382e:	2b00      	cmp	r3, #0
- 8003830:	d111      	bne.n	8003856 <add_task+0x56>
+ 80037a4:	687b      	ldr	r3, [r7, #4]
+ 80037a6:	2b00      	cmp	r3, #0
+ 80037a8:	d111      	bne.n	80037ce <add_task+0x56>
 	{
 		list_head = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
- 8003832:	2004      	movs	r0, #4
- 8003834:	f7fc ff94 	bl	8000760 <pvPortMalloc>
- 8003838:	6078      	str	r0, [r7, #4]
+ 80037aa:	2004      	movs	r0, #4
+ 80037ac:	f7fc ffd8 	bl	8000760 <pvPortMalloc>
+ 80037b0:	6078      	str	r0, [r7, #4]
 		list_head->task = temp->task;
- 800383a:	687a      	ldr	r2, [r7, #4]
- 800383c:	68bb      	ldr	r3, [r7, #8]
- 800383e:	4614      	mov	r4, r2
- 8003840:	461d      	mov	r5, r3
- 8003842:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
- 8003844:	c40f      	stmia	r4!, {r0, r1, r2, r3}
- 8003846:	e895 0003 	ldmia.w	r5, {r0, r1}
- 800384a:	e884 0003 	stmia.w	r4, {r0, r1}
+ 80037b2:	687a      	ldr	r2, [r7, #4]
+ 80037b4:	68bb      	ldr	r3, [r7, #8]
+ 80037b6:	4614      	mov	r4, r2
+ 80037b8:	461d      	mov	r5, r3
+ 80037ba:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
+ 80037bc:	c40f      	stmia	r4!, {r0, r1, r2, r3}
+ 80037be:	e895 0003 	ldmia.w	r5, {r0, r1}
+ 80037c2:	e884 0003 	stmia.w	r4, {r0, r1}
 		list_head->next_task = NULL;
- 800384e:	687b      	ldr	r3, [r7, #4]
- 8003850:	2200      	movs	r2, #0
- 8003852:	619a      	str	r2, [r3, #24]
- 8003854:	e00c      	b.n	8003870 <add_task+0x70>
+ 80037c6:	687b      	ldr	r3, [r7, #4]
+ 80037c8:	2200      	movs	r2, #0
+ 80037ca:	619a      	str	r2, [r3, #24]
+ 80037cc:	e00c      	b.n	80037e8 <add_task+0x70>
 	}
 	else {
 		p = list_head;
- 8003856:	687b      	ldr	r3, [r7, #4]
- 8003858:	60fb      	str	r3, [r7, #12]
+ 80037ce:	687b      	ldr	r3, [r7, #4]
+ 80037d0:	60fb      	str	r3, [r7, #12]
 		while (p->next_task != NULL)
- 800385a:	e002      	b.n	8003862 <add_task+0x62>
+ 80037d2:	e002      	b.n	80037da <add_task+0x62>
 		{
 			p = p->next_task;
- 800385c:	68fb      	ldr	r3, [r7, #12]
- 800385e:	699b      	ldr	r3, [r3, #24]
- 8003860:	60fb      	str	r3, [r7, #12]
+ 80037d4:	68fb      	ldr	r3, [r7, #12]
+ 80037d6:	699b      	ldr	r3, [r3, #24]
+ 80037d8:	60fb      	str	r3, [r7, #12]
 		while (p->next_task != NULL)
- 8003862:	68fb      	ldr	r3, [r7, #12]
- 8003864:	699b      	ldr	r3, [r3, #24]
- 8003866:	2b00      	cmp	r3, #0
- 8003868:	d1f8      	bne.n	800385c <add_task+0x5c>
+ 80037da:	68fb      	ldr	r3, [r7, #12]
+ 80037dc:	699b      	ldr	r3, [r3, #24]
+ 80037de:	2b00      	cmp	r3, #0
+ 80037e0:	d1f8      	bne.n	80037d4 <add_task+0x5c>
 		}
 		p->next_task = temp;
- 800386a:	68fb      	ldr	r3, [r7, #12]
- 800386c:	68ba      	ldr	r2, [r7, #8]
- 800386e:	619a      	str	r2, [r3, #24]
+ 80037e2:	68fb      	ldr	r3, [r7, #12]
+ 80037e4:	68ba      	ldr	r2, [r7, #8]
+ 80037e6:	619a      	str	r2, [r3, #24]
 	}
 
 	return list_head;
- 8003870:	687b      	ldr	r3, [r7, #4]
+ 80037e8:	687b      	ldr	r3, [r7, #4]
 }
- 8003872:	4618      	mov	r0, r3
- 8003874:	3710      	adds	r7, #16
- 8003876:	46bd      	mov	sp, r7
- 8003878:	bdb0      	pop	{r4, r5, r7, pc}
+ 80037ea:	4618      	mov	r0, r3
+ 80037ec:	3710      	adds	r7, #16
+ 80037ee:	46bd      	mov	sp, r7
+ 80037f0:	bdb0      	pop	{r4, r5, r7, pc}
 
-0800387a <delete_task>:
+080037f2 <delete_task>:
 
 // delete task
 dd_task_list * delete_task ( struct dd_task_list * list_head, struct dd_task * done_dd_task )
 {
- 800387a:	b580      	push	{r7, lr}
- 800387c:	b084      	sub	sp, #16
- 800387e:	af00      	add	r7, sp, #0
- 8003880:	6078      	str	r0, [r7, #4]
- 8003882:	6039      	str	r1, [r7, #0]
+ 80037f2:	b580      	push	{r7, lr}
+ 80037f4:	b084      	sub	sp, #16
+ 80037f6:	af00      	add	r7, sp, #0
+ 80037f8:	6078      	str	r0, [r7, #4]
+ 80037fa:	6039      	str	r1, [r7, #0]
 	// Store head node
     struct dd_task_list *temp = list_head;
- 8003884:	687b      	ldr	r3, [r7, #4]
- 8003886:	60fb      	str	r3, [r7, #12]
+ 80037fc:	687b      	ldr	r3, [r7, #4]
+ 80037fe:	60fb      	str	r3, [r7, #12]
 	struct dd_task_list *prev = NULL;
- 8003888:	2300      	movs	r3, #0
- 800388a:	60bb      	str	r3, [r7, #8]
+ 8003800:	2300      	movs	r3, #0
+ 8003802:	60bb      	str	r3, [r7, #8]
 
     // If head node itself holds the key to be deleted
     if (temp != NULL && temp->task.t_handle == done_dd_task->t_handle) {
- 800388c:	68fb      	ldr	r3, [r7, #12]
- 800388e:	2b00      	cmp	r3, #0
- 8003890:	d011      	beq.n	80038b6 <delete_task+0x3c>
- 8003892:	68fb      	ldr	r3, [r7, #12]
- 8003894:	681a      	ldr	r2, [r3, #0]
- 8003896:	683b      	ldr	r3, [r7, #0]
- 8003898:	681b      	ldr	r3, [r3, #0]
- 800389a:	429a      	cmp	r2, r3
- 800389c:	d10b      	bne.n	80038b6 <delete_task+0x3c>
+ 8003804:	68fb      	ldr	r3, [r7, #12]
+ 8003806:	2b00      	cmp	r3, #0
+ 8003808:	d011      	beq.n	800382e <delete_task+0x3c>
+ 800380a:	68fb      	ldr	r3, [r7, #12]
+ 800380c:	681a      	ldr	r2, [r3, #0]
+ 800380e:	683b      	ldr	r3, [r7, #0]
+ 8003810:	681b      	ldr	r3, [r3, #0]
+ 8003812:	429a      	cmp	r2, r3
+ 8003814:	d10b      	bne.n	800382e <delete_task+0x3c>
         list_head = temp->next_task; // Changed head
- 800389e:	68fb      	ldr	r3, [r7, #12]
- 80038a0:	699b      	ldr	r3, [r3, #24]
- 80038a2:	607b      	str	r3, [r7, #4]
+ 8003816:	68fb      	ldr	r3, [r7, #12]
+ 8003818:	699b      	ldr	r3, [r3, #24]
+ 800381a:	607b      	str	r3, [r7, #4]
         free(temp); // free old head
- 80038a4:	68f8      	ldr	r0, [r7, #12]
- 80038a6:	f000 fc15 	bl	80040d4 <free>
+ 800381c:	68f8      	ldr	r0, [r7, #12]
+ 800381e:	f000 fc15 	bl	800404c <free>
         //return;
     }
 
     // Search for the task to be deleted, keep track of the
     // previous node as we need to change 'prev->next'
     while (temp != NULL && temp->task.t_handle != done_dd_task->t_handle) {
- 80038aa:	e004      	b.n	80038b6 <delete_task+0x3c>
+ 8003822:	e004      	b.n	800382e <delete_task+0x3c>
         prev = temp;
- 80038ac:	68fb      	ldr	r3, [r7, #12]
- 80038ae:	60bb      	str	r3, [r7, #8]
+ 8003824:	68fb      	ldr	r3, [r7, #12]
+ 8003826:	60bb      	str	r3, [r7, #8]
         temp = temp->next_task;
- 80038b0:	68fb      	ldr	r3, [r7, #12]
- 80038b2:	699b      	ldr	r3, [r3, #24]
- 80038b4:	60fb      	str	r3, [r7, #12]
+ 8003828:	68fb      	ldr	r3, [r7, #12]
+ 800382a:	699b      	ldr	r3, [r3, #24]
+ 800382c:	60fb      	str	r3, [r7, #12]
     while (temp != NULL && temp->task.t_handle != done_dd_task->t_handle) {
- 80038b6:	68fb      	ldr	r3, [r7, #12]
- 80038b8:	2b00      	cmp	r3, #0
- 80038ba:	d005      	beq.n	80038c8 <delete_task+0x4e>
- 80038bc:	68fb      	ldr	r3, [r7, #12]
- 80038be:	681a      	ldr	r2, [r3, #0]
- 80038c0:	683b      	ldr	r3, [r7, #0]
- 80038c2:	681b      	ldr	r3, [r3, #0]
- 80038c4:	429a      	cmp	r2, r3
- 80038c6:	d1f1      	bne.n	80038ac <delete_task+0x32>
+ 800382e:	68fb      	ldr	r3, [r7, #12]
+ 8003830:	2b00      	cmp	r3, #0
+ 8003832:	d005      	beq.n	8003840 <delete_task+0x4e>
+ 8003834:	68fb      	ldr	r3, [r7, #12]
+ 8003836:	681a      	ldr	r2, [r3, #0]
+ 8003838:	683b      	ldr	r3, [r7, #0]
+ 800383a:	681b      	ldr	r3, [r3, #0]
+ 800383c:	429a      	cmp	r2, r3
+ 800383e:	d1f1      	bne.n	8003824 <delete_task+0x32>
     /*if (temp == NULL) {
     	return list_head;
     }*/
 
     // Unlink the node from linked list
     prev->next_task = temp->next_task;
- 80038c8:	68fb      	ldr	r3, [r7, #12]
- 80038ca:	699a      	ldr	r2, [r3, #24]
- 80038cc:	68bb      	ldr	r3, [r7, #8]
- 80038ce:	619a      	str	r2, [r3, #24]
+ 8003840:	68fb      	ldr	r3, [r7, #12]
+ 8003842:	699a      	ldr	r2, [r3, #24]
+ 8003844:	68bb      	ldr	r3, [r7, #8]
+ 8003846:	619a      	str	r2, [r3, #24]
 
     free(temp); // Free memory
- 80038d0:	68f8      	ldr	r0, [r7, #12]
- 80038d2:	f000 fbff 	bl	80040d4 <free>
+ 8003848:	68f8      	ldr	r0, [r7, #12]
+ 800384a:	f000 fbff 	bl	800404c <free>
 
     return list_head;
- 80038d6:	687b      	ldr	r3, [r7, #4]
+ 800384e:	687b      	ldr	r3, [r7, #4]
 }
- 80038d8:	4618      	mov	r0, r3
- 80038da:	3710      	adds	r7, #16
- 80038dc:	46bd      	mov	sp, r7
- 80038de:	bd80      	pop	{r7, pc}
+ 8003850:	4618      	mov	r0, r3
+ 8003852:	3710      	adds	r7, #16
+ 8003854:	46bd      	mov	sp, r7
+ 8003856:	bd80      	pop	{r7, pc}
 
-080038e0 <print_count_of_list>:
+08003858 <print_count_of_list>:
 
 // return count of list
 int print_count_of_list ( struct dd_task_list * dd_task_list_head )
 {
- 80038e0:	b480      	push	{r7}
- 80038e2:	b085      	sub	sp, #20
- 80038e4:	af00      	add	r7, sp, #0
- 80038e6:	6078      	str	r0, [r7, #4]
+ 8003858:	b480      	push	{r7}
+ 800385a:	b085      	sub	sp, #20
+ 800385c:	af00      	add	r7, sp, #0
+ 800385e:	6078      	str	r0, [r7, #4]
 	struct dd_task_list *p = dd_task_list_head;
- 80038e8:	687b      	ldr	r3, [r7, #4]
- 80038ea:	60fb      	str	r3, [r7, #12]
+ 8003860:	687b      	ldr	r3, [r7, #4]
+ 8003862:	60fb      	str	r3, [r7, #12]
 	int count = 0;
- 80038ec:	2300      	movs	r3, #0
- 80038ee:	60bb      	str	r3, [r7, #8]
+ 8003864:	2300      	movs	r3, #0
+ 8003866:	60bb      	str	r3, [r7, #8]
 	while(p != NULL){
- 80038f0:	e005      	b.n	80038fe <print_count_of_list+0x1e>
+ 8003868:	e005      	b.n	8003876 <print_count_of_list+0x1e>
 	    p = p->next_task;
- 80038f2:	68fb      	ldr	r3, [r7, #12]
- 80038f4:	699b      	ldr	r3, [r3, #24]
- 80038f6:	60fb      	str	r3, [r7, #12]
+ 800386a:	68fb      	ldr	r3, [r7, #12]
+ 800386c:	699b      	ldr	r3, [r3, #24]
+ 800386e:	60fb      	str	r3, [r7, #12]
 	    count++;
- 80038f8:	68bb      	ldr	r3, [r7, #8]
- 80038fa:	3301      	adds	r3, #1
- 80038fc:	60bb      	str	r3, [r7, #8]
+ 8003870:	68bb      	ldr	r3, [r7, #8]
+ 8003872:	3301      	adds	r3, #1
+ 8003874:	60bb      	str	r3, [r7, #8]
 	while(p != NULL){
- 80038fe:	68fb      	ldr	r3, [r7, #12]
- 8003900:	2b00      	cmp	r3, #0
- 8003902:	d1f6      	bne.n	80038f2 <print_count_of_list+0x12>
+ 8003876:	68fb      	ldr	r3, [r7, #12]
+ 8003878:	2b00      	cmp	r3, #0
+ 800387a:	d1f6      	bne.n	800386a <print_count_of_list+0x12>
 	}
 
 	return count;
- 8003904:	68bb      	ldr	r3, [r7, #8]
+ 800387c:	68bb      	ldr	r3, [r7, #8]
 }
- 8003906:	4618      	mov	r0, r3
- 8003908:	3714      	adds	r7, #20
- 800390a:	46bd      	mov	sp, r7
- 800390c:	f85d 7b04 	ldr.w	r7, [sp], #4
- 8003910:	4770      	bx	lr
+ 800387e:	4618      	mov	r0, r3
+ 8003880:	3714      	adds	r7, #20
+ 8003882:	46bd      	mov	sp, r7
+ 8003884:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8003888:	4770      	bx	lr
 
-08003912 <order_tasks_deadline_first>:
+0800388a <order_tasks_deadline_first>:
 
 // reorder by deadline first
 dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 {
- 8003912:	b4b0      	push	{r4, r5, r7}
- 8003914:	b08b      	sub	sp, #44	; 0x2c
- 8003916:	af00      	add	r7, sp, #0
- 8003918:	6078      	str	r0, [r7, #4]
+ 800388a:	b4b0      	push	{r4, r5, r7}
+ 800388c:	b08b      	sub	sp, #44	; 0x2c
+ 800388e:	af00      	add	r7, sp, #0
+ 8003890:	6078      	str	r0, [r7, #4]
 	struct dd_task_list *current = dd_task_list_head;
- 800391a:	687b      	ldr	r3, [r7, #4]
- 800391c:	627b      	str	r3, [r7, #36]	; 0x24
+ 8003892:	687b      	ldr	r3, [r7, #4]
+ 8003894:	627b      	str	r3, [r7, #36]	; 0x24
 	struct dd_task_list *index = NULL;
- 800391e:	2300      	movs	r3, #0
- 8003920:	623b      	str	r3, [r7, #32]
+ 8003896:	2300      	movs	r3, #0
+ 8003898:	623b      	str	r3, [r7, #32]
 	struct dd_task temp;
 
 	if (dd_task_list_head == NULL){
- 8003922:	687b      	ldr	r3, [r7, #4]
- 8003924:	2b00      	cmp	r3, #0
- 8003926:	d132      	bne.n	800398e <order_tasks_deadline_first+0x7c>
+ 800389a:	687b      	ldr	r3, [r7, #4]
+ 800389c:	2b00      	cmp	r3, #0
+ 800389e:	d132      	bne.n	8003906 <order_tasks_deadline_first+0x7c>
 		return dd_task_list_head;
- 8003928:	687b      	ldr	r3, [r7, #4]
- 800392a:	e034      	b.n	8003996 <order_tasks_deadline_first+0x84>
+ 80038a0:	687b      	ldr	r3, [r7, #4]
+ 80038a2:	e034      	b.n	800390e <order_tasks_deadline_first+0x84>
 	}
 	else {
 		while (current != NULL){
 			index = current->next_task;
- 800392c:	6a7b      	ldr	r3, [r7, #36]	; 0x24
- 800392e:	699b      	ldr	r3, [r3, #24]
- 8003930:	623b      	str	r3, [r7, #32]
+ 80038a4:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 80038a6:	699b      	ldr	r3, [r3, #24]
+ 80038a8:	623b      	str	r3, [r7, #32]
 
 			while (index != NULL){
- 8003932:	e026      	b.n	8003982 <order_tasks_deadline_first+0x70>
+ 80038aa:	e026      	b.n	80038fa <order_tasks_deadline_first+0x70>
 				if (current->task.absolute_deadline < index->task.absolute_deadline){
- 8003934:	6a7b      	ldr	r3, [r7, #36]	; 0x24
- 8003936:	691a      	ldr	r2, [r3, #16]
- 8003938:	6a3b      	ldr	r3, [r7, #32]
- 800393a:	691b      	ldr	r3, [r3, #16]
- 800393c:	429a      	cmp	r2, r3
- 800393e:	d21d      	bcs.n	800397c <order_tasks_deadline_first+0x6a>
+ 80038ac:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 80038ae:	691a      	ldr	r2, [r3, #16]
+ 80038b0:	6a3b      	ldr	r3, [r7, #32]
+ 80038b2:	691b      	ldr	r3, [r3, #16]
+ 80038b4:	429a      	cmp	r2, r3
+ 80038b6:	d21d      	bcs.n	80038f4 <order_tasks_deadline_first+0x6a>
 					temp = current->task;
- 8003940:	6a7b      	ldr	r3, [r7, #36]	; 0x24
- 8003942:	f107 0408 	add.w	r4, r7, #8
- 8003946:	461d      	mov	r5, r3
- 8003948:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
- 800394a:	c40f      	stmia	r4!, {r0, r1, r2, r3}
- 800394c:	e895 0003 	ldmia.w	r5, {r0, r1}
- 8003950:	e884 0003 	stmia.w	r4, {r0, r1}
+ 80038b8:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 80038ba:	f107 0408 	add.w	r4, r7, #8
+ 80038be:	461d      	mov	r5, r3
+ 80038c0:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
+ 80038c2:	c40f      	stmia	r4!, {r0, r1, r2, r3}
+ 80038c4:	e895 0003 	ldmia.w	r5, {r0, r1}
+ 80038c8:	e884 0003 	stmia.w	r4, {r0, r1}
 					current->task = index->task;
- 8003954:	6a7a      	ldr	r2, [r7, #36]	; 0x24
- 8003956:	6a3b      	ldr	r3, [r7, #32]
- 8003958:	4614      	mov	r4, r2
- 800395a:	461d      	mov	r5, r3
- 800395c:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
- 800395e:	c40f      	stmia	r4!, {r0, r1, r2, r3}
- 8003960:	e895 0003 	ldmia.w	r5, {r0, r1}
- 8003964:	e884 0003 	stmia.w	r4, {r0, r1}
+ 80038cc:	6a7a      	ldr	r2, [r7, #36]	; 0x24
+ 80038ce:	6a3b      	ldr	r3, [r7, #32]
+ 80038d0:	4614      	mov	r4, r2
+ 80038d2:	461d      	mov	r5, r3
+ 80038d4:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
+ 80038d6:	c40f      	stmia	r4!, {r0, r1, r2, r3}
+ 80038d8:	e895 0003 	ldmia.w	r5, {r0, r1}
+ 80038dc:	e884 0003 	stmia.w	r4, {r0, r1}
 					index->task = temp;
- 8003968:	6a3b      	ldr	r3, [r7, #32]
- 800396a:	461d      	mov	r5, r3
- 800396c:	f107 0408 	add.w	r4, r7, #8
- 8003970:	cc0f      	ldmia	r4!, {r0, r1, r2, r3}
- 8003972:	c50f      	stmia	r5!, {r0, r1, r2, r3}
- 8003974:	e894 0003 	ldmia.w	r4, {r0, r1}
- 8003978:	e885 0003 	stmia.w	r5, {r0, r1}
+ 80038e0:	6a3b      	ldr	r3, [r7, #32]
+ 80038e2:	461d      	mov	r5, r3
+ 80038e4:	f107 0408 	add.w	r4, r7, #8
+ 80038e8:	cc0f      	ldmia	r4!, {r0, r1, r2, r3}
+ 80038ea:	c50f      	stmia	r5!, {r0, r1, r2, r3}
+ 80038ec:	e894 0003 	ldmia.w	r4, {r0, r1}
+ 80038f0:	e885 0003 	stmia.w	r5, {r0, r1}
 				}
 				index = index->next_task;
- 800397c:	6a3b      	ldr	r3, [r7, #32]
- 800397e:	699b      	ldr	r3, [r3, #24]
- 8003980:	623b      	str	r3, [r7, #32]
+ 80038f4:	6a3b      	ldr	r3, [r7, #32]
+ 80038f6:	699b      	ldr	r3, [r3, #24]
+ 80038f8:	623b      	str	r3, [r7, #32]
 			while (index != NULL){
- 8003982:	6a3b      	ldr	r3, [r7, #32]
- 8003984:	2b00      	cmp	r3, #0
- 8003986:	d1d5      	bne.n	8003934 <order_tasks_deadline_first+0x22>
+ 80038fa:	6a3b      	ldr	r3, [r7, #32]
+ 80038fc:	2b00      	cmp	r3, #0
+ 80038fe:	d1d5      	bne.n	80038ac <order_tasks_deadline_first+0x22>
 			}
 			current = current->next_task;
- 8003988:	6a7b      	ldr	r3, [r7, #36]	; 0x24
- 800398a:	699b      	ldr	r3, [r3, #24]
- 800398c:	627b      	str	r3, [r7, #36]	; 0x24
+ 8003900:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 8003902:	699b      	ldr	r3, [r3, #24]
+ 8003904:	627b      	str	r3, [r7, #36]	; 0x24
 		while (current != NULL){
- 800398e:	6a7b      	ldr	r3, [r7, #36]	; 0x24
- 8003990:	2b00      	cmp	r3, #0
- 8003992:	d1cb      	bne.n	800392c <order_tasks_deadline_first+0x1a>
+ 8003906:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 8003908:	2b00      	cmp	r3, #0
+ 800390a:	d1cb      	bne.n	80038a4 <order_tasks_deadline_first+0x1a>
 		}
 
 	}
 
 	return dd_task_list_head;
- 8003994:	687b      	ldr	r3, [r7, #4]
+ 800390c:	687b      	ldr	r3, [r7, #4]
 }
- 8003996:	4618      	mov	r0, r3
- 8003998:	372c      	adds	r7, #44	; 0x2c
- 800399a:	46bd      	mov	sp, r7
- 800399c:	bcb0      	pop	{r4, r5, r7}
- 800399e:	4770      	bx	lr
+ 800390e:	4618      	mov	r0, r3
+ 8003910:	372c      	adds	r7, #44	; 0x2c
+ 8003912:	46bd      	mov	sp, r7
+ 8003914:	bcb0      	pop	{r4, r5, r7}
+ 8003916:	4770      	bx	lr
 
-080039a0 <assign_task_priorities>:
+08003918 <assign_task_priorities>:
 
 // assign task priorities
 dd_task_list * assign_task_priorities ( dd_task_list * dd_task_list_head )
 {
- 80039a0:	b580      	push	{r7, lr}
- 80039a2:	b084      	sub	sp, #16
- 80039a4:	af00      	add	r7, sp, #0
- 80039a6:	6078      	str	r0, [r7, #4]
+ 8003918:	b580      	push	{r7, lr}
+ 800391a:	b084      	sub	sp, #16
+ 800391c:	af00      	add	r7, sp, #0
+ 800391e:	6078      	str	r0, [r7, #4]
 	int size = configMAX_PRIORITIES-4;
- 80039a8:	2301      	movs	r3, #1
- 80039aa:	60bb      	str	r3, [r7, #8]
+ 8003920:	2301      	movs	r3, #1
+ 8003922:	60bb      	str	r3, [r7, #8]
 
 	if (dd_task_list_head == NULL){
- 80039ac:	687b      	ldr	r3, [r7, #4]
- 80039ae:	2b00      	cmp	r3, #0
- 80039b0:	d101      	bne.n	80039b6 <assign_task_priorities+0x16>
+ 8003924:	687b      	ldr	r3, [r7, #4]
+ 8003926:	2b00      	cmp	r3, #0
+ 8003928:	d101      	bne.n	800392e <assign_task_priorities+0x16>
 		return dd_task_list_head;
- 80039b2:	687b      	ldr	r3, [r7, #4]
- 80039b4:	e01b      	b.n	80039ee <assign_task_priorities+0x4e>
+ 800392a:	687b      	ldr	r3, [r7, #4]
+ 800392c:	e01b      	b.n	8003966 <assign_task_priorities+0x4e>
 	}
 	else {
 		struct dd_task_list *temp = dd_task_list_head;
- 80039b6:	687b      	ldr	r3, [r7, #4]
- 80039b8:	60fb      	str	r3, [r7, #12]
+ 800392e:	687b      	ldr	r3, [r7, #4]
+ 8003930:	60fb      	str	r3, [r7, #12]
 		vTaskPrioritySet(dd_task_list_head->task.t_handle, 3); // highest priority (but what happens if size is as big as max priority?)
- 80039ba:	687b      	ldr	r3, [r7, #4]
- 80039bc:	681b      	ldr	r3, [r3, #0]
- 80039be:	2103      	movs	r1, #3
- 80039c0:	4618      	mov	r0, r3
- 80039c2:	f7fd fd6f 	bl	80014a4 <vTaskPrioritySet>
+ 8003932:	687b      	ldr	r3, [r7, #4]
+ 8003934:	681b      	ldr	r3, [r3, #0]
+ 8003936:	2103      	movs	r1, #3
+ 8003938:	4618      	mov	r0, r3
+ 800393a:	f7fd fdb3 	bl	80014a4 <vTaskPrioritySet>
 		if (size - 1 != 0)
- 80039c6:	68bb      	ldr	r3, [r7, #8]
- 80039c8:	2b01      	cmp	r3, #1
- 80039ca:	d00c      	beq.n	80039e6 <assign_task_priorities+0x46>
+ 800393e:	68bb      	ldr	r3, [r7, #8]
+ 8003940:	2b01      	cmp	r3, #1
+ 8003942:	d00c      	beq.n	800395e <assign_task_priorities+0x46>
 		{
 			size--; // can't make priority lower than one
- 80039cc:	68bb      	ldr	r3, [r7, #8]
- 80039ce:	3b01      	subs	r3, #1
- 80039d0:	60bb      	str	r3, [r7, #8]
+ 8003944:	68bb      	ldr	r3, [r7, #8]
+ 8003946:	3b01      	subs	r3, #1
+ 8003948:	60bb      	str	r3, [r7, #8]
 		}
 
 		// set the rest of tasks priorities
 		while(temp != NULL){
- 80039d2:	e008      	b.n	80039e6 <assign_task_priorities+0x46>
+ 800394a:	e008      	b.n	800395e <assign_task_priorities+0x46>
 			vTaskPrioritySet(temp->task.t_handle, 1); // each task is 1 level priority lower than prev task (should they go from 3 to 1 or is 2 and 1 okay?)
- 80039d4:	68fb      	ldr	r3, [r7, #12]
- 80039d6:	681b      	ldr	r3, [r3, #0]
- 80039d8:	2101      	movs	r1, #1
- 80039da:	4618      	mov	r0, r3
- 80039dc:	f7fd fd62 	bl	80014a4 <vTaskPrioritySet>
+ 800394c:	68fb      	ldr	r3, [r7, #12]
+ 800394e:	681b      	ldr	r3, [r3, #0]
+ 8003950:	2101      	movs	r1, #1
+ 8003952:	4618      	mov	r0, r3
+ 8003954:	f7fd fda6 	bl	80014a4 <vTaskPrioritySet>
 			temp = temp->next_task;
- 80039e0:	68fb      	ldr	r3, [r7, #12]
- 80039e2:	699b      	ldr	r3, [r3, #24]
- 80039e4:	60fb      	str	r3, [r7, #12]
+ 8003958:	68fb      	ldr	r3, [r7, #12]
+ 800395a:	699b      	ldr	r3, [r3, #24]
+ 800395c:	60fb      	str	r3, [r7, #12]
 		while(temp != NULL){
- 80039e6:	68fb      	ldr	r3, [r7, #12]
- 80039e8:	2b00      	cmp	r3, #0
- 80039ea:	d1f3      	bne.n	80039d4 <assign_task_priorities+0x34>
+ 800395e:	68fb      	ldr	r3, [r7, #12]
+ 8003960:	2b00      	cmp	r3, #0
+ 8003962:	d1f3      	bne.n	800394c <assign_task_priorities+0x34>
 		}
 	}
 
 	return dd_task_list_head;
- 80039ec:	687b      	ldr	r3, [r7, #4]
+ 8003964:	687b      	ldr	r3, [r7, #4]
 }
- 80039ee:	4618      	mov	r0, r3
- 80039f0:	3710      	adds	r7, #16
- 80039f2:	46bd      	mov	sp, r7
- 80039f4:	bd80      	pop	{r7, pc}
+ 8003966:	4618      	mov	r0, r3
+ 8003968:	3710      	adds	r7, #16
+ 800396a:	46bd      	mov	sp, r7
+ 800396c:	bd80      	pop	{r7, pc}
 	...
 
-080039f8 <vGenerator1CallbackFunction>:
+08003970 <vGenerator1CallbackFunction>:
 
 /*------------------ software timer callbacks -----------------------------------------*/
 void vGenerator1CallbackFunction( TimerHandle_t xGenerator1Timer )
 {
- 80039f8:	b580      	push	{r7, lr}
- 80039fa:	b082      	sub	sp, #8
- 80039fc:	af00      	add	r7, sp, #0
- 80039fe:	6078      	str	r0, [r7, #4]
+ 8003970:	b580      	push	{r7, lr}
+ 8003972:	b082      	sub	sp, #8
+ 8003974:	af00      	add	r7, sp, #0
+ 8003976:	6078      	str	r0, [r7, #4]
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	vTaskResume(xGenerator1TaskHandle);
- 8003a00:	4b04      	ldr	r3, [pc, #16]	; (8003a14 <vGenerator1CallbackFunction+0x1c>)
- 8003a02:	681b      	ldr	r3, [r3, #0]
- 8003a04:	4618      	mov	r0, r3
- 8003a06:	f7fd febd 	bl	8001784 <vTaskResume>
+ 8003978:	4b04      	ldr	r3, [pc, #16]	; (800398c <vGenerator1CallbackFunction+0x1c>)
+ 800397a:	681b      	ldr	r3, [r3, #0]
+ 800397c:	4618      	mov	r0, r3
+ 800397e:	f7fd ff01 	bl	8001784 <vTaskResume>
 }
- 8003a0a:	bf00      	nop
- 8003a0c:	3708      	adds	r7, #8
- 8003a0e:	46bd      	mov	sp, r7
- 8003a10:	bd80      	pop	{r7, pc}
- 8003a12:	bf00      	nop
- 8003a14:	20001df8 	.word	0x20001df8
+ 8003982:	bf00      	nop
+ 8003984:	3708      	adds	r7, #8
+ 8003986:	46bd      	mov	sp, r7
+ 8003988:	bd80      	pop	{r7, pc}
+ 800398a:	bf00      	nop
+ 800398c:	20001df8 	.word	0x20001df8
 
-08003a18 <vGenerator2CallbackFunction>:
+08003990 <vGenerator2CallbackFunction>:
 
 void vGenerator2CallbackFunction( TimerHandle_t xGenerator2Timer )
 {
- 8003a18:	b580      	push	{r7, lr}
- 8003a1a:	b082      	sub	sp, #8
- 8003a1c:	af00      	add	r7, sp, #0
- 8003a1e:	6078      	str	r0, [r7, #4]
+ 8003990:	b580      	push	{r7, lr}
+ 8003992:	b082      	sub	sp, #8
+ 8003994:	af00      	add	r7, sp, #0
+ 8003996:	6078      	str	r0, [r7, #4]
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	vTaskResume(xGenerator2TaskHandle);
- 8003a20:	4b04      	ldr	r3, [pc, #16]	; (8003a34 <vGenerator2CallbackFunction+0x1c>)
- 8003a22:	681b      	ldr	r3, [r3, #0]
- 8003a24:	4618      	mov	r0, r3
- 8003a26:	f7fd fead 	bl	8001784 <vTaskResume>
+ 8003998:	4b04      	ldr	r3, [pc, #16]	; (80039ac <vGenerator2CallbackFunction+0x1c>)
+ 800399a:	681b      	ldr	r3, [r3, #0]
+ 800399c:	4618      	mov	r0, r3
+ 800399e:	f7fd fef1 	bl	8001784 <vTaskResume>
 }
- 8003a2a:	bf00      	nop
- 8003a2c:	3708      	adds	r7, #8
- 8003a2e:	46bd      	mov	sp, r7
- 8003a30:	bd80      	pop	{r7, pc}
- 8003a32:	bf00      	nop
- 8003a34:	20001dfc 	.word	0x20001dfc
+ 80039a2:	bf00      	nop
+ 80039a4:	3708      	adds	r7, #8
+ 80039a6:	46bd      	mov	sp, r7
+ 80039a8:	bd80      	pop	{r7, pc}
+ 80039aa:	bf00      	nop
+ 80039ac:	20001dfc 	.word	0x20001dfc
 
-08003a38 <vGenerator3CallbackFunction>:
+080039b0 <vGenerator3CallbackFunction>:
 
 void vGenerator3CallbackFunction( TimerHandle_t xGenerator3Timer )
 {
- 8003a38:	b580      	push	{r7, lr}
- 8003a3a:	b082      	sub	sp, #8
- 8003a3c:	af00      	add	r7, sp, #0
- 8003a3e:	6078      	str	r0, [r7, #4]
+ 80039b0:	b580      	push	{r7, lr}
+ 80039b2:	b082      	sub	sp, #8
+ 80039b4:	af00      	add	r7, sp, #0
+ 80039b6:	6078      	str	r0, [r7, #4]
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	vTaskResume(xGenerator3TaskHandle);
- 8003a40:	4b04      	ldr	r3, [pc, #16]	; (8003a54 <vGenerator3CallbackFunction+0x1c>)
- 8003a42:	681b      	ldr	r3, [r3, #0]
- 8003a44:	4618      	mov	r0, r3
- 8003a46:	f7fd fe9d 	bl	8001784 <vTaskResume>
+ 80039b8:	4b04      	ldr	r3, [pc, #16]	; (80039cc <vGenerator3CallbackFunction+0x1c>)
+ 80039ba:	681b      	ldr	r3, [r3, #0]
+ 80039bc:	4618      	mov	r0, r3
+ 80039be:	f7fd fee1 	bl	8001784 <vTaskResume>
 }
- 8003a4a:	bf00      	nop
- 8003a4c:	3708      	adds	r7, #8
- 8003a4e:	46bd      	mov	sp, r7
- 8003a50:	bd80      	pop	{r7, pc}
- 8003a52:	bf00      	nop
- 8003a54:	20001e00 	.word	0x20001e00
+ 80039c2:	bf00      	nop
+ 80039c4:	3708      	adds	r7, #8
+ 80039c6:	46bd      	mov	sp, r7
+ 80039c8:	bd80      	pop	{r7, pc}
+ 80039ca:	bf00      	nop
+ 80039cc:	20001e00 	.word	0x20001e00
 
-08003a58 <vApplicationMallocFailedHook>:
+080039d0 <vApplicationMallocFailedHook>:
 // could add another timer callback for overdue tasks (would be started each time a task is created?)
 
 /*-----------------------------------------------------------*/
 
 void vApplicationMallocFailedHook( void )
 {
- 8003a58:	b480      	push	{r7}
- 8003a5a:	af00      	add	r7, sp, #0
+ 80039d0:	b480      	push	{r7}
+ 80039d2:	af00      	add	r7, sp, #0
 	Called if a call to pvPortMalloc() fails because there is insufficient
 	free memory available in the FreeRTOS heap.  pvPortMalloc() is called
 	internally by FreeRTOS API functions that create tasks, queues, software 
 	timers, and semaphores.  The size of the FreeRTOS heap is set by the
 	configTOTAL_HEAP_SIZE configuration constant in FreeRTOSConfig.h. */
 	for( ;; );
- 8003a5c:	e7fe      	b.n	8003a5c <vApplicationMallocFailedHook+0x4>
+ 80039d4:	e7fe      	b.n	80039d4 <vApplicationMallocFailedHook+0x4>
 
-08003a5e <vApplicationStackOverflowHook>:
+080039d6 <vApplicationStackOverflowHook>:
 }
 /*-----------------------------------------------------------*/
 
 void vApplicationStackOverflowHook( xTaskHandle pxTask, signed char *pcTaskName )
 {
- 8003a5e:	b480      	push	{r7}
- 8003a60:	b083      	sub	sp, #12
- 8003a62:	af00      	add	r7, sp, #0
- 8003a64:	6078      	str	r0, [r7, #4]
- 8003a66:	6039      	str	r1, [r7, #0]
+ 80039d6:	b480      	push	{r7}
+ 80039d8:	b083      	sub	sp, #12
+ 80039da:	af00      	add	r7, sp, #0
+ 80039dc:	6078      	str	r0, [r7, #4]
+ 80039de:	6039      	str	r1, [r7, #0]
 	/* Run time stack overflow checking is performed if
 	configconfigCHECK_FOR_STACK_OVERFLOW is defined to 1 or 2.  This hook
 	function is called if a stack overflow is detected.  pxCurrentTCB can be
 	inspected in the debugger if the task name passed into this function is
 	corrupt. */
 	for( ;; );
- 8003a68:	e7fe      	b.n	8003a68 <vApplicationStackOverflowHook+0xa>
+ 80039e0:	e7fe      	b.n	80039e0 <vApplicationStackOverflowHook+0xa>
 
-08003a6a <vApplicationIdleHook>:
+080039e2 <vApplicationIdleHook>:
 }
 /*-----------------------------------------------------------*/
 
 void vApplicationIdleHook( void )
 {
- 8003a6a:	b580      	push	{r7, lr}
- 8003a6c:	b082      	sub	sp, #8
- 8003a6e:	af00      	add	r7, sp, #0
+ 80039e2:	b580      	push	{r7, lr}
+ 80039e4:	b082      	sub	sp, #8
+ 80039e6:	af00      	add	r7, sp, #0
 	FreeRTOSConfig.h.
 
 	This function is called on each cycle of the idle task.  In this case it
 	does nothing useful, other than report the amount of FreeRTOS heap that
 	remains unallocated. */
 	xFreeStackSpace = xPortGetFreeHeapSize();
- 8003a70:	f7fc fed8 	bl	8000824 <xPortGetFreeHeapSize>
- 8003a74:	4603      	mov	r3, r0
- 8003a76:	607b      	str	r3, [r7, #4]
+ 80039e8:	f7fc ff1c 	bl	8000824 <xPortGetFreeHeapSize>
+ 80039ec:	4603      	mov	r3, r0
+ 80039ee:	607b      	str	r3, [r7, #4]
 
 	if( xFreeStackSpace > 100 )
- 8003a78:	687b      	ldr	r3, [r7, #4]
+ 80039f0:	687b      	ldr	r3, [r7, #4]
 		/* By now, the kernel has allocated everything it is going to, so
 		if there is a lot of heap remaining unallocated then
 		the value of configTOTAL_HEAP_SIZE in FreeRTOSConfig.h can be
 		reduced accordingly. */
 	}
 }
- 8003a7a:	bf00      	nop
- 8003a7c:	3708      	adds	r7, #8
- 8003a7e:	46bd      	mov	sp, r7
- 8003a80:	bd80      	pop	{r7, pc}
+ 80039f2:	bf00      	nop
+ 80039f4:	3708      	adds	r7, #8
+ 80039f6:	46bd      	mov	sp, r7
+ 80039f8:	bd80      	pop	{r7, pc}
 
-08003a82 <prvSetupHardware>:
+080039fa <prvSetupHardware>:
 /*-----------------------------------------------------------*/
 
 static void prvSetupHardware( void )
 {
- 8003a82:	b580      	push	{r7, lr}
- 8003a84:	af00      	add	r7, sp, #0
+ 80039fa:	b580      	push	{r7, lr}
+ 80039fc:	af00      	add	r7, sp, #0
 	/* Ensure all priority bits are assigned as preemption priority bits.
 	http://www.freertos.org/RTOS-Cortex-M3-M4.html */
 	NVIC_SetPriorityGrouping( 0 );
- 8003a86:	2000      	movs	r0, #0
- 8003a88:	f7ff fadc 	bl	8003044 <NVIC_SetPriorityGrouping>
+ 80039fe:	2000      	movs	r0, #0
+ 8003a00:	f7ff fb20 	bl	8003044 <NVIC_SetPriorityGrouping>
 
 	/* TODO: Setup the clocks, etc. here, if they were not configured before
 	main() was called. */
 }
- 8003a8c:	bf00      	nop
- 8003a8e:	bd80      	pop	{r7, pc}
+ 8003a04:	bf00      	nop
+ 8003a06:	bd80      	pop	{r7, pc}
 
-08003a90 <Reset_Handler>:
+08003a08 <Reset_Handler>:
   .weak  Reset_Handler
   .type  Reset_Handler, %function
 Reset_Handler:  
 
 /* Copy the data segment initializers from flash to SRAM */  
   movs  r1, #0
- 8003a90:	2100      	movs	r1, #0
+ 8003a08:	2100      	movs	r1, #0
   b  LoopCopyDataInit
- 8003a92:	e003      	b.n	8003a9c <LoopCopyDataInit>
+ 8003a0a:	e003      	b.n	8003a14 <LoopCopyDataInit>
 
-08003a94 <CopyDataInit>:
+08003a0c <CopyDataInit>:
 
 CopyDataInit:
   ldr  r3, =_sidata
- 8003a94:	4b0b      	ldr	r3, [pc, #44]	; (8003ac4 <LoopFillZerobss+0x14>)
+ 8003a0c:	4b0b      	ldr	r3, [pc, #44]	; (8003a3c <LoopFillZerobss+0x14>)
   ldr  r3, [r3, r1]
- 8003a96:	585b      	ldr	r3, [r3, r1]
+ 8003a0e:	585b      	ldr	r3, [r3, r1]
   str  r3, [r0, r1]
- 8003a98:	5043      	str	r3, [r0, r1]
+ 8003a10:	5043      	str	r3, [r0, r1]
   adds  r1, r1, #4
- 8003a9a:	3104      	adds	r1, #4
+ 8003a12:	3104      	adds	r1, #4
 
-08003a9c <LoopCopyDataInit>:
+08003a14 <LoopCopyDataInit>:
     
 LoopCopyDataInit:
   ldr  r0, =_sdata
- 8003a9c:	480a      	ldr	r0, [pc, #40]	; (8003ac8 <LoopFillZerobss+0x18>)
+ 8003a14:	480a      	ldr	r0, [pc, #40]	; (8003a40 <LoopFillZerobss+0x18>)
   ldr  r3, =_edata
- 8003a9e:	4b0b      	ldr	r3, [pc, #44]	; (8003acc <LoopFillZerobss+0x1c>)
+ 8003a16:	4b0b      	ldr	r3, [pc, #44]	; (8003a44 <LoopFillZerobss+0x1c>)
   adds  r2, r0, r1
- 8003aa0:	1842      	adds	r2, r0, r1
+ 8003a18:	1842      	adds	r2, r0, r1
   cmp  r2, r3
- 8003aa2:	429a      	cmp	r2, r3
+ 8003a1a:	429a      	cmp	r2, r3
   bcc  CopyDataInit
- 8003aa4:	d3f6      	bcc.n	8003a94 <CopyDataInit>
+ 8003a1c:	d3f6      	bcc.n	8003a0c <CopyDataInit>
   ldr  r2, =_sbss
- 8003aa6:	4a0a      	ldr	r2, [pc, #40]	; (8003ad0 <LoopFillZerobss+0x20>)
+ 8003a1e:	4a0a      	ldr	r2, [pc, #40]	; (8003a48 <LoopFillZerobss+0x20>)
   b  LoopFillZerobss
- 8003aa8:	e002      	b.n	8003ab0 <LoopFillZerobss>
+ 8003a20:	e002      	b.n	8003a28 <LoopFillZerobss>
 
-08003aaa <FillZerobss>:
+08003a22 <FillZerobss>:
 /* Zero fill the bss segment. */  
 FillZerobss:
   movs  r3, #0
- 8003aaa:	2300      	movs	r3, #0
+ 8003a22:	2300      	movs	r3, #0
   str  r3, [r2], #4
- 8003aac:	f842 3b04 	str.w	r3, [r2], #4
+ 8003a24:	f842 3b04 	str.w	r3, [r2], #4
 
-08003ab0 <LoopFillZerobss>:
+08003a28 <LoopFillZerobss>:
     
 LoopFillZerobss:
   ldr  r3, = _ebss
- 8003ab0:	4b08      	ldr	r3, [pc, #32]	; (8003ad4 <LoopFillZerobss+0x24>)
+ 8003a28:	4b08      	ldr	r3, [pc, #32]	; (8003a4c <LoopFillZerobss+0x24>)
   cmp  r2, r3
- 8003ab2:	429a      	cmp	r2, r3
+ 8003a2a:	429a      	cmp	r2, r3
   bcc  FillZerobss
- 8003ab4:	d3f9      	bcc.n	8003aaa <FillZerobss>
+ 8003a2c:	d3f9      	bcc.n	8003a22 <FillZerobss>
 
 /* Call the clock system intitialization function.*/
   bl  SystemInit   
- 8003ab6:	f000 f877 	bl	8003ba8 <SystemInit>
+ 8003a2e:	f000 f877 	bl	8003b20 <SystemInit>
 /* Call static constructors */
     bl __libc_init_array
- 8003aba:	f000 fae7 	bl	800408c <__libc_init_array>
+ 8003a32:	f000 fae7 	bl	8004004 <__libc_init_array>
 /* Call the application's entry point.*/
   bl  main
- 8003abe:	f7ff fae5 	bl	800308c <main>
+ 8003a36:	f7ff fb29 	bl	800308c <main>
   bx  lr    
- 8003ac2:	4770      	bx	lr
+ 8003a3a:	4770      	bx	lr
   ldr  r3, =_sidata
- 8003ac4:	08004314 	.word	0x08004314
+ 8003a3c:	0800428c 	.word	0x0800428c
   ldr  r0, =_sdata
- 8003ac8:	20000000 	.word	0x20000000
+ 8003a40:	20000000 	.word	0x20000000
   ldr  r3, =_edata
- 8003acc:	2000008c 	.word	0x2000008c
+ 8003a44:	2000008c 	.word	0x2000008c
   ldr  r2, =_sbss
- 8003ad0:	2000008c 	.word	0x2000008c
+ 8003a48:	2000008c 	.word	0x2000008c
   ldr  r3, = _ebss
- 8003ad4:	20001ed8 	.word	0x20001ed8
+ 8003a4c:	20001ed8 	.word	0x20001ed8
 
-08003ad8 <ADC_IRQHandler>:
+08003a50 <ADC_IRQHandler>:
  * @retval None       
 */
     .section  .text.Default_Handler,"ax",%progbits
 Default_Handler:
 Infinite_Loop:
   b  Infinite_Loop
- 8003ad8:	e7fe      	b.n	8003ad8 <ADC_IRQHandler>
+ 8003a50:	e7fe      	b.n	8003a50 <ADC_IRQHandler>
 
-08003ada <NMI_Handler>:
+08003a52 <NMI_Handler>:
   * @brief   This function handles NMI exception.
   * @param  None
   * @retval None
   */
 void NMI_Handler(void)
 {
- 8003ada:	b480      	push	{r7}
- 8003adc:	af00      	add	r7, sp, #0
+ 8003a52:	b480      	push	{r7}
+ 8003a54:	af00      	add	r7, sp, #0
 }
- 8003ade:	bf00      	nop
- 8003ae0:	46bd      	mov	sp, r7
- 8003ae2:	f85d 7b04 	ldr.w	r7, [sp], #4
- 8003ae6:	4770      	bx	lr
+ 8003a56:	bf00      	nop
+ 8003a58:	46bd      	mov	sp, r7
+ 8003a5a:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8003a5e:	4770      	bx	lr
 
-08003ae8 <HardFault_Handler>:
+08003a60 <HardFault_Handler>:
   * @brief  This function handles Hard Fault exception.
   * @param  None
   * @retval None
   */
 void HardFault_Handler(void)
 {
- 8003ae8:	b480      	push	{r7}
- 8003aea:	af00      	add	r7, sp, #0
+ 8003a60:	b480      	push	{r7}
+ 8003a62:	af00      	add	r7, sp, #0
   /* Go to infinite loop when Hard Fault exception occurs */
   while (1)
- 8003aec:	e7fe      	b.n	8003aec <HardFault_Handler+0x4>
+ 8003a64:	e7fe      	b.n	8003a64 <HardFault_Handler+0x4>
 
-08003aee <MemManage_Handler>:
+08003a66 <MemManage_Handler>:
   * @brief  This function handles Memory Manage exception.
   * @param  None
   * @retval None
   */
 void MemManage_Handler(void)
 {
- 8003aee:	b480      	push	{r7}
- 8003af0:	af00      	add	r7, sp, #0
+ 8003a66:	b480      	push	{r7}
+ 8003a68:	af00      	add	r7, sp, #0
   /* Go to infinite loop when Memory Manage exception occurs */
   while (1)
- 8003af2:	e7fe      	b.n	8003af2 <MemManage_Handler+0x4>
+ 8003a6a:	e7fe      	b.n	8003a6a <MemManage_Handler+0x4>
 
-08003af4 <BusFault_Handler>:
+08003a6c <BusFault_Handler>:
   * @brief  This function handles Bus Fault exception.
   * @param  None
   * @retval None
   */
 void BusFault_Handler(void)
 {
- 8003af4:	b480      	push	{r7}
- 8003af6:	af00      	add	r7, sp, #0
+ 8003a6c:	b480      	push	{r7}
+ 8003a6e:	af00      	add	r7, sp, #0
   /* Go to infinite loop when Bus Fault exception occurs */
   while (1)
- 8003af8:	e7fe      	b.n	8003af8 <BusFault_Handler+0x4>
+ 8003a70:	e7fe      	b.n	8003a70 <BusFault_Handler+0x4>
 
-08003afa <UsageFault_Handler>:
+08003a72 <UsageFault_Handler>:
   * @brief  This function handles Usage Fault exception.
   * @param  None
   * @retval None
   */
 void UsageFault_Handler(void)
 {
- 8003afa:	b480      	push	{r7}
- 8003afc:	af00      	add	r7, sp, #0
+ 8003a72:	b480      	push	{r7}
+ 8003a74:	af00      	add	r7, sp, #0
   /* Go to infinite loop when Usage Fault exception occurs */
   while (1)
- 8003afe:	e7fe      	b.n	8003afe <UsageFault_Handler+0x4>
+ 8003a76:	e7fe      	b.n	8003a76 <UsageFault_Handler+0x4>
 
-08003b00 <DebugMon_Handler>:
+08003a78 <DebugMon_Handler>:
   * @brief  This function handles Debug Monitor exception.
   * @param  None
   * @retval None
   */
 void DebugMon_Handler(void)
 {
- 8003b00:	b480      	push	{r7}
- 8003b02:	af00      	add	r7, sp, #0
+ 8003a78:	b480      	push	{r7}
+ 8003a7a:	af00      	add	r7, sp, #0
 }
- 8003b04:	bf00      	nop
- 8003b06:	46bd      	mov	sp, r7
- 8003b08:	f85d 7b04 	ldr.w	r7, [sp], #4
- 8003b0c:	4770      	bx	lr
+ 8003a7c:	bf00      	nop
+ 8003a7e:	46bd      	mov	sp, r7
+ 8003a80:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8003a84:	4770      	bx	lr
 	...
 
-08003b10 <ITM_SendChar>:
+08003a88 <ITM_SendChar>:
 
     \param [in]     ch  Character to transmit
     \return             Character to transmit
  */
 static __INLINE uint32_t ITM_SendChar (uint32_t ch)
 {
- 8003b10:	b480      	push	{r7}
- 8003b12:	b083      	sub	sp, #12
- 8003b14:	af00      	add	r7, sp, #0
- 8003b16:	6078      	str	r0, [r7, #4]
+ 8003a88:	b480      	push	{r7}
+ 8003a8a:	b083      	sub	sp, #12
+ 8003a8c:	af00      	add	r7, sp, #0
+ 8003a8e:	6078      	str	r0, [r7, #4]
   if ((CoreDebug->DEMCR & CoreDebug_DEMCR_TRCENA_Msk)  &&      /* Trace enabled */
- 8003b18:	4b13      	ldr	r3, [pc, #76]	; (8003b68 <ITM_SendChar+0x58>)
- 8003b1a:	68db      	ldr	r3, [r3, #12]
- 8003b1c:	f003 7380 	and.w	r3, r3, #16777216	; 0x1000000
- 8003b20:	2b00      	cmp	r3, #0
- 8003b22:	d01a      	beq.n	8003b5a <ITM_SendChar+0x4a>
+ 8003a90:	4b13      	ldr	r3, [pc, #76]	; (8003ae0 <ITM_SendChar+0x58>)
+ 8003a92:	68db      	ldr	r3, [r3, #12]
+ 8003a94:	f003 7380 	and.w	r3, r3, #16777216	; 0x1000000
+ 8003a98:	2b00      	cmp	r3, #0
+ 8003a9a:	d01a      	beq.n	8003ad2 <ITM_SendChar+0x4a>
       (ITM->TCR & ITM_TCR_ITMENA_Msk)                  &&      /* ITM enabled */
- 8003b24:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
- 8003b28:	f8d3 3e80 	ldr.w	r3, [r3, #3712]	; 0xe80
- 8003b2c:	f003 0301 	and.w	r3, r3, #1
+ 8003a9c:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
+ 8003aa0:	f8d3 3e80 	ldr.w	r3, [r3, #3712]	; 0xe80
+ 8003aa4:	f003 0301 	and.w	r3, r3, #1
   if ((CoreDebug->DEMCR & CoreDebug_DEMCR_TRCENA_Msk)  &&      /* Trace enabled */
- 8003b30:	2b00      	cmp	r3, #0
- 8003b32:	d012      	beq.n	8003b5a <ITM_SendChar+0x4a>
+ 8003aa8:	2b00      	cmp	r3, #0
+ 8003aaa:	d012      	beq.n	8003ad2 <ITM_SendChar+0x4a>
       (ITM->TER & (1UL << 0)        )                    )     /* ITM Port #0 enabled */
- 8003b34:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
- 8003b38:	f8d3 3e00 	ldr.w	r3, [r3, #3584]	; 0xe00
- 8003b3c:	f003 0301 	and.w	r3, r3, #1
+ 8003aac:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
+ 8003ab0:	f8d3 3e00 	ldr.w	r3, [r3, #3584]	; 0xe00
+ 8003ab4:	f003 0301 	and.w	r3, r3, #1
       (ITM->TCR & ITM_TCR_ITMENA_Msk)                  &&      /* ITM enabled */
- 8003b40:	2b00      	cmp	r3, #0
- 8003b42:	d00a      	beq.n	8003b5a <ITM_SendChar+0x4a>
+ 8003ab8:	2b00      	cmp	r3, #0
+ 8003aba:	d00a      	beq.n	8003ad2 <ITM_SendChar+0x4a>
   {
     while (ITM->PORT[0].u32 == 0);
- 8003b44:	bf00      	nop
- 8003b46:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
- 8003b4a:	681b      	ldr	r3, [r3, #0]
- 8003b4c:	2b00      	cmp	r3, #0
- 8003b4e:	d0fa      	beq.n	8003b46 <ITM_SendChar+0x36>
+ 8003abc:	bf00      	nop
+ 8003abe:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
+ 8003ac2:	681b      	ldr	r3, [r3, #0]
+ 8003ac4:	2b00      	cmp	r3, #0
+ 8003ac6:	d0fa      	beq.n	8003abe <ITM_SendChar+0x36>
     ITM->PORT[0].u8 = (uint8_t) ch;
- 8003b50:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
- 8003b54:	687a      	ldr	r2, [r7, #4]
- 8003b56:	b2d2      	uxtb	r2, r2
- 8003b58:	701a      	strb	r2, [r3, #0]
+ 8003ac8:	f04f 4360 	mov.w	r3, #3758096384	; 0xe0000000
+ 8003acc:	687a      	ldr	r2, [r7, #4]
+ 8003ace:	b2d2      	uxtb	r2, r2
+ 8003ad0:	701a      	strb	r2, [r3, #0]
   }
   return (ch);
- 8003b5a:	687b      	ldr	r3, [r7, #4]
+ 8003ad2:	687b      	ldr	r3, [r7, #4]
 }
- 8003b5c:	4618      	mov	r0, r3
- 8003b5e:	370c      	adds	r7, #12
- 8003b60:	46bd      	mov	sp, r7
- 8003b62:	f85d 7b04 	ldr.w	r7, [sp], #4
- 8003b66:	4770      	bx	lr
- 8003b68:	e000edf0 	.word	0xe000edf0
+ 8003ad4:	4618      	mov	r0, r3
+ 8003ad6:	370c      	adds	r7, #12
+ 8003ad8:	46bd      	mov	sp, r7
+ 8003ada:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8003ade:	4770      	bx	lr
+ 8003ae0:	e000edf0 	.word	0xe000edf0
 
-08003b6c <_write>:
+08003ae4 <_write>:
 {
 	while (1) {}		/* Make sure we hang here */
 }
 
 int _write(int file, char *ptr, int len)
 {
- 8003b6c:	b580      	push	{r7, lr}
- 8003b6e:	b086      	sub	sp, #24
- 8003b70:	af00      	add	r7, sp, #0
- 8003b72:	60f8      	str	r0, [r7, #12]
- 8003b74:	60b9      	str	r1, [r7, #8]
- 8003b76:	607a      	str	r2, [r7, #4]
+ 8003ae4:	b580      	push	{r7, lr}
+ 8003ae6:	b086      	sub	sp, #24
+ 8003ae8:	af00      	add	r7, sp, #0
+ 8003aea:	60f8      	str	r0, [r7, #12]
+ 8003aec:	60b9      	str	r1, [r7, #8]
+ 8003aee:	607a      	str	r2, [r7, #4]
  /* Implement your write code here, this is used by
 puts and printf for example */
  int i=0;
- 8003b78:	2300      	movs	r3, #0
- 8003b7a:	617b      	str	r3, [r7, #20]
+ 8003af0:	2300      	movs	r3, #0
+ 8003af2:	617b      	str	r3, [r7, #20]
  for(i=0 ; i<len ; i++)
- 8003b7c:	2300      	movs	r3, #0
- 8003b7e:	617b      	str	r3, [r7, #20]
- 8003b80:	e009      	b.n	8003b96 <_write+0x2a>
+ 8003af4:	2300      	movs	r3, #0
+ 8003af6:	617b      	str	r3, [r7, #20]
+ 8003af8:	e009      	b.n	8003b0e <_write+0x2a>
 	 ITM_SendChar((*ptr++));
- 8003b82:	68bb      	ldr	r3, [r7, #8]
- 8003b84:	1c5a      	adds	r2, r3, #1
- 8003b86:	60ba      	str	r2, [r7, #8]
- 8003b88:	781b      	ldrb	r3, [r3, #0]
- 8003b8a:	4618      	mov	r0, r3
- 8003b8c:	f7ff ffc0 	bl	8003b10 <ITM_SendChar>
+ 8003afa:	68bb      	ldr	r3, [r7, #8]
+ 8003afc:	1c5a      	adds	r2, r3, #1
+ 8003afe:	60ba      	str	r2, [r7, #8]
+ 8003b00:	781b      	ldrb	r3, [r3, #0]
+ 8003b02:	4618      	mov	r0, r3
+ 8003b04:	f7ff ffc0 	bl	8003a88 <ITM_SendChar>
  for(i=0 ; i<len ; i++)
- 8003b90:	697b      	ldr	r3, [r7, #20]
- 8003b92:	3301      	adds	r3, #1
- 8003b94:	617b      	str	r3, [r7, #20]
- 8003b96:	697a      	ldr	r2, [r7, #20]
- 8003b98:	687b      	ldr	r3, [r7, #4]
- 8003b9a:	429a      	cmp	r2, r3
- 8003b9c:	dbf1      	blt.n	8003b82 <_write+0x16>
+ 8003b08:	697b      	ldr	r3, [r7, #20]
+ 8003b0a:	3301      	adds	r3, #1
+ 8003b0c:	617b      	str	r3, [r7, #20]
+ 8003b0e:	697a      	ldr	r2, [r7, #20]
+ 8003b10:	687b      	ldr	r3, [r7, #4]
+ 8003b12:	429a      	cmp	r2, r3
+ 8003b14:	dbf1      	blt.n	8003afa <_write+0x16>
  return len;
- 8003b9e:	687b      	ldr	r3, [r7, #4]
+ 8003b16:	687b      	ldr	r3, [r7, #4]
 }
- 8003ba0:	4618      	mov	r0, r3
- 8003ba2:	3718      	adds	r7, #24
- 8003ba4:	46bd      	mov	sp, r7
- 8003ba6:	bd80      	pop	{r7, pc}
+ 8003b18:	4618      	mov	r0, r3
+ 8003b1a:	3718      	adds	r7, #24
+ 8003b1c:	46bd      	mov	sp, r7
+ 8003b1e:	bd80      	pop	{r7, pc}
 
-08003ba8 <SystemInit>:
+08003b20 <SystemInit>:
   *         SystemFrequency variable.
   * @param  None
   * @retval None
   */
 void SystemInit(void)
 {
- 8003ba8:	b580      	push	{r7, lr}
- 8003baa:	af00      	add	r7, sp, #0
+ 8003b20:	b580      	push	{r7, lr}
+ 8003b22:	af00      	add	r7, sp, #0
   /* FPU settings ------------------------------------------------------------*/
   #if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
 	SCB->CPACR |= ((3UL << 10*2)|(3UL << 11*2));  /* set CP10 and CP11 Full Access */
- 8003bac:	4a16      	ldr	r2, [pc, #88]	; (8003c08 <SystemInit+0x60>)
- 8003bae:	4b16      	ldr	r3, [pc, #88]	; (8003c08 <SystemInit+0x60>)
- 8003bb0:	f8d3 3088 	ldr.w	r3, [r3, #136]	; 0x88
- 8003bb4:	f443 0370 	orr.w	r3, r3, #15728640	; 0xf00000
- 8003bb8:	f8c2 3088 	str.w	r3, [r2, #136]	; 0x88
+ 8003b24:	4a16      	ldr	r2, [pc, #88]	; (8003b80 <SystemInit+0x60>)
+ 8003b26:	4b16      	ldr	r3, [pc, #88]	; (8003b80 <SystemInit+0x60>)
+ 8003b28:	f8d3 3088 	ldr.w	r3, [r3, #136]	; 0x88
+ 8003b2c:	f443 0370 	orr.w	r3, r3, #15728640	; 0xf00000
+ 8003b30:	f8c2 3088 	str.w	r3, [r2, #136]	; 0x88
   #endif
 
   /* Reset the RCC clock configuration to the default reset state ------------*/
   /* Set HSION bit */
   RCC->CR |= (uint32_t)0x00000001;
- 8003bbc:	4a13      	ldr	r2, [pc, #76]	; (8003c0c <SystemInit+0x64>)
- 8003bbe:	4b13      	ldr	r3, [pc, #76]	; (8003c0c <SystemInit+0x64>)
- 8003bc0:	681b      	ldr	r3, [r3, #0]
- 8003bc2:	f043 0301 	orr.w	r3, r3, #1
- 8003bc6:	6013      	str	r3, [r2, #0]
+ 8003b34:	4a13      	ldr	r2, [pc, #76]	; (8003b84 <SystemInit+0x64>)
+ 8003b36:	4b13      	ldr	r3, [pc, #76]	; (8003b84 <SystemInit+0x64>)
+ 8003b38:	681b      	ldr	r3, [r3, #0]
+ 8003b3a:	f043 0301 	orr.w	r3, r3, #1
+ 8003b3e:	6013      	str	r3, [r2, #0]
 
   /* Reset CFGR register */
   RCC->CFGR = 0x00000000;
- 8003bc8:	4b10      	ldr	r3, [pc, #64]	; (8003c0c <SystemInit+0x64>)
- 8003bca:	2200      	movs	r2, #0
- 8003bcc:	609a      	str	r2, [r3, #8]
+ 8003b40:	4b10      	ldr	r3, [pc, #64]	; (8003b84 <SystemInit+0x64>)
+ 8003b42:	2200      	movs	r2, #0
+ 8003b44:	609a      	str	r2, [r3, #8]
 
   /* Reset HSEON, CSSON and PLLON bits */
   RCC->CR &= (uint32_t)0xFEF6FFFF;
- 8003bce:	4a0f      	ldr	r2, [pc, #60]	; (8003c0c <SystemInit+0x64>)
- 8003bd0:	4b0e      	ldr	r3, [pc, #56]	; (8003c0c <SystemInit+0x64>)
- 8003bd2:	681b      	ldr	r3, [r3, #0]
- 8003bd4:	f023 7384 	bic.w	r3, r3, #17301504	; 0x1080000
- 8003bd8:	f423 3380 	bic.w	r3, r3, #65536	; 0x10000
- 8003bdc:	6013      	str	r3, [r2, #0]
+ 8003b46:	4a0f      	ldr	r2, [pc, #60]	; (8003b84 <SystemInit+0x64>)
+ 8003b48:	4b0e      	ldr	r3, [pc, #56]	; (8003b84 <SystemInit+0x64>)
+ 8003b4a:	681b      	ldr	r3, [r3, #0]
+ 8003b4c:	f023 7384 	bic.w	r3, r3, #17301504	; 0x1080000
+ 8003b50:	f423 3380 	bic.w	r3, r3, #65536	; 0x10000
+ 8003b54:	6013      	str	r3, [r2, #0]
 
   /* Reset PLLCFGR register */
   RCC->PLLCFGR = 0x24003010;
- 8003bde:	4b0b      	ldr	r3, [pc, #44]	; (8003c0c <SystemInit+0x64>)
- 8003be0:	4a0b      	ldr	r2, [pc, #44]	; (8003c10 <SystemInit+0x68>)
- 8003be2:	605a      	str	r2, [r3, #4]
+ 8003b56:	4b0b      	ldr	r3, [pc, #44]	; (8003b84 <SystemInit+0x64>)
+ 8003b58:	4a0b      	ldr	r2, [pc, #44]	; (8003b88 <SystemInit+0x68>)
+ 8003b5a:	605a      	str	r2, [r3, #4]
 
   /* Reset HSEBYP bit */
   RCC->CR &= (uint32_t)0xFFFBFFFF;
- 8003be4:	4a09      	ldr	r2, [pc, #36]	; (8003c0c <SystemInit+0x64>)
- 8003be6:	4b09      	ldr	r3, [pc, #36]	; (8003c0c <SystemInit+0x64>)
- 8003be8:	681b      	ldr	r3, [r3, #0]
- 8003bea:	f423 2380 	bic.w	r3, r3, #262144	; 0x40000
- 8003bee:	6013      	str	r3, [r2, #0]
+ 8003b5c:	4a09      	ldr	r2, [pc, #36]	; (8003b84 <SystemInit+0x64>)
+ 8003b5e:	4b09      	ldr	r3, [pc, #36]	; (8003b84 <SystemInit+0x64>)
+ 8003b60:	681b      	ldr	r3, [r3, #0]
+ 8003b62:	f423 2380 	bic.w	r3, r3, #262144	; 0x40000
+ 8003b66:	6013      	str	r3, [r2, #0]
 
   /* Disable all interrupts */
   RCC->CIR = 0x00000000;
- 8003bf0:	4b06      	ldr	r3, [pc, #24]	; (8003c0c <SystemInit+0x64>)
- 8003bf2:	2200      	movs	r2, #0
- 8003bf4:	60da      	str	r2, [r3, #12]
+ 8003b68:	4b06      	ldr	r3, [pc, #24]	; (8003b84 <SystemInit+0x64>)
+ 8003b6a:	2200      	movs	r2, #0
+ 8003b6c:	60da      	str	r2, [r3, #12]
   SystemInit_ExtMemCtl(); 
 #endif /* DATA_IN_ExtSRAM */
          
   /* Configure the System clock source, PLL Multiplier and Divider factors, 
      AHB/APBx prescalers and Flash settings ----------------------------------*/
   SetSysClock();
- 8003bf6:	f000 f80d 	bl	8003c14 <SetSysClock>
+ 8003b6e:	f000 f80d 	bl	8003b8c <SetSysClock>
 
   /* Configure the Vector Table location add offset address ------------------*/
 #ifdef VECT_TAB_SRAM
   SCB->VTOR = SRAM_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
 #else
   SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
- 8003bfa:	4b03      	ldr	r3, [pc, #12]	; (8003c08 <SystemInit+0x60>)
- 8003bfc:	f04f 6200 	mov.w	r2, #134217728	; 0x8000000
- 8003c00:	609a      	str	r2, [r3, #8]
+ 8003b72:	4b03      	ldr	r3, [pc, #12]	; (8003b80 <SystemInit+0x60>)
+ 8003b74:	f04f 6200 	mov.w	r2, #134217728	; 0x8000000
+ 8003b78:	609a      	str	r2, [r3, #8]
 #endif
 }
- 8003c02:	bf00      	nop
- 8003c04:	bd80      	pop	{r7, pc}
- 8003c06:	bf00      	nop
- 8003c08:	e000ed00 	.word	0xe000ed00
- 8003c0c:	40023800 	.word	0x40023800
- 8003c10:	24003010 	.word	0x24003010
+ 8003b7a:	bf00      	nop
+ 8003b7c:	bd80      	pop	{r7, pc}
+ 8003b7e:	bf00      	nop
+ 8003b80:	e000ed00 	.word	0xe000ed00
+ 8003b84:	40023800 	.word	0x40023800
+ 8003b88:	24003010 	.word	0x24003010
 
-08003c14 <SetSysClock>:
+08003b8c <SetSysClock>:
   *         is reset to the default reset state (done in SystemInit() function).   
   * @param  None
   * @retval None
   */
 static void SetSysClock(void)
 {
- 8003c14:	b480      	push	{r7}
- 8003c16:	b083      	sub	sp, #12
- 8003c18:	af00      	add	r7, sp, #0
+ 8003b8c:	b480      	push	{r7}
+ 8003b8e:	b083      	sub	sp, #12
+ 8003b90:	af00      	add	r7, sp, #0
 /******************************************************************************/
 /*            PLL (clocked by HSE) used as System clock source                */
 /******************************************************************************/
   __IO uint32_t StartUpCounter = 0, HSEStatus = 0;
- 8003c1a:	2300      	movs	r3, #0
- 8003c1c:	607b      	str	r3, [r7, #4]
- 8003c1e:	2300      	movs	r3, #0
- 8003c20:	603b      	str	r3, [r7, #0]
+ 8003b92:	2300      	movs	r3, #0
+ 8003b94:	607b      	str	r3, [r7, #4]
+ 8003b96:	2300      	movs	r3, #0
+ 8003b98:	603b      	str	r3, [r7, #0]
   
   /* Enable HSE */
   RCC->CR |= ((uint32_t)RCC_CR_HSEON);
- 8003c22:	4a36      	ldr	r2, [pc, #216]	; (8003cfc <SetSysClock+0xe8>)
- 8003c24:	4b35      	ldr	r3, [pc, #212]	; (8003cfc <SetSysClock+0xe8>)
- 8003c26:	681b      	ldr	r3, [r3, #0]
- 8003c28:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
- 8003c2c:	6013      	str	r3, [r2, #0]
+ 8003b9a:	4a36      	ldr	r2, [pc, #216]	; (8003c74 <SetSysClock+0xe8>)
+ 8003b9c:	4b35      	ldr	r3, [pc, #212]	; (8003c74 <SetSysClock+0xe8>)
+ 8003b9e:	681b      	ldr	r3, [r3, #0]
+ 8003ba0:	f443 3380 	orr.w	r3, r3, #65536	; 0x10000
+ 8003ba4:	6013      	str	r3, [r2, #0]
  
   /* Wait till HSE is ready and if Time out is reached exit */
   do
   {
     HSEStatus = RCC->CR & RCC_CR_HSERDY;
- 8003c2e:	4b33      	ldr	r3, [pc, #204]	; (8003cfc <SetSysClock+0xe8>)
- 8003c30:	681b      	ldr	r3, [r3, #0]
- 8003c32:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
- 8003c36:	603b      	str	r3, [r7, #0]
+ 8003ba6:	4b33      	ldr	r3, [pc, #204]	; (8003c74 <SetSysClock+0xe8>)
+ 8003ba8:	681b      	ldr	r3, [r3, #0]
+ 8003baa:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
+ 8003bae:	603b      	str	r3, [r7, #0]
     StartUpCounter++;
- 8003c38:	687b      	ldr	r3, [r7, #4]
- 8003c3a:	3301      	adds	r3, #1
- 8003c3c:	607b      	str	r3, [r7, #4]
+ 8003bb0:	687b      	ldr	r3, [r7, #4]
+ 8003bb2:	3301      	adds	r3, #1
+ 8003bb4:	607b      	str	r3, [r7, #4]
   } while((HSEStatus == 0) && (StartUpCounter != HSE_STARTUP_TIMEOUT));
- 8003c3e:	683b      	ldr	r3, [r7, #0]
- 8003c40:	2b00      	cmp	r3, #0
- 8003c42:	d103      	bne.n	8003c4c <SetSysClock+0x38>
- 8003c44:	687b      	ldr	r3, [r7, #4]
- 8003c46:	f5b3 6fa0 	cmp.w	r3, #1280	; 0x500
- 8003c4a:	d1f0      	bne.n	8003c2e <SetSysClock+0x1a>
+ 8003bb6:	683b      	ldr	r3, [r7, #0]
+ 8003bb8:	2b00      	cmp	r3, #0
+ 8003bba:	d103      	bne.n	8003bc4 <SetSysClock+0x38>
+ 8003bbc:	687b      	ldr	r3, [r7, #4]
+ 8003bbe:	f5b3 6fa0 	cmp.w	r3, #1280	; 0x500
+ 8003bc2:	d1f0      	bne.n	8003ba6 <SetSysClock+0x1a>
 
   if ((RCC->CR & RCC_CR_HSERDY) != RESET)
- 8003c4c:	4b2b      	ldr	r3, [pc, #172]	; (8003cfc <SetSysClock+0xe8>)
- 8003c4e:	681b      	ldr	r3, [r3, #0]
- 8003c50:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
- 8003c54:	2b00      	cmp	r3, #0
- 8003c56:	d002      	beq.n	8003c5e <SetSysClock+0x4a>
+ 8003bc4:	4b2b      	ldr	r3, [pc, #172]	; (8003c74 <SetSysClock+0xe8>)
+ 8003bc6:	681b      	ldr	r3, [r3, #0]
+ 8003bc8:	f403 3300 	and.w	r3, r3, #131072	; 0x20000
+ 8003bcc:	2b00      	cmp	r3, #0
+ 8003bce:	d002      	beq.n	8003bd6 <SetSysClock+0x4a>
   {
     HSEStatus = (uint32_t)0x01;
- 8003c58:	2301      	movs	r3, #1
- 8003c5a:	603b      	str	r3, [r7, #0]
- 8003c5c:	e001      	b.n	8003c62 <SetSysClock+0x4e>
+ 8003bd0:	2301      	movs	r3, #1
+ 8003bd2:	603b      	str	r3, [r7, #0]
+ 8003bd4:	e001      	b.n	8003bda <SetSysClock+0x4e>
   }
   else
   {
     HSEStatus = (uint32_t)0x00;
- 8003c5e:	2300      	movs	r3, #0
- 8003c60:	603b      	str	r3, [r7, #0]
+ 8003bd6:	2300      	movs	r3, #0
+ 8003bd8:	603b      	str	r3, [r7, #0]
   }
 
   if (HSEStatus == (uint32_t)0x01)
- 8003c62:	683b      	ldr	r3, [r7, #0]
- 8003c64:	2b01      	cmp	r3, #1
- 8003c66:	d142      	bne.n	8003cee <SetSysClock+0xda>
+ 8003bda:	683b      	ldr	r3, [r7, #0]
+ 8003bdc:	2b01      	cmp	r3, #1
+ 8003bde:	d142      	bne.n	8003c66 <SetSysClock+0xda>
   {
     /* Enable high performance mode, System frequency up to 168 MHz */
     RCC->APB1ENR |= RCC_APB1ENR_PWREN;
- 8003c68:	4a24      	ldr	r2, [pc, #144]	; (8003cfc <SetSysClock+0xe8>)
- 8003c6a:	4b24      	ldr	r3, [pc, #144]	; (8003cfc <SetSysClock+0xe8>)
- 8003c6c:	6c1b      	ldr	r3, [r3, #64]	; 0x40
- 8003c6e:	f043 5380 	orr.w	r3, r3, #268435456	; 0x10000000
- 8003c72:	6413      	str	r3, [r2, #64]	; 0x40
+ 8003be0:	4a24      	ldr	r2, [pc, #144]	; (8003c74 <SetSysClock+0xe8>)
+ 8003be2:	4b24      	ldr	r3, [pc, #144]	; (8003c74 <SetSysClock+0xe8>)
+ 8003be4:	6c1b      	ldr	r3, [r3, #64]	; 0x40
+ 8003be6:	f043 5380 	orr.w	r3, r3, #268435456	; 0x10000000
+ 8003bea:	6413      	str	r3, [r2, #64]	; 0x40
     PWR->CR |= PWR_CR_PMODE;  
- 8003c74:	4a22      	ldr	r2, [pc, #136]	; (8003d00 <SetSysClock+0xec>)
- 8003c76:	4b22      	ldr	r3, [pc, #136]	; (8003d00 <SetSysClock+0xec>)
- 8003c78:	681b      	ldr	r3, [r3, #0]
- 8003c7a:	f443 4380 	orr.w	r3, r3, #16384	; 0x4000
- 8003c7e:	6013      	str	r3, [r2, #0]
+ 8003bec:	4a22      	ldr	r2, [pc, #136]	; (8003c78 <SetSysClock+0xec>)
+ 8003bee:	4b22      	ldr	r3, [pc, #136]	; (8003c78 <SetSysClock+0xec>)
+ 8003bf0:	681b      	ldr	r3, [r3, #0]
+ 8003bf2:	f443 4380 	orr.w	r3, r3, #16384	; 0x4000
+ 8003bf6:	6013      	str	r3, [r2, #0]
 
     /* HCLK = SYSCLK / 1*/
     RCC->CFGR |= RCC_CFGR_HPRE_DIV1;
- 8003c80:	4a1e      	ldr	r2, [pc, #120]	; (8003cfc <SetSysClock+0xe8>)
- 8003c82:	4b1e      	ldr	r3, [pc, #120]	; (8003cfc <SetSysClock+0xe8>)
- 8003c84:	689b      	ldr	r3, [r3, #8]
- 8003c86:	6093      	str	r3, [r2, #8]
+ 8003bf8:	4a1e      	ldr	r2, [pc, #120]	; (8003c74 <SetSysClock+0xe8>)
+ 8003bfa:	4b1e      	ldr	r3, [pc, #120]	; (8003c74 <SetSysClock+0xe8>)
+ 8003bfc:	689b      	ldr	r3, [r3, #8]
+ 8003bfe:	6093      	str	r3, [r2, #8]
       
     /* PCLK2 = HCLK / 2*/
     RCC->CFGR |= RCC_CFGR_PPRE2_DIV2;
- 8003c88:	4a1c      	ldr	r2, [pc, #112]	; (8003cfc <SetSysClock+0xe8>)
- 8003c8a:	4b1c      	ldr	r3, [pc, #112]	; (8003cfc <SetSysClock+0xe8>)
- 8003c8c:	689b      	ldr	r3, [r3, #8]
- 8003c8e:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
- 8003c92:	6093      	str	r3, [r2, #8]
+ 8003c00:	4a1c      	ldr	r2, [pc, #112]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c02:	4b1c      	ldr	r3, [pc, #112]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c04:	689b      	ldr	r3, [r3, #8]
+ 8003c06:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
+ 8003c0a:	6093      	str	r3, [r2, #8]
     
     /* PCLK1 = HCLK / 4*/
     RCC->CFGR |= RCC_CFGR_PPRE1_DIV4;
- 8003c94:	4a19      	ldr	r2, [pc, #100]	; (8003cfc <SetSysClock+0xe8>)
- 8003c96:	4b19      	ldr	r3, [pc, #100]	; (8003cfc <SetSysClock+0xe8>)
- 8003c98:	689b      	ldr	r3, [r3, #8]
- 8003c9a:	f443 53a0 	orr.w	r3, r3, #5120	; 0x1400
- 8003c9e:	6093      	str	r3, [r2, #8]
+ 8003c0c:	4a19      	ldr	r2, [pc, #100]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c0e:	4b19      	ldr	r3, [pc, #100]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c10:	689b      	ldr	r3, [r3, #8]
+ 8003c12:	f443 53a0 	orr.w	r3, r3, #5120	; 0x1400
+ 8003c16:	6093      	str	r3, [r2, #8]
 
     /* Configure the main PLL */
     RCC->PLLCFGR = PLL_M | (PLL_N << 6) | (((PLL_P >> 1) -1) << 16) |
- 8003ca0:	4b16      	ldr	r3, [pc, #88]	; (8003cfc <SetSysClock+0xe8>)
- 8003ca2:	4a18      	ldr	r2, [pc, #96]	; (8003d04 <SetSysClock+0xf0>)
- 8003ca4:	605a      	str	r2, [r3, #4]
+ 8003c18:	4b16      	ldr	r3, [pc, #88]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c1a:	4a18      	ldr	r2, [pc, #96]	; (8003c7c <SetSysClock+0xf0>)
+ 8003c1c:	605a      	str	r2, [r3, #4]
                    (RCC_PLLCFGR_PLLSRC_HSE) | (PLL_Q << 24);
 
     /* Enable the main PLL */
     RCC->CR |= RCC_CR_PLLON;
- 8003ca6:	4a15      	ldr	r2, [pc, #84]	; (8003cfc <SetSysClock+0xe8>)
- 8003ca8:	4b14      	ldr	r3, [pc, #80]	; (8003cfc <SetSysClock+0xe8>)
- 8003caa:	681b      	ldr	r3, [r3, #0]
- 8003cac:	f043 7380 	orr.w	r3, r3, #16777216	; 0x1000000
- 8003cb0:	6013      	str	r3, [r2, #0]
+ 8003c1e:	4a15      	ldr	r2, [pc, #84]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c20:	4b14      	ldr	r3, [pc, #80]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c22:	681b      	ldr	r3, [r3, #0]
+ 8003c24:	f043 7380 	orr.w	r3, r3, #16777216	; 0x1000000
+ 8003c28:	6013      	str	r3, [r2, #0]
 
     /* Wait till the main PLL is ready */
     while((RCC->CR & RCC_CR_PLLRDY) == 0)
- 8003cb2:	bf00      	nop
- 8003cb4:	4b11      	ldr	r3, [pc, #68]	; (8003cfc <SetSysClock+0xe8>)
- 8003cb6:	681b      	ldr	r3, [r3, #0]
- 8003cb8:	f003 7300 	and.w	r3, r3, #33554432	; 0x2000000
- 8003cbc:	2b00      	cmp	r3, #0
- 8003cbe:	d0f9      	beq.n	8003cb4 <SetSysClock+0xa0>
+ 8003c2a:	bf00      	nop
+ 8003c2c:	4b11      	ldr	r3, [pc, #68]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c2e:	681b      	ldr	r3, [r3, #0]
+ 8003c30:	f003 7300 	and.w	r3, r3, #33554432	; 0x2000000
+ 8003c34:	2b00      	cmp	r3, #0
+ 8003c36:	d0f9      	beq.n	8003c2c <SetSysClock+0xa0>
     {
     }
    
     /* Configure Flash prefetch, Instruction cache, Data cache and wait state */
     FLASH->ACR = FLASH_ACR_ICEN |FLASH_ACR_DCEN |FLASH_ACR_LATENCY_5WS;
- 8003cc0:	4b11      	ldr	r3, [pc, #68]	; (8003d08 <SetSysClock+0xf4>)
- 8003cc2:	f240 6205 	movw	r2, #1541	; 0x605
- 8003cc6:	601a      	str	r2, [r3, #0]
+ 8003c38:	4b11      	ldr	r3, [pc, #68]	; (8003c80 <SetSysClock+0xf4>)
+ 8003c3a:	f240 6205 	movw	r2, #1541	; 0x605
+ 8003c3e:	601a      	str	r2, [r3, #0]
 
     /* Select the main PLL as system clock source */
     RCC->CFGR &= (uint32_t)((uint32_t)~(RCC_CFGR_SW));
- 8003cc8:	4a0c      	ldr	r2, [pc, #48]	; (8003cfc <SetSysClock+0xe8>)
- 8003cca:	4b0c      	ldr	r3, [pc, #48]	; (8003cfc <SetSysClock+0xe8>)
- 8003ccc:	689b      	ldr	r3, [r3, #8]
- 8003cce:	f023 0303 	bic.w	r3, r3, #3
- 8003cd2:	6093      	str	r3, [r2, #8]
+ 8003c40:	4a0c      	ldr	r2, [pc, #48]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c42:	4b0c      	ldr	r3, [pc, #48]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c44:	689b      	ldr	r3, [r3, #8]
+ 8003c46:	f023 0303 	bic.w	r3, r3, #3
+ 8003c4a:	6093      	str	r3, [r2, #8]
     RCC->CFGR |= RCC_CFGR_SW_PLL;
- 8003cd4:	4a09      	ldr	r2, [pc, #36]	; (8003cfc <SetSysClock+0xe8>)
- 8003cd6:	4b09      	ldr	r3, [pc, #36]	; (8003cfc <SetSysClock+0xe8>)
- 8003cd8:	689b      	ldr	r3, [r3, #8]
- 8003cda:	f043 0302 	orr.w	r3, r3, #2
- 8003cde:	6093      	str	r3, [r2, #8]
+ 8003c4c:	4a09      	ldr	r2, [pc, #36]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c4e:	4b09      	ldr	r3, [pc, #36]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c50:	689b      	ldr	r3, [r3, #8]
+ 8003c52:	f043 0302 	orr.w	r3, r3, #2
+ 8003c56:	6093      	str	r3, [r2, #8]
 
     /* Wait till the main PLL is used as system clock source */
     while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS ) != RCC_CFGR_SWS_PLL)
- 8003ce0:	bf00      	nop
- 8003ce2:	4b06      	ldr	r3, [pc, #24]	; (8003cfc <SetSysClock+0xe8>)
- 8003ce4:	689b      	ldr	r3, [r3, #8]
- 8003ce6:	f003 030c 	and.w	r3, r3, #12
- 8003cea:	2b08      	cmp	r3, #8
- 8003cec:	d1f9      	bne.n	8003ce2 <SetSysClock+0xce>
+ 8003c58:	bf00      	nop
+ 8003c5a:	4b06      	ldr	r3, [pc, #24]	; (8003c74 <SetSysClock+0xe8>)
+ 8003c5c:	689b      	ldr	r3, [r3, #8]
+ 8003c5e:	f003 030c 	and.w	r3, r3, #12
+ 8003c62:	2b08      	cmp	r3, #8
+ 8003c64:	d1f9      	bne.n	8003c5a <SetSysClock+0xce>
   else
   { /* If HSE fails to start-up, the application will have wrong clock
          configuration. User can add here some code to deal with this error */
   }
 
 }
- 8003cee:	bf00      	nop
- 8003cf0:	370c      	adds	r7, #12
- 8003cf2:	46bd      	mov	sp, r7
- 8003cf4:	f85d 7b04 	ldr.w	r7, [sp], #4
- 8003cf8:	4770      	bx	lr
- 8003cfa:	bf00      	nop
- 8003cfc:	40023800 	.word	0x40023800
- 8003d00:	40007000 	.word	0x40007000
- 8003d04:	07405408 	.word	0x07405408
- 8003d08:	40023c00 	.word	0x40023c00
+ 8003c66:	bf00      	nop
+ 8003c68:	370c      	adds	r7, #12
+ 8003c6a:	46bd      	mov	sp, r7
+ 8003c6c:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8003c70:	4770      	bx	lr
+ 8003c72:	bf00      	nop
+ 8003c74:	40023800 	.word	0x40023800
+ 8003c78:	40007000 	.word	0x40007000
+ 8003c7c:	07405408 	.word	0x07405408
+ 8003c80:	40023c00 	.word	0x40023c00
 
-08003d0c <ts_itoa>:
+08003c84 <ts_itoa>:
 **  Abstract: Convert integer to ascii
 **  Returns:  void
 **---------------------------------------------------------------------------
 */
 void ts_itoa(char **buf, unsigned int d, int base)
 {
- 8003d0c:	b480      	push	{r7}
- 8003d0e:	b087      	sub	sp, #28
- 8003d10:	af00      	add	r7, sp, #0
- 8003d12:	60f8      	str	r0, [r7, #12]
- 8003d14:	60b9      	str	r1, [r7, #8]
- 8003d16:	607a      	str	r2, [r7, #4]
+ 8003c84:	b480      	push	{r7}
+ 8003c86:	b087      	sub	sp, #28
+ 8003c88:	af00      	add	r7, sp, #0
+ 8003c8a:	60f8      	str	r0, [r7, #12]
+ 8003c8c:	60b9      	str	r1, [r7, #8]
+ 8003c8e:	607a      	str	r2, [r7, #4]
 	int div = 1;
- 8003d18:	2301      	movs	r3, #1
- 8003d1a:	617b      	str	r3, [r7, #20]
+ 8003c90:	2301      	movs	r3, #1
+ 8003c92:	617b      	str	r3, [r7, #20]
 	while (d/div >= base)
- 8003d1c:	e004      	b.n	8003d28 <ts_itoa+0x1c>
+ 8003c94:	e004      	b.n	8003ca0 <ts_itoa+0x1c>
 		div *= base;
- 8003d1e:	697b      	ldr	r3, [r7, #20]
- 8003d20:	687a      	ldr	r2, [r7, #4]
- 8003d22:	fb02 f303 	mul.w	r3, r2, r3
- 8003d26:	617b      	str	r3, [r7, #20]
+ 8003c96:	697b      	ldr	r3, [r7, #20]
+ 8003c98:	687a      	ldr	r2, [r7, #4]
+ 8003c9a:	fb02 f303 	mul.w	r3, r2, r3
+ 8003c9e:	617b      	str	r3, [r7, #20]
 	while (d/div >= base)
- 8003d28:	697b      	ldr	r3, [r7, #20]
- 8003d2a:	68ba      	ldr	r2, [r7, #8]
- 8003d2c:	fbb2 f2f3 	udiv	r2, r2, r3
- 8003d30:	687b      	ldr	r3, [r7, #4]
- 8003d32:	429a      	cmp	r2, r3
- 8003d34:	d2f3      	bcs.n	8003d1e <ts_itoa+0x12>
+ 8003ca0:	697b      	ldr	r3, [r7, #20]
+ 8003ca2:	68ba      	ldr	r2, [r7, #8]
+ 8003ca4:	fbb2 f2f3 	udiv	r2, r2, r3
+ 8003ca8:	687b      	ldr	r3, [r7, #4]
+ 8003caa:	429a      	cmp	r2, r3
+ 8003cac:	d2f3      	bcs.n	8003c96 <ts_itoa+0x12>
 
 	while (div != 0)
- 8003d36:	e029      	b.n	8003d8c <ts_itoa+0x80>
+ 8003cae:	e029      	b.n	8003d04 <ts_itoa+0x80>
 	{
 		int num = d/div;
- 8003d38:	697b      	ldr	r3, [r7, #20]
- 8003d3a:	68ba      	ldr	r2, [r7, #8]
- 8003d3c:	fbb2 f3f3 	udiv	r3, r2, r3
- 8003d40:	613b      	str	r3, [r7, #16]
+ 8003cb0:	697b      	ldr	r3, [r7, #20]
+ 8003cb2:	68ba      	ldr	r2, [r7, #8]
+ 8003cb4:	fbb2 f3f3 	udiv	r3, r2, r3
+ 8003cb8:	613b      	str	r3, [r7, #16]
 		d = d%div;
- 8003d42:	697a      	ldr	r2, [r7, #20]
- 8003d44:	68bb      	ldr	r3, [r7, #8]
- 8003d46:	fbb3 f1f2 	udiv	r1, r3, r2
- 8003d4a:	fb02 f201 	mul.w	r2, r2, r1
- 8003d4e:	1a9b      	subs	r3, r3, r2
- 8003d50:	60bb      	str	r3, [r7, #8]
+ 8003cba:	697a      	ldr	r2, [r7, #20]
+ 8003cbc:	68bb      	ldr	r3, [r7, #8]
+ 8003cbe:	fbb3 f1f2 	udiv	r1, r3, r2
+ 8003cc2:	fb02 f201 	mul.w	r2, r2, r1
+ 8003cc6:	1a9b      	subs	r3, r3, r2
+ 8003cc8:	60bb      	str	r3, [r7, #8]
 		div /= base;
- 8003d52:	697a      	ldr	r2, [r7, #20]
- 8003d54:	687b      	ldr	r3, [r7, #4]
- 8003d56:	fb92 f3f3 	sdiv	r3, r2, r3
- 8003d5a:	617b      	str	r3, [r7, #20]
+ 8003cca:	697a      	ldr	r2, [r7, #20]
+ 8003ccc:	687b      	ldr	r3, [r7, #4]
+ 8003cce:	fb92 f3f3 	sdiv	r3, r2, r3
+ 8003cd2:	617b      	str	r3, [r7, #20]
 		if (num > 9)
- 8003d5c:	693b      	ldr	r3, [r7, #16]
- 8003d5e:	2b09      	cmp	r3, #9
- 8003d60:	dd0a      	ble.n	8003d78 <ts_itoa+0x6c>
+ 8003cd4:	693b      	ldr	r3, [r7, #16]
+ 8003cd6:	2b09      	cmp	r3, #9
+ 8003cd8:	dd0a      	ble.n	8003cf0 <ts_itoa+0x6c>
 			*((*buf)++) = (num-10) + 'A';
- 8003d62:	68fb      	ldr	r3, [r7, #12]
- 8003d64:	681b      	ldr	r3, [r3, #0]
- 8003d66:	1c59      	adds	r1, r3, #1
- 8003d68:	68fa      	ldr	r2, [r7, #12]
- 8003d6a:	6011      	str	r1, [r2, #0]
- 8003d6c:	693a      	ldr	r2, [r7, #16]
- 8003d6e:	b2d2      	uxtb	r2, r2
- 8003d70:	3237      	adds	r2, #55	; 0x37
- 8003d72:	b2d2      	uxtb	r2, r2
- 8003d74:	701a      	strb	r2, [r3, #0]
- 8003d76:	e009      	b.n	8003d8c <ts_itoa+0x80>
+ 8003cda:	68fb      	ldr	r3, [r7, #12]
+ 8003cdc:	681b      	ldr	r3, [r3, #0]
+ 8003cde:	1c59      	adds	r1, r3, #1
+ 8003ce0:	68fa      	ldr	r2, [r7, #12]
+ 8003ce2:	6011      	str	r1, [r2, #0]
+ 8003ce4:	693a      	ldr	r2, [r7, #16]
+ 8003ce6:	b2d2      	uxtb	r2, r2
+ 8003ce8:	3237      	adds	r2, #55	; 0x37
+ 8003cea:	b2d2      	uxtb	r2, r2
+ 8003cec:	701a      	strb	r2, [r3, #0]
+ 8003cee:	e009      	b.n	8003d04 <ts_itoa+0x80>
 		else
 			*((*buf)++) = num + '0';
- 8003d78:	68fb      	ldr	r3, [r7, #12]
- 8003d7a:	681b      	ldr	r3, [r3, #0]
- 8003d7c:	1c59      	adds	r1, r3, #1
- 8003d7e:	68fa      	ldr	r2, [r7, #12]
- 8003d80:	6011      	str	r1, [r2, #0]
- 8003d82:	693a      	ldr	r2, [r7, #16]
- 8003d84:	b2d2      	uxtb	r2, r2
- 8003d86:	3230      	adds	r2, #48	; 0x30
- 8003d88:	b2d2      	uxtb	r2, r2
- 8003d8a:	701a      	strb	r2, [r3, #0]
+ 8003cf0:	68fb      	ldr	r3, [r7, #12]
+ 8003cf2:	681b      	ldr	r3, [r3, #0]
+ 8003cf4:	1c59      	adds	r1, r3, #1
+ 8003cf6:	68fa      	ldr	r2, [r7, #12]
+ 8003cf8:	6011      	str	r1, [r2, #0]
+ 8003cfa:	693a      	ldr	r2, [r7, #16]
+ 8003cfc:	b2d2      	uxtb	r2, r2
+ 8003cfe:	3230      	adds	r2, #48	; 0x30
+ 8003d00:	b2d2      	uxtb	r2, r2
+ 8003d02:	701a      	strb	r2, [r3, #0]
 	while (div != 0)
- 8003d8c:	697b      	ldr	r3, [r7, #20]
- 8003d8e:	2b00      	cmp	r3, #0
- 8003d90:	d1d2      	bne.n	8003d38 <ts_itoa+0x2c>
+ 8003d04:	697b      	ldr	r3, [r7, #20]
+ 8003d06:	2b00      	cmp	r3, #0
+ 8003d08:	d1d2      	bne.n	8003cb0 <ts_itoa+0x2c>
 	}
 }
- 8003d92:	bf00      	nop
- 8003d94:	371c      	adds	r7, #28
- 8003d96:	46bd      	mov	sp, r7
- 8003d98:	f85d 7b04 	ldr.w	r7, [sp], #4
- 8003d9c:	4770      	bx	lr
+ 8003d0a:	bf00      	nop
+ 8003d0c:	371c      	adds	r7, #28
+ 8003d0e:	46bd      	mov	sp, r7
+ 8003d10:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8003d14:	4770      	bx	lr
 
-08003d9e <ts_formatstring>:
+08003d16 <ts_formatstring>:
 **  Abstract: Writes arguments va to buffer buf according to format fmt
 **  Returns:  Length of string
 **---------------------------------------------------------------------------
 */
 int ts_formatstring(char *buf, const char *fmt, va_list va)
 {
- 8003d9e:	b580      	push	{r7, lr}
- 8003da0:	b088      	sub	sp, #32
- 8003da2:	af00      	add	r7, sp, #0
- 8003da4:	60f8      	str	r0, [r7, #12]
- 8003da6:	60b9      	str	r1, [r7, #8]
- 8003da8:	607a      	str	r2, [r7, #4]
+ 8003d16:	b580      	push	{r7, lr}
+ 8003d18:	b088      	sub	sp, #32
+ 8003d1a:	af00      	add	r7, sp, #0
+ 8003d1c:	60f8      	str	r0, [r7, #12]
+ 8003d1e:	60b9      	str	r1, [r7, #8]
+ 8003d20:	607a      	str	r2, [r7, #4]
 	char *start_buf = buf;
- 8003daa:	68fb      	ldr	r3, [r7, #12]
- 8003dac:	617b      	str	r3, [r7, #20]
+ 8003d22:	68fb      	ldr	r3, [r7, #12]
+ 8003d24:	617b      	str	r3, [r7, #20]
 	while(*fmt)
- 8003dae:	e07d      	b.n	8003eac <ts_formatstring+0x10e>
+ 8003d26:	e07d      	b.n	8003e24 <ts_formatstring+0x10e>
 	{
 		/* Character needs formating? */
 		if (*fmt == '%')
- 8003db0:	68bb      	ldr	r3, [r7, #8]
- 8003db2:	781b      	ldrb	r3, [r3, #0]
- 8003db4:	2b25      	cmp	r3, #37	; 0x25
- 8003db6:	d171      	bne.n	8003e9c <ts_formatstring+0xfe>
+ 8003d28:	68bb      	ldr	r3, [r7, #8]
+ 8003d2a:	781b      	ldrb	r3, [r3, #0]
+ 8003d2c:	2b25      	cmp	r3, #37	; 0x25
+ 8003d2e:	d171      	bne.n	8003e14 <ts_formatstring+0xfe>
 		{
 			switch (*(++fmt))
- 8003db8:	68bb      	ldr	r3, [r7, #8]
- 8003dba:	3301      	adds	r3, #1
- 8003dbc:	60bb      	str	r3, [r7, #8]
- 8003dbe:	68bb      	ldr	r3, [r7, #8]
- 8003dc0:	781b      	ldrb	r3, [r3, #0]
- 8003dc2:	2b64      	cmp	r3, #100	; 0x64
- 8003dc4:	d01e      	beq.n	8003e04 <ts_formatstring+0x66>
- 8003dc6:	2b64      	cmp	r3, #100	; 0x64
- 8003dc8:	dc06      	bgt.n	8003dd8 <ts_formatstring+0x3a>
- 8003dca:	2b58      	cmp	r3, #88	; 0x58
- 8003dcc:	d050      	beq.n	8003e70 <ts_formatstring+0xd2>
- 8003dce:	2b63      	cmp	r3, #99	; 0x63
- 8003dd0:	d00e      	beq.n	8003df0 <ts_formatstring+0x52>
- 8003dd2:	2b25      	cmp	r3, #37	; 0x25
- 8003dd4:	d058      	beq.n	8003e88 <ts_formatstring+0xea>
- 8003dd6:	e05d      	b.n	8003e94 <ts_formatstring+0xf6>
- 8003dd8:	2b73      	cmp	r3, #115	; 0x73
- 8003dda:	d02b      	beq.n	8003e34 <ts_formatstring+0x96>
- 8003ddc:	2b73      	cmp	r3, #115	; 0x73
- 8003dde:	dc02      	bgt.n	8003de6 <ts_formatstring+0x48>
- 8003de0:	2b69      	cmp	r3, #105	; 0x69
- 8003de2:	d00f      	beq.n	8003e04 <ts_formatstring+0x66>
- 8003de4:	e056      	b.n	8003e94 <ts_formatstring+0xf6>
- 8003de6:	2b75      	cmp	r3, #117	; 0x75
- 8003de8:	d037      	beq.n	8003e5a <ts_formatstring+0xbc>
- 8003dea:	2b78      	cmp	r3, #120	; 0x78
- 8003dec:	d040      	beq.n	8003e70 <ts_formatstring+0xd2>
- 8003dee:	e051      	b.n	8003e94 <ts_formatstring+0xf6>
+ 8003d30:	68bb      	ldr	r3, [r7, #8]
+ 8003d32:	3301      	adds	r3, #1
+ 8003d34:	60bb      	str	r3, [r7, #8]
+ 8003d36:	68bb      	ldr	r3, [r7, #8]
+ 8003d38:	781b      	ldrb	r3, [r3, #0]
+ 8003d3a:	2b64      	cmp	r3, #100	; 0x64
+ 8003d3c:	d01e      	beq.n	8003d7c <ts_formatstring+0x66>
+ 8003d3e:	2b64      	cmp	r3, #100	; 0x64
+ 8003d40:	dc06      	bgt.n	8003d50 <ts_formatstring+0x3a>
+ 8003d42:	2b58      	cmp	r3, #88	; 0x58
+ 8003d44:	d050      	beq.n	8003de8 <ts_formatstring+0xd2>
+ 8003d46:	2b63      	cmp	r3, #99	; 0x63
+ 8003d48:	d00e      	beq.n	8003d68 <ts_formatstring+0x52>
+ 8003d4a:	2b25      	cmp	r3, #37	; 0x25
+ 8003d4c:	d058      	beq.n	8003e00 <ts_formatstring+0xea>
+ 8003d4e:	e05d      	b.n	8003e0c <ts_formatstring+0xf6>
+ 8003d50:	2b73      	cmp	r3, #115	; 0x73
+ 8003d52:	d02b      	beq.n	8003dac <ts_formatstring+0x96>
+ 8003d54:	2b73      	cmp	r3, #115	; 0x73
+ 8003d56:	dc02      	bgt.n	8003d5e <ts_formatstring+0x48>
+ 8003d58:	2b69      	cmp	r3, #105	; 0x69
+ 8003d5a:	d00f      	beq.n	8003d7c <ts_formatstring+0x66>
+ 8003d5c:	e056      	b.n	8003e0c <ts_formatstring+0xf6>
+ 8003d5e:	2b75      	cmp	r3, #117	; 0x75
+ 8003d60:	d037      	beq.n	8003dd2 <ts_formatstring+0xbc>
+ 8003d62:	2b78      	cmp	r3, #120	; 0x78
+ 8003d64:	d040      	beq.n	8003de8 <ts_formatstring+0xd2>
+ 8003d66:	e051      	b.n	8003e0c <ts_formatstring+0xf6>
 			{
 			  case 'c':
 				*buf++ = va_arg(va, int);
- 8003df0:	68fb      	ldr	r3, [r7, #12]
- 8003df2:	1c5a      	adds	r2, r3, #1
- 8003df4:	60fa      	str	r2, [r7, #12]
- 8003df6:	687a      	ldr	r2, [r7, #4]
- 8003df8:	1d11      	adds	r1, r2, #4
- 8003dfa:	6079      	str	r1, [r7, #4]
- 8003dfc:	6812      	ldr	r2, [r2, #0]
- 8003dfe:	b2d2      	uxtb	r2, r2
- 8003e00:	701a      	strb	r2, [r3, #0]
+ 8003d68:	68fb      	ldr	r3, [r7, #12]
+ 8003d6a:	1c5a      	adds	r2, r3, #1
+ 8003d6c:	60fa      	str	r2, [r7, #12]
+ 8003d6e:	687a      	ldr	r2, [r7, #4]
+ 8003d70:	1d11      	adds	r1, r2, #4
+ 8003d72:	6079      	str	r1, [r7, #4]
+ 8003d74:	6812      	ldr	r2, [r2, #0]
+ 8003d76:	b2d2      	uxtb	r2, r2
+ 8003d78:	701a      	strb	r2, [r3, #0]
 				break;
- 8003e02:	e047      	b.n	8003e94 <ts_formatstring+0xf6>
+ 8003d7a:	e047      	b.n	8003e0c <ts_formatstring+0xf6>
 			  case 'd':
 			  case 'i':
 				{
 					signed int val = va_arg(va, signed int);
- 8003e04:	687b      	ldr	r3, [r7, #4]
- 8003e06:	1d1a      	adds	r2, r3, #4
- 8003e08:	607a      	str	r2, [r7, #4]
- 8003e0a:	681b      	ldr	r3, [r3, #0]
- 8003e0c:	61fb      	str	r3, [r7, #28]
+ 8003d7c:	687b      	ldr	r3, [r7, #4]
+ 8003d7e:	1d1a      	adds	r2, r3, #4
+ 8003d80:	607a      	str	r2, [r7, #4]
+ 8003d82:	681b      	ldr	r3, [r3, #0]
+ 8003d84:	61fb      	str	r3, [r7, #28]
 					if (val < 0)
- 8003e0e:	69fb      	ldr	r3, [r7, #28]
- 8003e10:	2b00      	cmp	r3, #0
- 8003e12:	da07      	bge.n	8003e24 <ts_formatstring+0x86>
+ 8003d86:	69fb      	ldr	r3, [r7, #28]
+ 8003d88:	2b00      	cmp	r3, #0
+ 8003d8a:	da07      	bge.n	8003d9c <ts_formatstring+0x86>
 					{
 						val *= -1;
- 8003e14:	69fb      	ldr	r3, [r7, #28]
- 8003e16:	425b      	negs	r3, r3
- 8003e18:	61fb      	str	r3, [r7, #28]
+ 8003d8c:	69fb      	ldr	r3, [r7, #28]
+ 8003d8e:	425b      	negs	r3, r3
+ 8003d90:	61fb      	str	r3, [r7, #28]
 						*buf++ = '-';
- 8003e1a:	68fb      	ldr	r3, [r7, #12]
- 8003e1c:	1c5a      	adds	r2, r3, #1
- 8003e1e:	60fa      	str	r2, [r7, #12]
- 8003e20:	222d      	movs	r2, #45	; 0x2d
- 8003e22:	701a      	strb	r2, [r3, #0]
+ 8003d92:	68fb      	ldr	r3, [r7, #12]
+ 8003d94:	1c5a      	adds	r2, r3, #1
+ 8003d96:	60fa      	str	r2, [r7, #12]
+ 8003d98:	222d      	movs	r2, #45	; 0x2d
+ 8003d9a:	701a      	strb	r2, [r3, #0]
 					}
 					ts_itoa(&buf, val, 10);
- 8003e24:	69f9      	ldr	r1, [r7, #28]
- 8003e26:	f107 030c 	add.w	r3, r7, #12
- 8003e2a:	220a      	movs	r2, #10
- 8003e2c:	4618      	mov	r0, r3
- 8003e2e:	f7ff ff6d 	bl	8003d0c <ts_itoa>
+ 8003d9c:	69f9      	ldr	r1, [r7, #28]
+ 8003d9e:	f107 030c 	add.w	r3, r7, #12
+ 8003da2:	220a      	movs	r2, #10
+ 8003da4:	4618      	mov	r0, r3
+ 8003da6:	f7ff ff6d 	bl	8003c84 <ts_itoa>
 				}
 				break;
- 8003e32:	e02f      	b.n	8003e94 <ts_formatstring+0xf6>
+ 8003daa:	e02f      	b.n	8003e0c <ts_formatstring+0xf6>
 			  case 's':
 				{
 					char * arg = va_arg(va, char *);
- 8003e34:	687b      	ldr	r3, [r7, #4]
- 8003e36:	1d1a      	adds	r2, r3, #4
- 8003e38:	607a      	str	r2, [r7, #4]
- 8003e3a:	681b      	ldr	r3, [r3, #0]
- 8003e3c:	61bb      	str	r3, [r7, #24]
+ 8003dac:	687b      	ldr	r3, [r7, #4]
+ 8003dae:	1d1a      	adds	r2, r3, #4
+ 8003db0:	607a      	str	r2, [r7, #4]
+ 8003db2:	681b      	ldr	r3, [r3, #0]
+ 8003db4:	61bb      	str	r3, [r7, #24]
 					while (*arg)
- 8003e3e:	e007      	b.n	8003e50 <ts_formatstring+0xb2>
+ 8003db6:	e007      	b.n	8003dc8 <ts_formatstring+0xb2>
 					{
 						*buf++ = *arg++;
- 8003e40:	68fb      	ldr	r3, [r7, #12]
- 8003e42:	1c5a      	adds	r2, r3, #1
- 8003e44:	60fa      	str	r2, [r7, #12]
- 8003e46:	69ba      	ldr	r2, [r7, #24]
- 8003e48:	1c51      	adds	r1, r2, #1
- 8003e4a:	61b9      	str	r1, [r7, #24]
- 8003e4c:	7812      	ldrb	r2, [r2, #0]
- 8003e4e:	701a      	strb	r2, [r3, #0]
+ 8003db8:	68fb      	ldr	r3, [r7, #12]
+ 8003dba:	1c5a      	adds	r2, r3, #1
+ 8003dbc:	60fa      	str	r2, [r7, #12]
+ 8003dbe:	69ba      	ldr	r2, [r7, #24]
+ 8003dc0:	1c51      	adds	r1, r2, #1
+ 8003dc2:	61b9      	str	r1, [r7, #24]
+ 8003dc4:	7812      	ldrb	r2, [r2, #0]
+ 8003dc6:	701a      	strb	r2, [r3, #0]
 					while (*arg)
- 8003e50:	69bb      	ldr	r3, [r7, #24]
- 8003e52:	781b      	ldrb	r3, [r3, #0]
- 8003e54:	2b00      	cmp	r3, #0
- 8003e56:	d1f3      	bne.n	8003e40 <ts_formatstring+0xa2>
+ 8003dc8:	69bb      	ldr	r3, [r7, #24]
+ 8003dca:	781b      	ldrb	r3, [r3, #0]
+ 8003dcc:	2b00      	cmp	r3, #0
+ 8003dce:	d1f3      	bne.n	8003db8 <ts_formatstring+0xa2>
 					}
 				}
 				break;
- 8003e58:	e01c      	b.n	8003e94 <ts_formatstring+0xf6>
+ 8003dd0:	e01c      	b.n	8003e0c <ts_formatstring+0xf6>
 			  case 'u':
 					ts_itoa(&buf, va_arg(va, unsigned int), 10);
- 8003e5a:	687b      	ldr	r3, [r7, #4]
- 8003e5c:	1d1a      	adds	r2, r3, #4
- 8003e5e:	607a      	str	r2, [r7, #4]
- 8003e60:	6819      	ldr	r1, [r3, #0]
- 8003e62:	f107 030c 	add.w	r3, r7, #12
- 8003e66:	220a      	movs	r2, #10
- 8003e68:	4618      	mov	r0, r3
- 8003e6a:	f7ff ff4f 	bl	8003d0c <ts_itoa>
+ 8003dd2:	687b      	ldr	r3, [r7, #4]
+ 8003dd4:	1d1a      	adds	r2, r3, #4
+ 8003dd6:	607a      	str	r2, [r7, #4]
+ 8003dd8:	6819      	ldr	r1, [r3, #0]
+ 8003dda:	f107 030c 	add.w	r3, r7, #12
+ 8003dde:	220a      	movs	r2, #10
+ 8003de0:	4618      	mov	r0, r3
+ 8003de2:	f7ff ff4f 	bl	8003c84 <ts_itoa>
 				break;
- 8003e6e:	e011      	b.n	8003e94 <ts_formatstring+0xf6>
+ 8003de6:	e011      	b.n	8003e0c <ts_formatstring+0xf6>
 			  case 'x':
 			  case 'X':
 					ts_itoa(&buf, va_arg(va, int), 16);
- 8003e70:	687b      	ldr	r3, [r7, #4]
- 8003e72:	1d1a      	adds	r2, r3, #4
- 8003e74:	607a      	str	r2, [r7, #4]
- 8003e76:	681b      	ldr	r3, [r3, #0]
- 8003e78:	4619      	mov	r1, r3
- 8003e7a:	f107 030c 	add.w	r3, r7, #12
- 8003e7e:	2210      	movs	r2, #16
- 8003e80:	4618      	mov	r0, r3
- 8003e82:	f7ff ff43 	bl	8003d0c <ts_itoa>
+ 8003de8:	687b      	ldr	r3, [r7, #4]
+ 8003dea:	1d1a      	adds	r2, r3, #4
+ 8003dec:	607a      	str	r2, [r7, #4]
+ 8003dee:	681b      	ldr	r3, [r3, #0]
+ 8003df0:	4619      	mov	r1, r3
+ 8003df2:	f107 030c 	add.w	r3, r7, #12
+ 8003df6:	2210      	movs	r2, #16
+ 8003df8:	4618      	mov	r0, r3
+ 8003dfa:	f7ff ff43 	bl	8003c84 <ts_itoa>
 				break;
- 8003e86:	e005      	b.n	8003e94 <ts_formatstring+0xf6>
+ 8003dfe:	e005      	b.n	8003e0c <ts_formatstring+0xf6>
 			  case '%':
 				  *buf++ = '%';
- 8003e88:	68fb      	ldr	r3, [r7, #12]
- 8003e8a:	1c5a      	adds	r2, r3, #1
- 8003e8c:	60fa      	str	r2, [r7, #12]
- 8003e8e:	2225      	movs	r2, #37	; 0x25
- 8003e90:	701a      	strb	r2, [r3, #0]
+ 8003e00:	68fb      	ldr	r3, [r7, #12]
+ 8003e02:	1c5a      	adds	r2, r3, #1
+ 8003e04:	60fa      	str	r2, [r7, #12]
+ 8003e06:	2225      	movs	r2, #37	; 0x25
+ 8003e08:	701a      	strb	r2, [r3, #0]
 				  break;
- 8003e92:	bf00      	nop
+ 8003e0a:	bf00      	nop
 			}
 			fmt++;
- 8003e94:	68bb      	ldr	r3, [r7, #8]
- 8003e96:	3301      	adds	r3, #1
- 8003e98:	60bb      	str	r3, [r7, #8]
- 8003e9a:	e007      	b.n	8003eac <ts_formatstring+0x10e>
+ 8003e0c:	68bb      	ldr	r3, [r7, #8]
+ 8003e0e:	3301      	adds	r3, #1
+ 8003e10:	60bb      	str	r3, [r7, #8]
+ 8003e12:	e007      	b.n	8003e24 <ts_formatstring+0x10e>
 		}
 		/* Else just copy */
 		else
 		{
 			*buf++ = *fmt++;
- 8003e9c:	68fb      	ldr	r3, [r7, #12]
- 8003e9e:	1c5a      	adds	r2, r3, #1
- 8003ea0:	60fa      	str	r2, [r7, #12]
- 8003ea2:	68ba      	ldr	r2, [r7, #8]
- 8003ea4:	1c51      	adds	r1, r2, #1
- 8003ea6:	60b9      	str	r1, [r7, #8]
- 8003ea8:	7812      	ldrb	r2, [r2, #0]
- 8003eaa:	701a      	strb	r2, [r3, #0]
+ 8003e14:	68fb      	ldr	r3, [r7, #12]
+ 8003e16:	1c5a      	adds	r2, r3, #1
+ 8003e18:	60fa      	str	r2, [r7, #12]
+ 8003e1a:	68ba      	ldr	r2, [r7, #8]
+ 8003e1c:	1c51      	adds	r1, r2, #1
+ 8003e1e:	60b9      	str	r1, [r7, #8]
+ 8003e20:	7812      	ldrb	r2, [r2, #0]
+ 8003e22:	701a      	strb	r2, [r3, #0]
 	while(*fmt)
- 8003eac:	68bb      	ldr	r3, [r7, #8]
- 8003eae:	781b      	ldrb	r3, [r3, #0]
- 8003eb0:	2b00      	cmp	r3, #0
- 8003eb2:	f47f af7d 	bne.w	8003db0 <ts_formatstring+0x12>
+ 8003e24:	68bb      	ldr	r3, [r7, #8]
+ 8003e26:	781b      	ldrb	r3, [r3, #0]
+ 8003e28:	2b00      	cmp	r3, #0
+ 8003e2a:	f47f af7d 	bne.w	8003d28 <ts_formatstring+0x12>
 		}
 	}
 	*buf = 0;
- 8003eb6:	68fb      	ldr	r3, [r7, #12]
- 8003eb8:	2200      	movs	r2, #0
- 8003eba:	701a      	strb	r2, [r3, #0]
+ 8003e2e:	68fb      	ldr	r3, [r7, #12]
+ 8003e30:	2200      	movs	r2, #0
+ 8003e32:	701a      	strb	r2, [r3, #0]
 
 	return (int)(buf - start_buf);
- 8003ebc:	68fb      	ldr	r3, [r7, #12]
- 8003ebe:	461a      	mov	r2, r3
- 8003ec0:	697b      	ldr	r3, [r7, #20]
- 8003ec2:	1ad3      	subs	r3, r2, r3
+ 8003e34:	68fb      	ldr	r3, [r7, #12]
+ 8003e36:	461a      	mov	r2, r3
+ 8003e38:	697b      	ldr	r3, [r7, #20]
+ 8003e3a:	1ad3      	subs	r3, r2, r3
 }
- 8003ec4:	4618      	mov	r0, r3
- 8003ec6:	3720      	adds	r7, #32
- 8003ec8:	46bd      	mov	sp, r7
- 8003eca:	bd80      	pop	{r7, pc}
+ 8003e3c:	4618      	mov	r0, r3
+ 8003e3e:	3720      	adds	r7, #32
+ 8003e40:	46bd      	mov	sp, r7
+ 8003e42:	bd80      	pop	{r7, pc}
 
-08003ecc <ts_formatlength>:
+08003e44 <ts_formatlength>:
 **            format string and va_list va
 **  Returns:  Maximum length
 **---------------------------------------------------------------------------
 */
 int ts_formatlength(const char *fmt, va_list va)
 {
- 8003ecc:	b480      	push	{r7}
- 8003ece:	b085      	sub	sp, #20
- 8003ed0:	af00      	add	r7, sp, #0
- 8003ed2:	6078      	str	r0, [r7, #4]
- 8003ed4:	6039      	str	r1, [r7, #0]
+ 8003e44:	b480      	push	{r7}
+ 8003e46:	b085      	sub	sp, #20
+ 8003e48:	af00      	add	r7, sp, #0
+ 8003e4a:	6078      	str	r0, [r7, #4]
+ 8003e4c:	6039      	str	r1, [r7, #0]
 	int length = 0;
- 8003ed6:	2300      	movs	r3, #0
- 8003ed8:	60fb      	str	r3, [r7, #12]
+ 8003e4e:	2300      	movs	r3, #0
+ 8003e50:	60fb      	str	r3, [r7, #12]
 	while (*fmt)
- 8003eda:	e081      	b.n	8003fe0 <ts_formatlength+0x114>
+ 8003e52:	e081      	b.n	8003f58 <ts_formatlength+0x114>
 	{
 		if (*fmt == '%')
- 8003edc:	687b      	ldr	r3, [r7, #4]
- 8003ede:	781b      	ldrb	r3, [r3, #0]
- 8003ee0:	2b25      	cmp	r3, #37	; 0x25
- 8003ee2:	d177      	bne.n	8003fd4 <ts_formatlength+0x108>
+ 8003e54:	687b      	ldr	r3, [r7, #4]
+ 8003e56:	781b      	ldrb	r3, [r3, #0]
+ 8003e58:	2b25      	cmp	r3, #37	; 0x25
+ 8003e5a:	d177      	bne.n	8003f4c <ts_formatlength+0x108>
 		{
 			++fmt;
- 8003ee4:	687b      	ldr	r3, [r7, #4]
- 8003ee6:	3301      	adds	r3, #1
- 8003ee8:	607b      	str	r3, [r7, #4]
+ 8003e5c:	687b      	ldr	r3, [r7, #4]
+ 8003e5e:	3301      	adds	r3, #1
+ 8003e60:	607b      	str	r3, [r7, #4]
 			switch (*fmt)
- 8003eea:	687b      	ldr	r3, [r7, #4]
- 8003eec:	781b      	ldrb	r3, [r3, #0]
- 8003eee:	3b58      	subs	r3, #88	; 0x58
- 8003ef0:	2b20      	cmp	r3, #32
- 8003ef2:	d86a      	bhi.n	8003fca <ts_formatlength+0xfe>
- 8003ef4:	a201      	add	r2, pc, #4	; (adr r2, 8003efc <ts_formatlength+0x30>)
- 8003ef6:	f852 f023 	ldr.w	pc, [r2, r3, lsl #2]
- 8003efa:	bf00      	nop
- 8003efc:	08003fbd 	.word	0x08003fbd
- 8003f00:	08003fcb 	.word	0x08003fcb
- 8003f04:	08003fcb 	.word	0x08003fcb
- 8003f08:	08003fcb 	.word	0x08003fcb
- 8003f0c:	08003fcb 	.word	0x08003fcb
- 8003f10:	08003fcb 	.word	0x08003fcb
- 8003f14:	08003fcb 	.word	0x08003fcb
- 8003f18:	08003fcb 	.word	0x08003fcb
- 8003f1c:	08003fcb 	.word	0x08003fcb
- 8003f20:	08003fcb 	.word	0x08003fcb
- 8003f24:	08003fcb 	.word	0x08003fcb
- 8003f28:	08003f81 	.word	0x08003f81
- 8003f2c:	08003f8f 	.word	0x08003f8f
- 8003f30:	08003fcb 	.word	0x08003fcb
- 8003f34:	08003fcb 	.word	0x08003fcb
- 8003f38:	08003fcb 	.word	0x08003fcb
- 8003f3c:	08003fcb 	.word	0x08003fcb
- 8003f40:	08003f8f 	.word	0x08003f8f
- 8003f44:	08003fcb 	.word	0x08003fcb
- 8003f48:	08003fcb 	.word	0x08003fcb
- 8003f4c:	08003fcb 	.word	0x08003fcb
- 8003f50:	08003fcb 	.word	0x08003fcb
- 8003f54:	08003fcb 	.word	0x08003fcb
- 8003f58:	08003fcb 	.word	0x08003fcb
- 8003f5c:	08003fcb 	.word	0x08003fcb
- 8003f60:	08003fcb 	.word	0x08003fcb
- 8003f64:	08003fcb 	.word	0x08003fcb
- 8003f68:	08003f9d 	.word	0x08003f9d
- 8003f6c:	08003fcb 	.word	0x08003fcb
- 8003f70:	08003f8f 	.word	0x08003f8f
- 8003f74:	08003fcb 	.word	0x08003fcb
- 8003f78:	08003fcb 	.word	0x08003fcb
- 8003f7c:	08003fbd 	.word	0x08003fbd
+ 8003e62:	687b      	ldr	r3, [r7, #4]
+ 8003e64:	781b      	ldrb	r3, [r3, #0]
+ 8003e66:	3b58      	subs	r3, #88	; 0x58
+ 8003e68:	2b20      	cmp	r3, #32
+ 8003e6a:	d86a      	bhi.n	8003f42 <ts_formatlength+0xfe>
+ 8003e6c:	a201      	add	r2, pc, #4	; (adr r2, 8003e74 <ts_formatlength+0x30>)
+ 8003e6e:	f852 f023 	ldr.w	pc, [r2, r3, lsl #2]
+ 8003e72:	bf00      	nop
+ 8003e74:	08003f35 	.word	0x08003f35
+ 8003e78:	08003f43 	.word	0x08003f43
+ 8003e7c:	08003f43 	.word	0x08003f43
+ 8003e80:	08003f43 	.word	0x08003f43
+ 8003e84:	08003f43 	.word	0x08003f43
+ 8003e88:	08003f43 	.word	0x08003f43
+ 8003e8c:	08003f43 	.word	0x08003f43
+ 8003e90:	08003f43 	.word	0x08003f43
+ 8003e94:	08003f43 	.word	0x08003f43
+ 8003e98:	08003f43 	.word	0x08003f43
+ 8003e9c:	08003f43 	.word	0x08003f43
+ 8003ea0:	08003ef9 	.word	0x08003ef9
+ 8003ea4:	08003f07 	.word	0x08003f07
+ 8003ea8:	08003f43 	.word	0x08003f43
+ 8003eac:	08003f43 	.word	0x08003f43
+ 8003eb0:	08003f43 	.word	0x08003f43
+ 8003eb4:	08003f43 	.word	0x08003f43
+ 8003eb8:	08003f07 	.word	0x08003f07
+ 8003ebc:	08003f43 	.word	0x08003f43
+ 8003ec0:	08003f43 	.word	0x08003f43
+ 8003ec4:	08003f43 	.word	0x08003f43
+ 8003ec8:	08003f43 	.word	0x08003f43
+ 8003ecc:	08003f43 	.word	0x08003f43
+ 8003ed0:	08003f43 	.word	0x08003f43
+ 8003ed4:	08003f43 	.word	0x08003f43
+ 8003ed8:	08003f43 	.word	0x08003f43
+ 8003edc:	08003f43 	.word	0x08003f43
+ 8003ee0:	08003f15 	.word	0x08003f15
+ 8003ee4:	08003f43 	.word	0x08003f43
+ 8003ee8:	08003f07 	.word	0x08003f07
+ 8003eec:	08003f43 	.word	0x08003f43
+ 8003ef0:	08003f43 	.word	0x08003f43
+ 8003ef4:	08003f35 	.word	0x08003f35
 			{
 			  case 'c':
 		  		  va_arg(va, int);
- 8003f80:	683b      	ldr	r3, [r7, #0]
- 8003f82:	3304      	adds	r3, #4
- 8003f84:	603b      	str	r3, [r7, #0]
+ 8003ef8:	683b      	ldr	r3, [r7, #0]
+ 8003efa:	3304      	adds	r3, #4
+ 8003efc:	603b      	str	r3, [r7, #0]
 				  ++length;
- 8003f86:	68fb      	ldr	r3, [r7, #12]
- 8003f88:	3301      	adds	r3, #1
- 8003f8a:	60fb      	str	r3, [r7, #12]
+ 8003efe:	68fb      	ldr	r3, [r7, #12]
+ 8003f00:	3301      	adds	r3, #1
+ 8003f02:	60fb      	str	r3, [r7, #12]
 				  break;
- 8003f8c:	e025      	b.n	8003fda <ts_formatlength+0x10e>
+ 8003f04:	e025      	b.n	8003f52 <ts_formatlength+0x10e>
 			  case 'd':
 			  case 'i':
 			  case 'u':
 				  /* 32 bits integer is max 11 characters with minus sign */
 				  length += 11;
- 8003f8e:	68fb      	ldr	r3, [r7, #12]
- 8003f90:	330b      	adds	r3, #11
- 8003f92:	60fb      	str	r3, [r7, #12]
+ 8003f06:	68fb      	ldr	r3, [r7, #12]
+ 8003f08:	330b      	adds	r3, #11
+ 8003f0a:	60fb      	str	r3, [r7, #12]
 				  va_arg(va, int);
- 8003f94:	683b      	ldr	r3, [r7, #0]
- 8003f96:	3304      	adds	r3, #4
- 8003f98:	603b      	str	r3, [r7, #0]
+ 8003f0c:	683b      	ldr	r3, [r7, #0]
+ 8003f0e:	3304      	adds	r3, #4
+ 8003f10:	603b      	str	r3, [r7, #0]
 				  break;
- 8003f9a:	e01e      	b.n	8003fda <ts_formatlength+0x10e>
+ 8003f12:	e01e      	b.n	8003f52 <ts_formatlength+0x10e>
 			  case 's':
 			  	  {
 			  		  char * str = va_arg(va, char *);
- 8003f9c:	683b      	ldr	r3, [r7, #0]
- 8003f9e:	1d1a      	adds	r2, r3, #4
- 8003fa0:	603a      	str	r2, [r7, #0]
- 8003fa2:	681b      	ldr	r3, [r3, #0]
- 8003fa4:	60bb      	str	r3, [r7, #8]
+ 8003f14:	683b      	ldr	r3, [r7, #0]
+ 8003f16:	1d1a      	adds	r2, r3, #4
+ 8003f18:	603a      	str	r2, [r7, #0]
+ 8003f1a:	681b      	ldr	r3, [r3, #0]
+ 8003f1c:	60bb      	str	r3, [r7, #8]
 			  		  while (*str++)
- 8003fa6:	e002      	b.n	8003fae <ts_formatlength+0xe2>
+ 8003f1e:	e002      	b.n	8003f26 <ts_formatlength+0xe2>
 			  			  ++length;
- 8003fa8:	68fb      	ldr	r3, [r7, #12]
- 8003faa:	3301      	adds	r3, #1
- 8003fac:	60fb      	str	r3, [r7, #12]
+ 8003f20:	68fb      	ldr	r3, [r7, #12]
+ 8003f22:	3301      	adds	r3, #1
+ 8003f24:	60fb      	str	r3, [r7, #12]
 			  		  while (*str++)
- 8003fae:	68bb      	ldr	r3, [r7, #8]
- 8003fb0:	1c5a      	adds	r2, r3, #1
- 8003fb2:	60ba      	str	r2, [r7, #8]
- 8003fb4:	781b      	ldrb	r3, [r3, #0]
- 8003fb6:	2b00      	cmp	r3, #0
- 8003fb8:	d1f6      	bne.n	8003fa8 <ts_formatlength+0xdc>
+ 8003f26:	68bb      	ldr	r3, [r7, #8]
+ 8003f28:	1c5a      	adds	r2, r3, #1
+ 8003f2a:	60ba      	str	r2, [r7, #8]
+ 8003f2c:	781b      	ldrb	r3, [r3, #0]
+ 8003f2e:	2b00      	cmp	r3, #0
+ 8003f30:	d1f6      	bne.n	8003f20 <ts_formatlength+0xdc>
 			  	  }
 				  break;
- 8003fba:	e00e      	b.n	8003fda <ts_formatlength+0x10e>
+ 8003f32:	e00e      	b.n	8003f52 <ts_formatlength+0x10e>
 			  case 'x':
 			  case 'X':
 				  /* 32 bits integer as hex is max 8 characters */
 				  length += 8;
- 8003fbc:	68fb      	ldr	r3, [r7, #12]
- 8003fbe:	3308      	adds	r3, #8
- 8003fc0:	60fb      	str	r3, [r7, #12]
+ 8003f34:	68fb      	ldr	r3, [r7, #12]
+ 8003f36:	3308      	adds	r3, #8
+ 8003f38:	60fb      	str	r3, [r7, #12]
 				  va_arg(va, unsigned int);
- 8003fc2:	683b      	ldr	r3, [r7, #0]
- 8003fc4:	3304      	adds	r3, #4
- 8003fc6:	603b      	str	r3, [r7, #0]
+ 8003f3a:	683b      	ldr	r3, [r7, #0]
+ 8003f3c:	3304      	adds	r3, #4
+ 8003f3e:	603b      	str	r3, [r7, #0]
 				  break;
- 8003fc8:	e007      	b.n	8003fda <ts_formatlength+0x10e>
+ 8003f40:	e007      	b.n	8003f52 <ts_formatlength+0x10e>
 			  default:
 				  ++length;
- 8003fca:	68fb      	ldr	r3, [r7, #12]
- 8003fcc:	3301      	adds	r3, #1
- 8003fce:	60fb      	str	r3, [r7, #12]
+ 8003f42:	68fb      	ldr	r3, [r7, #12]
+ 8003f44:	3301      	adds	r3, #1
+ 8003f46:	60fb      	str	r3, [r7, #12]
 				  break;
- 8003fd0:	bf00      	nop
- 8003fd2:	e002      	b.n	8003fda <ts_formatlength+0x10e>
+ 8003f48:	bf00      	nop
+ 8003f4a:	e002      	b.n	8003f52 <ts_formatlength+0x10e>
 			}
 		}
 		else
 		{
 			++length;
- 8003fd4:	68fb      	ldr	r3, [r7, #12]
- 8003fd6:	3301      	adds	r3, #1
- 8003fd8:	60fb      	str	r3, [r7, #12]
+ 8003f4c:	68fb      	ldr	r3, [r7, #12]
+ 8003f4e:	3301      	adds	r3, #1
+ 8003f50:	60fb      	str	r3, [r7, #12]
 		}
 		++fmt;
- 8003fda:	687b      	ldr	r3, [r7, #4]
- 8003fdc:	3301      	adds	r3, #1
- 8003fde:	607b      	str	r3, [r7, #4]
+ 8003f52:	687b      	ldr	r3, [r7, #4]
+ 8003f54:	3301      	adds	r3, #1
+ 8003f56:	607b      	str	r3, [r7, #4]
 	while (*fmt)
- 8003fe0:	687b      	ldr	r3, [r7, #4]
- 8003fe2:	781b      	ldrb	r3, [r3, #0]
- 8003fe4:	2b00      	cmp	r3, #0
- 8003fe6:	f47f af79 	bne.w	8003edc <ts_formatlength+0x10>
+ 8003f58:	687b      	ldr	r3, [r7, #4]
+ 8003f5a:	781b      	ldrb	r3, [r3, #0]
+ 8003f5c:	2b00      	cmp	r3, #0
+ 8003f5e:	f47f af79 	bne.w	8003e54 <ts_formatlength+0x10>
 	}
 	return length;
- 8003fea:	68fb      	ldr	r3, [r7, #12]
+ 8003f62:	68fb      	ldr	r3, [r7, #12]
 }
- 8003fec:	4618      	mov	r0, r3
- 8003fee:	3714      	adds	r7, #20
- 8003ff0:	46bd      	mov	sp, r7
- 8003ff2:	f85d 7b04 	ldr.w	r7, [sp], #4
- 8003ff6:	4770      	bx	lr
+ 8003f64:	4618      	mov	r0, r3
+ 8003f66:	3714      	adds	r7, #20
+ 8003f68:	46bd      	mov	sp, r7
+ 8003f6a:	f85d 7b04 	ldr.w	r7, [sp], #4
+ 8003f6e:	4770      	bx	lr
 
-08003ff8 <printf>:
+08003f70 <printf>:
 **  Returns:  Number of bytes written
 **
 **===========================================================================
 */
 int printf(const char *fmt, ...)
 {
- 8003ff8:	b40f      	push	{r0, r1, r2, r3}
- 8003ffa:	e92d 43f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, lr}
- 8003ffe:	b085      	sub	sp, #20
- 8004000:	af00      	add	r7, sp, #0
+ 8003f70:	b40f      	push	{r0, r1, r2, r3}
+ 8003f72:	e92d 43f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, lr}
+ 8003f76:	b085      	sub	sp, #20
+ 8003f78:	af00      	add	r7, sp, #0
 	int length = 0;
- 8004002:	2300      	movs	r3, #0
- 8004004:	60fb      	str	r3, [r7, #12]
+ 8003f7a:	2300      	movs	r3, #0
+ 8003f7c:	60fb      	str	r3, [r7, #12]
 	va_list va;
 	va_start(va, fmt);
- 8004006:	f107 0334 	add.w	r3, r7, #52	; 0x34
- 800400a:	603b      	str	r3, [r7, #0]
+ 8003f7e:	f107 0334 	add.w	r3, r7, #52	; 0x34
+ 8003f82:	603b      	str	r3, [r7, #0]
 	length = ts_formatlength(fmt, va);
- 800400c:	6839      	ldr	r1, [r7, #0]
- 800400e:	6b38      	ldr	r0, [r7, #48]	; 0x30
- 8004010:	f7ff ff5c 	bl	8003ecc <ts_formatlength>
- 8004014:	60f8      	str	r0, [r7, #12]
+ 8003f84:	6839      	ldr	r1, [r7, #0]
+ 8003f86:	6b38      	ldr	r0, [r7, #48]	; 0x30
+ 8003f88:	f7ff ff5c 	bl	8003e44 <ts_formatlength>
+ 8003f8c:	60f8      	str	r0, [r7, #12]
 	va_end(va);
 	{
- 8004016:	466b      	mov	r3, sp
- 8004018:	461e      	mov	r6, r3
+ 8003f8e:	466b      	mov	r3, sp
+ 8003f90:	461e      	mov	r6, r3
 		char buf[length];
- 800401a:	68f9      	ldr	r1, [r7, #12]
- 800401c:	1e4b      	subs	r3, r1, #1
- 800401e:	60bb      	str	r3, [r7, #8]
- 8004020:	460b      	mov	r3, r1
- 8004022:	461a      	mov	r2, r3
- 8004024:	f04f 0300 	mov.w	r3, #0
- 8004028:	ea4f 09c3 	mov.w	r9, r3, lsl #3
- 800402c:	ea49 7952 	orr.w	r9, r9, r2, lsr #29
- 8004030:	ea4f 08c2 	mov.w	r8, r2, lsl #3
- 8004034:	460b      	mov	r3, r1
- 8004036:	461a      	mov	r2, r3
- 8004038:	f04f 0300 	mov.w	r3, #0
- 800403c:	00dd      	lsls	r5, r3, #3
- 800403e:	ea45 7552 	orr.w	r5, r5, r2, lsr #29
- 8004042:	00d4      	lsls	r4, r2, #3
- 8004044:	460b      	mov	r3, r1
- 8004046:	3307      	adds	r3, #7
- 8004048:	08db      	lsrs	r3, r3, #3
- 800404a:	00db      	lsls	r3, r3, #3
- 800404c:	ebad 0d03 	sub.w	sp, sp, r3
- 8004050:	466b      	mov	r3, sp
- 8004052:	3300      	adds	r3, #0
- 8004054:	607b      	str	r3, [r7, #4]
+ 8003f92:	68f9      	ldr	r1, [r7, #12]
+ 8003f94:	1e4b      	subs	r3, r1, #1
+ 8003f96:	60bb      	str	r3, [r7, #8]
+ 8003f98:	460b      	mov	r3, r1
+ 8003f9a:	461a      	mov	r2, r3
+ 8003f9c:	f04f 0300 	mov.w	r3, #0
+ 8003fa0:	ea4f 09c3 	mov.w	r9, r3, lsl #3
+ 8003fa4:	ea49 7952 	orr.w	r9, r9, r2, lsr #29
+ 8003fa8:	ea4f 08c2 	mov.w	r8, r2, lsl #3
+ 8003fac:	460b      	mov	r3, r1
+ 8003fae:	461a      	mov	r2, r3
+ 8003fb0:	f04f 0300 	mov.w	r3, #0
+ 8003fb4:	00dd      	lsls	r5, r3, #3
+ 8003fb6:	ea45 7552 	orr.w	r5, r5, r2, lsr #29
+ 8003fba:	00d4      	lsls	r4, r2, #3
+ 8003fbc:	460b      	mov	r3, r1
+ 8003fbe:	3307      	adds	r3, #7
+ 8003fc0:	08db      	lsrs	r3, r3, #3
+ 8003fc2:	00db      	lsls	r3, r3, #3
+ 8003fc4:	ebad 0d03 	sub.w	sp, sp, r3
+ 8003fc8:	466b      	mov	r3, sp
+ 8003fca:	3300      	adds	r3, #0
+ 8003fcc:	607b      	str	r3, [r7, #4]
 		va_start(va, fmt);
- 8004056:	f107 0334 	add.w	r3, r7, #52	; 0x34
- 800405a:	603b      	str	r3, [r7, #0]
+ 8003fce:	f107 0334 	add.w	r3, r7, #52	; 0x34
+ 8003fd2:	603b      	str	r3, [r7, #0]
 		length = ts_formatstring(buf, fmt, va);
- 800405c:	687b      	ldr	r3, [r7, #4]
- 800405e:	683a      	ldr	r2, [r7, #0]
- 8004060:	6b39      	ldr	r1, [r7, #48]	; 0x30
- 8004062:	4618      	mov	r0, r3
- 8004064:	f7ff fe9b 	bl	8003d9e <ts_formatstring>
- 8004068:	60f8      	str	r0, [r7, #12]
+ 8003fd4:	687b      	ldr	r3, [r7, #4]
+ 8003fd6:	683a      	ldr	r2, [r7, #0]
+ 8003fd8:	6b39      	ldr	r1, [r7, #48]	; 0x30
+ 8003fda:	4618      	mov	r0, r3
+ 8003fdc:	f7ff fe9b 	bl	8003d16 <ts_formatstring>
+ 8003fe0:	60f8      	str	r0, [r7, #12]
 		length = _write(1, buf, length);
- 800406a:	687b      	ldr	r3, [r7, #4]
- 800406c:	68fa      	ldr	r2, [r7, #12]
- 800406e:	4619      	mov	r1, r3
- 8004070:	2001      	movs	r0, #1
- 8004072:	f7ff fd7b 	bl	8003b6c <_write>
- 8004076:	60f8      	str	r0, [r7, #12]
- 8004078:	46b5      	mov	sp, r6
+ 8003fe2:	687b      	ldr	r3, [r7, #4]
+ 8003fe4:	68fa      	ldr	r2, [r7, #12]
+ 8003fe6:	4619      	mov	r1, r3
+ 8003fe8:	2001      	movs	r0, #1
+ 8003fea:	f7ff fd7b 	bl	8003ae4 <_write>
+ 8003fee:	60f8      	str	r0, [r7, #12]
+ 8003ff0:	46b5      	mov	sp, r6
 		va_end(va);
 	}
 	return length;
- 800407a:	68fb      	ldr	r3, [r7, #12]
+ 8003ff2:	68fb      	ldr	r3, [r7, #12]
 }
- 800407c:	4618      	mov	r0, r3
- 800407e:	3714      	adds	r7, #20
- 8004080:	46bd      	mov	sp, r7
- 8004082:	e8bd 43f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, lr}
- 8004086:	b004      	add	sp, #16
- 8004088:	4770      	bx	lr
+ 8003ff4:	4618      	mov	r0, r3
+ 8003ff6:	3714      	adds	r7, #20
+ 8003ff8:	46bd      	mov	sp, r7
+ 8003ffa:	e8bd 43f0 	ldmia.w	sp!, {r4, r5, r6, r7, r8, r9, lr}
+ 8003ffe:	b004      	add	sp, #16
+ 8004000:	4770      	bx	lr
 	...
 
-0800408c <__libc_init_array>:
- 800408c:	b570      	push	{r4, r5, r6, lr}
- 800408e:	4e0d      	ldr	r6, [pc, #52]	; (80040c4 <__libc_init_array+0x38>)
- 8004090:	4c0d      	ldr	r4, [pc, #52]	; (80040c8 <__libc_init_array+0x3c>)
- 8004092:	1ba4      	subs	r4, r4, r6
- 8004094:	10a4      	asrs	r4, r4, #2
- 8004096:	2500      	movs	r5, #0
- 8004098:	42a5      	cmp	r5, r4
- 800409a:	d109      	bne.n	80040b0 <__libc_init_array+0x24>
- 800409c:	4e0b      	ldr	r6, [pc, #44]	; (80040cc <__libc_init_array+0x40>)
- 800409e:	4c0c      	ldr	r4, [pc, #48]	; (80040d0 <__libc_init_array+0x44>)
- 80040a0:	f000 f928 	bl	80042f4 <_init>
- 80040a4:	1ba4      	subs	r4, r4, r6
- 80040a6:	10a4      	asrs	r4, r4, #2
- 80040a8:	2500      	movs	r5, #0
- 80040aa:	42a5      	cmp	r5, r4
- 80040ac:	d105      	bne.n	80040ba <__libc_init_array+0x2e>
- 80040ae:	bd70      	pop	{r4, r5, r6, pc}
- 80040b0:	f856 3025 	ldr.w	r3, [r6, r5, lsl #2]
- 80040b4:	4798      	blx	r3
- 80040b6:	3501      	adds	r5, #1
- 80040b8:	e7ee      	b.n	8004098 <__libc_init_array+0xc>
- 80040ba:	f856 3025 	ldr.w	r3, [r6, r5, lsl #2]
- 80040be:	4798      	blx	r3
- 80040c0:	3501      	adds	r5, #1
- 80040c2:	e7f2      	b.n	80040aa <__libc_init_array+0x1e>
- 80040c4:	0800430c 	.word	0x0800430c
- 80040c8:	0800430c 	.word	0x0800430c
- 80040cc:	0800430c 	.word	0x0800430c
- 80040d0:	08004310 	.word	0x08004310
+08004004 <__libc_init_array>:
+ 8004004:	b570      	push	{r4, r5, r6, lr}
+ 8004006:	4e0d      	ldr	r6, [pc, #52]	; (800403c <__libc_init_array+0x38>)
+ 8004008:	4c0d      	ldr	r4, [pc, #52]	; (8004040 <__libc_init_array+0x3c>)
+ 800400a:	1ba4      	subs	r4, r4, r6
+ 800400c:	10a4      	asrs	r4, r4, #2
+ 800400e:	2500      	movs	r5, #0
+ 8004010:	42a5      	cmp	r5, r4
+ 8004012:	d109      	bne.n	8004028 <__libc_init_array+0x24>
+ 8004014:	4e0b      	ldr	r6, [pc, #44]	; (8004044 <__libc_init_array+0x40>)
+ 8004016:	4c0c      	ldr	r4, [pc, #48]	; (8004048 <__libc_init_array+0x44>)
+ 8004018:	f000 f928 	bl	800426c <_init>
+ 800401c:	1ba4      	subs	r4, r4, r6
+ 800401e:	10a4      	asrs	r4, r4, #2
+ 8004020:	2500      	movs	r5, #0
+ 8004022:	42a5      	cmp	r5, r4
+ 8004024:	d105      	bne.n	8004032 <__libc_init_array+0x2e>
+ 8004026:	bd70      	pop	{r4, r5, r6, pc}
+ 8004028:	f856 3025 	ldr.w	r3, [r6, r5, lsl #2]
+ 800402c:	4798      	blx	r3
+ 800402e:	3501      	adds	r5, #1
+ 8004030:	e7ee      	b.n	8004010 <__libc_init_array+0xc>
+ 8004032:	f856 3025 	ldr.w	r3, [r6, r5, lsl #2]
+ 8004036:	4798      	blx	r3
+ 8004038:	3501      	adds	r5, #1
+ 800403a:	e7f2      	b.n	8004022 <__libc_init_array+0x1e>
+ 800403c:	08004284 	.word	0x08004284
+ 8004040:	08004284 	.word	0x08004284
+ 8004044:	08004284 	.word	0x08004284
+ 8004048:	08004288 	.word	0x08004288
 
-080040d4 <free>:
- 80040d4:	4b02      	ldr	r3, [pc, #8]	; (80040e0 <free+0xc>)
- 80040d6:	4601      	mov	r1, r0
- 80040d8:	6818      	ldr	r0, [r3, #0]
- 80040da:	f000 b817 	b.w	800410c <_free_r>
- 80040de:	bf00      	nop
- 80040e0:	20000028 	.word	0x20000028
+0800404c <free>:
+ 800404c:	4b02      	ldr	r3, [pc, #8]	; (8004058 <free+0xc>)
+ 800404e:	4601      	mov	r1, r0
+ 8004050:	6818      	ldr	r0, [r3, #0]
+ 8004052:	f000 b817 	b.w	8004084 <_free_r>
+ 8004056:	bf00      	nop
+ 8004058:	20000028 	.word	0x20000028
 
-080040e4 <memcpy>:
- 80040e4:	b510      	push	{r4, lr}
- 80040e6:	1e43      	subs	r3, r0, #1
- 80040e8:	440a      	add	r2, r1
- 80040ea:	4291      	cmp	r1, r2
- 80040ec:	d100      	bne.n	80040f0 <memcpy+0xc>
- 80040ee:	bd10      	pop	{r4, pc}
- 80040f0:	f811 4b01 	ldrb.w	r4, [r1], #1
- 80040f4:	f803 4f01 	strb.w	r4, [r3, #1]!
- 80040f8:	e7f7      	b.n	80040ea <memcpy+0x6>
+0800405c <memcpy>:
+ 800405c:	b510      	push	{r4, lr}
+ 800405e:	1e43      	subs	r3, r0, #1
+ 8004060:	440a      	add	r2, r1
+ 8004062:	4291      	cmp	r1, r2
+ 8004064:	d100      	bne.n	8004068 <memcpy+0xc>
+ 8004066:	bd10      	pop	{r4, pc}
+ 8004068:	f811 4b01 	ldrb.w	r4, [r1], #1
+ 800406c:	f803 4f01 	strb.w	r4, [r3, #1]!
+ 8004070:	e7f7      	b.n	8004062 <memcpy+0x6>
 
-080040fa <memset>:
- 80040fa:	4402      	add	r2, r0
- 80040fc:	4603      	mov	r3, r0
- 80040fe:	4293      	cmp	r3, r2
- 8004100:	d100      	bne.n	8004104 <memset+0xa>
- 8004102:	4770      	bx	lr
- 8004104:	f803 1b01 	strb.w	r1, [r3], #1
- 8004108:	e7f9      	b.n	80040fe <memset+0x4>
+08004072 <memset>:
+ 8004072:	4402      	add	r2, r0
+ 8004074:	4603      	mov	r3, r0
+ 8004076:	4293      	cmp	r3, r2
+ 8004078:	d100      	bne.n	800407c <memset+0xa>
+ 800407a:	4770      	bx	lr
+ 800407c:	f803 1b01 	strb.w	r1, [r3], #1
+ 8004080:	e7f9      	b.n	8004076 <memset+0x4>
 	...
 
-0800410c <_free_r>:
- 800410c:	b538      	push	{r3, r4, r5, lr}
- 800410e:	4605      	mov	r5, r0
- 8004110:	2900      	cmp	r1, #0
- 8004112:	d045      	beq.n	80041a0 <_free_r+0x94>
- 8004114:	f851 3c04 	ldr.w	r3, [r1, #-4]
- 8004118:	1f0c      	subs	r4, r1, #4
- 800411a:	2b00      	cmp	r3, #0
- 800411c:	bfb8      	it	lt
- 800411e:	18e4      	addlt	r4, r4, r3
- 8004120:	f000 f842 	bl	80041a8 <__malloc_lock>
- 8004124:	4a1f      	ldr	r2, [pc, #124]	; (80041a4 <_free_r+0x98>)
- 8004126:	6813      	ldr	r3, [r2, #0]
- 8004128:	4610      	mov	r0, r2
- 800412a:	b933      	cbnz	r3, 800413a <_free_r+0x2e>
- 800412c:	6063      	str	r3, [r4, #4]
- 800412e:	6014      	str	r4, [r2, #0]
- 8004130:	4628      	mov	r0, r5
- 8004132:	e8bd 4038 	ldmia.w	sp!, {r3, r4, r5, lr}
- 8004136:	f000 b838 	b.w	80041aa <__malloc_unlock>
- 800413a:	42a3      	cmp	r3, r4
- 800413c:	d90c      	bls.n	8004158 <_free_r+0x4c>
- 800413e:	6821      	ldr	r1, [r4, #0]
- 8004140:	1862      	adds	r2, r4, r1
- 8004142:	4293      	cmp	r3, r2
- 8004144:	bf04      	itt	eq
- 8004146:	681a      	ldreq	r2, [r3, #0]
- 8004148:	685b      	ldreq	r3, [r3, #4]
- 800414a:	6063      	str	r3, [r4, #4]
- 800414c:	bf04      	itt	eq
- 800414e:	1852      	addeq	r2, r2, r1
- 8004150:	6022      	streq	r2, [r4, #0]
- 8004152:	6004      	str	r4, [r0, #0]
- 8004154:	e7ec      	b.n	8004130 <_free_r+0x24>
- 8004156:	4613      	mov	r3, r2
- 8004158:	685a      	ldr	r2, [r3, #4]
- 800415a:	b10a      	cbz	r2, 8004160 <_free_r+0x54>
- 800415c:	42a2      	cmp	r2, r4
- 800415e:	d9fa      	bls.n	8004156 <_free_r+0x4a>
- 8004160:	6819      	ldr	r1, [r3, #0]
- 8004162:	1858      	adds	r0, r3, r1
- 8004164:	42a0      	cmp	r0, r4
- 8004166:	d10b      	bne.n	8004180 <_free_r+0x74>
- 8004168:	6820      	ldr	r0, [r4, #0]
- 800416a:	4401      	add	r1, r0
- 800416c:	1858      	adds	r0, r3, r1
- 800416e:	4282      	cmp	r2, r0
- 8004170:	6019      	str	r1, [r3, #0]
- 8004172:	d1dd      	bne.n	8004130 <_free_r+0x24>
- 8004174:	6810      	ldr	r0, [r2, #0]
- 8004176:	6852      	ldr	r2, [r2, #4]
- 8004178:	605a      	str	r2, [r3, #4]
- 800417a:	4401      	add	r1, r0
- 800417c:	6019      	str	r1, [r3, #0]
- 800417e:	e7d7      	b.n	8004130 <_free_r+0x24>
- 8004180:	d902      	bls.n	8004188 <_free_r+0x7c>
- 8004182:	230c      	movs	r3, #12
- 8004184:	602b      	str	r3, [r5, #0]
- 8004186:	e7d3      	b.n	8004130 <_free_r+0x24>
- 8004188:	6820      	ldr	r0, [r4, #0]
- 800418a:	1821      	adds	r1, r4, r0
- 800418c:	428a      	cmp	r2, r1
- 800418e:	bf04      	itt	eq
- 8004190:	6811      	ldreq	r1, [r2, #0]
- 8004192:	6852      	ldreq	r2, [r2, #4]
- 8004194:	6062      	str	r2, [r4, #4]
- 8004196:	bf04      	itt	eq
- 8004198:	1809      	addeq	r1, r1, r0
- 800419a:	6021      	streq	r1, [r4, #0]
- 800419c:	605c      	str	r4, [r3, #4]
- 800419e:	e7c7      	b.n	8004130 <_free_r+0x24>
- 80041a0:	bd38      	pop	{r3, r4, r5, pc}
- 80041a2:	bf00      	nop
- 80041a4:	20001e0c 	.word	0x20001e0c
+08004084 <_free_r>:
+ 8004084:	b538      	push	{r3, r4, r5, lr}
+ 8004086:	4605      	mov	r5, r0
+ 8004088:	2900      	cmp	r1, #0
+ 800408a:	d045      	beq.n	8004118 <_free_r+0x94>
+ 800408c:	f851 3c04 	ldr.w	r3, [r1, #-4]
+ 8004090:	1f0c      	subs	r4, r1, #4
+ 8004092:	2b00      	cmp	r3, #0
+ 8004094:	bfb8      	it	lt
+ 8004096:	18e4      	addlt	r4, r4, r3
+ 8004098:	f000 f842 	bl	8004120 <__malloc_lock>
+ 800409c:	4a1f      	ldr	r2, [pc, #124]	; (800411c <_free_r+0x98>)
+ 800409e:	6813      	ldr	r3, [r2, #0]
+ 80040a0:	4610      	mov	r0, r2
+ 80040a2:	b933      	cbnz	r3, 80040b2 <_free_r+0x2e>
+ 80040a4:	6063      	str	r3, [r4, #4]
+ 80040a6:	6014      	str	r4, [r2, #0]
+ 80040a8:	4628      	mov	r0, r5
+ 80040aa:	e8bd 4038 	ldmia.w	sp!, {r3, r4, r5, lr}
+ 80040ae:	f000 b838 	b.w	8004122 <__malloc_unlock>
+ 80040b2:	42a3      	cmp	r3, r4
+ 80040b4:	d90c      	bls.n	80040d0 <_free_r+0x4c>
+ 80040b6:	6821      	ldr	r1, [r4, #0]
+ 80040b8:	1862      	adds	r2, r4, r1
+ 80040ba:	4293      	cmp	r3, r2
+ 80040bc:	bf04      	itt	eq
+ 80040be:	681a      	ldreq	r2, [r3, #0]
+ 80040c0:	685b      	ldreq	r3, [r3, #4]
+ 80040c2:	6063      	str	r3, [r4, #4]
+ 80040c4:	bf04      	itt	eq
+ 80040c6:	1852      	addeq	r2, r2, r1
+ 80040c8:	6022      	streq	r2, [r4, #0]
+ 80040ca:	6004      	str	r4, [r0, #0]
+ 80040cc:	e7ec      	b.n	80040a8 <_free_r+0x24>
+ 80040ce:	4613      	mov	r3, r2
+ 80040d0:	685a      	ldr	r2, [r3, #4]
+ 80040d2:	b10a      	cbz	r2, 80040d8 <_free_r+0x54>
+ 80040d4:	42a2      	cmp	r2, r4
+ 80040d6:	d9fa      	bls.n	80040ce <_free_r+0x4a>
+ 80040d8:	6819      	ldr	r1, [r3, #0]
+ 80040da:	1858      	adds	r0, r3, r1
+ 80040dc:	42a0      	cmp	r0, r4
+ 80040de:	d10b      	bne.n	80040f8 <_free_r+0x74>
+ 80040e0:	6820      	ldr	r0, [r4, #0]
+ 80040e2:	4401      	add	r1, r0
+ 80040e4:	1858      	adds	r0, r3, r1
+ 80040e6:	4282      	cmp	r2, r0
+ 80040e8:	6019      	str	r1, [r3, #0]
+ 80040ea:	d1dd      	bne.n	80040a8 <_free_r+0x24>
+ 80040ec:	6810      	ldr	r0, [r2, #0]
+ 80040ee:	6852      	ldr	r2, [r2, #4]
+ 80040f0:	605a      	str	r2, [r3, #4]
+ 80040f2:	4401      	add	r1, r0
+ 80040f4:	6019      	str	r1, [r3, #0]
+ 80040f6:	e7d7      	b.n	80040a8 <_free_r+0x24>
+ 80040f8:	d902      	bls.n	8004100 <_free_r+0x7c>
+ 80040fa:	230c      	movs	r3, #12
+ 80040fc:	602b      	str	r3, [r5, #0]
+ 80040fe:	e7d3      	b.n	80040a8 <_free_r+0x24>
+ 8004100:	6820      	ldr	r0, [r4, #0]
+ 8004102:	1821      	adds	r1, r4, r0
+ 8004104:	428a      	cmp	r2, r1
+ 8004106:	bf04      	itt	eq
+ 8004108:	6811      	ldreq	r1, [r2, #0]
+ 800410a:	6852      	ldreq	r2, [r2, #4]
+ 800410c:	6062      	str	r2, [r4, #4]
+ 800410e:	bf04      	itt	eq
+ 8004110:	1809      	addeq	r1, r1, r0
+ 8004112:	6021      	streq	r1, [r4, #0]
+ 8004114:	605c      	str	r4, [r3, #4]
+ 8004116:	e7c7      	b.n	80040a8 <_free_r+0x24>
+ 8004118:	bd38      	pop	{r3, r4, r5, pc}
+ 800411a:	bf00      	nop
+ 800411c:	20001e0c 	.word	0x20001e0c
 
-080041a8 <__malloc_lock>:
- 80041a8:	4770      	bx	lr
+08004120 <__malloc_lock>:
+ 8004120:	4770      	bx	lr
 
-080041aa <__malloc_unlock>:
- 80041aa:	4770      	bx	lr
- 80041ac:	454c4449 	.word	0x454c4449
- 80041b0:	00000000 	.word	0x00000000
- 80041b4:	20726d54 	.word	0x20726d54
- 80041b8:	00637653 	.word	0x00637653
- 80041bc:	51726d54 	.word	0x51726d54
- 80041c0:	00000000 	.word	0x00000000
- 80041c4:	75716552 	.word	0x75716552
- 80041c8:	51747365 	.word	0x51747365
- 80041cc:	65756575 	.word	0x65756575
- 80041d0:	00000000 	.word	0x00000000
- 80041d4:	70736552 	.word	0x70736552
- 80041d8:	65736e6f 	.word	0x65736e6f
- 80041dc:	75657551 	.word	0x75657551
- 80041e0:	00000065 	.word	0x00000065
- 80041e4:	53204444 	.word	0x53204444
- 80041e8:	64656863 	.word	0x64656863
- 80041ec:	72656c75 	.word	0x72656c75
- 80041f0:	00000000 	.word	0x00000000
- 80041f4:	54204444 	.word	0x54204444
- 80041f8:	206b7361 	.word	0x206b7361
- 80041fc:	656e6547 	.word	0x656e6547
- 8004200:	6f746172 	.word	0x6f746172
- 8004204:	00312072 	.word	0x00312072
- 8004208:	54204444 	.word	0x54204444
- 800420c:	206b7361 	.word	0x206b7361
- 8004210:	656e6547 	.word	0x656e6547
- 8004214:	6f746172 	.word	0x6f746172
- 8004218:	00322072 	.word	0x00322072
- 800421c:	54204444 	.word	0x54204444
- 8004220:	206b7361 	.word	0x206b7361
- 8004224:	656e6547 	.word	0x656e6547
- 8004228:	6f746172 	.word	0x6f746172
- 800422c:	00332072 	.word	0x00332072
- 8004230:	696e6f4d 	.word	0x696e6f4d
- 8004234:	00726f74 	.word	0x00726f74
- 8004238:	656e6547 	.word	0x656e6547
- 800423c:	6f746172 	.word	0x6f746172
- 8004240:	00312072 	.word	0x00312072
- 8004244:	656e6547 	.word	0x656e6547
- 8004248:	6f746172 	.word	0x6f746172
- 800424c:	00322072 	.word	0x00322072
- 8004250:	656e6547 	.word	0x656e6547
- 8004254:	6f746172 	.word	0x6f746172
- 8004258:	00332072 	.word	0x00332072
- 800425c:	72657355 	.word	0x72657355
- 8004260:	73615420 	.word	0x73615420
- 8004264:	0031206b 	.word	0x0031206b
- 8004268:	72657355 	.word	0x72657355
- 800426c:	73615420 	.word	0x73615420
- 8004270:	0032206b 	.word	0x0032206b
- 8004274:	72657355 	.word	0x72657355
- 8004278:	73615420 	.word	0x73615420
- 800427c:	0033206b 	.word	0x0033206b
- 8004280:	69746341 	.word	0x69746341
- 8004284:	74206576 	.word	0x74206576
- 8004288:	206b7361 	.word	0x206b7361
- 800428c:	7473696c 	.word	0x7473696c
- 8004290:	756f6320 	.word	0x756f6320
- 8004294:	203a746e 	.word	0x203a746e
- 8004298:	000a6425 	.word	0x000a6425
- 800429c:	706d6f43 	.word	0x706d6f43
- 80042a0:	6574656c 	.word	0x6574656c
- 80042a4:	73617420 	.word	0x73617420
- 80042a8:	696c206b 	.word	0x696c206b
- 80042ac:	63207473 	.word	0x63207473
- 80042b0:	746e756f 	.word	0x746e756f
- 80042b4:	6425203a 	.word	0x6425203a
- 80042b8:	0000000a 	.word	0x0000000a
- 80042bc:	7265764f 	.word	0x7265764f
- 80042c0:	20657564 	.word	0x20657564
- 80042c4:	6b736174 	.word	0x6b736174
- 80042c8:	73696c20 	.word	0x73696c20
- 80042cc:	6f632074 	.word	0x6f632074
- 80042d0:	3a746e75 	.word	0x3a746e75
- 80042d4:	0a642520 	.word	0x0a642520
- 80042d8:	00000000 	.word	0x00000000
+08004122 <__malloc_unlock>:
+ 8004122:	4770      	bx	lr
+ 8004124:	454c4449 	.word	0x454c4449
+ 8004128:	00000000 	.word	0x00000000
+ 800412c:	20726d54 	.word	0x20726d54
+ 8004130:	00637653 	.word	0x00637653
+ 8004134:	51726d54 	.word	0x51726d54
+ 8004138:	00000000 	.word	0x00000000
+ 800413c:	75716552 	.word	0x75716552
+ 8004140:	51747365 	.word	0x51747365
+ 8004144:	65756575 	.word	0x65756575
+ 8004148:	00000000 	.word	0x00000000
+ 800414c:	70736552 	.word	0x70736552
+ 8004150:	65736e6f 	.word	0x65736e6f
+ 8004154:	75657551 	.word	0x75657551
+ 8004158:	00000065 	.word	0x00000065
+ 800415c:	53204444 	.word	0x53204444
+ 8004160:	64656863 	.word	0x64656863
+ 8004164:	72656c75 	.word	0x72656c75
+ 8004168:	00000000 	.word	0x00000000
+ 800416c:	54204444 	.word	0x54204444
+ 8004170:	206b7361 	.word	0x206b7361
+ 8004174:	656e6547 	.word	0x656e6547
+ 8004178:	6f746172 	.word	0x6f746172
+ 800417c:	00312072 	.word	0x00312072
+ 8004180:	54204444 	.word	0x54204444
+ 8004184:	206b7361 	.word	0x206b7361
+ 8004188:	656e6547 	.word	0x656e6547
+ 800418c:	6f746172 	.word	0x6f746172
+ 8004190:	00322072 	.word	0x00322072
+ 8004194:	54204444 	.word	0x54204444
+ 8004198:	206b7361 	.word	0x206b7361
+ 800419c:	656e6547 	.word	0x656e6547
+ 80041a0:	6f746172 	.word	0x6f746172
+ 80041a4:	00332072 	.word	0x00332072
+ 80041a8:	696e6f4d 	.word	0x696e6f4d
+ 80041ac:	00726f74 	.word	0x00726f74
+ 80041b0:	656e6547 	.word	0x656e6547
+ 80041b4:	6f746172 	.word	0x6f746172
+ 80041b8:	00312072 	.word	0x00312072
+ 80041bc:	656e6547 	.word	0x656e6547
+ 80041c0:	6f746172 	.word	0x6f746172
+ 80041c4:	00322072 	.word	0x00322072
+ 80041c8:	656e6547 	.word	0x656e6547
+ 80041cc:	6f746172 	.word	0x6f746172
+ 80041d0:	00332072 	.word	0x00332072
+ 80041d4:	72657355 	.word	0x72657355
+ 80041d8:	73615420 	.word	0x73615420
+ 80041dc:	0031206b 	.word	0x0031206b
+ 80041e0:	72657355 	.word	0x72657355
+ 80041e4:	73615420 	.word	0x73615420
+ 80041e8:	0032206b 	.word	0x0032206b
+ 80041ec:	72657355 	.word	0x72657355
+ 80041f0:	73615420 	.word	0x73615420
+ 80041f4:	0033206b 	.word	0x0033206b
+ 80041f8:	69746341 	.word	0x69746341
+ 80041fc:	74206576 	.word	0x74206576
+ 8004200:	206b7361 	.word	0x206b7361
+ 8004204:	7473696c 	.word	0x7473696c
+ 8004208:	756f6320 	.word	0x756f6320
+ 800420c:	203a746e 	.word	0x203a746e
+ 8004210:	000a6425 	.word	0x000a6425
+ 8004214:	706d6f43 	.word	0x706d6f43
+ 8004218:	6574656c 	.word	0x6574656c
+ 800421c:	73617420 	.word	0x73617420
+ 8004220:	696c206b 	.word	0x696c206b
+ 8004224:	63207473 	.word	0x63207473
+ 8004228:	746e756f 	.word	0x746e756f
+ 800422c:	6425203a 	.word	0x6425203a
+ 8004230:	0000000a 	.word	0x0000000a
+ 8004234:	7265764f 	.word	0x7265764f
+ 8004238:	20657564 	.word	0x20657564
+ 800423c:	6b736174 	.word	0x6b736174
+ 8004240:	73696c20 	.word	0x73696c20
+ 8004244:	6f632074 	.word	0x6f632074
+ 8004248:	3a746e75 	.word	0x3a746e75
+ 800424c:	0a642520 	.word	0x0a642520
+ 8004250:	00000000 	.word	0x00000000
 
-080042dc <GPIO_PIN>:
- 80042dc:	20001000 80004000                       ... .@..
+08004254 <GPIO_PIN>:
+ 8004254:	20001000 80004000                       ... .@..
 
-080042e4 <GPIO_CLK>:
- 80042e4:	00000008 00000008 00000008 00000008     ................
+0800425c <GPIO_CLK>:
+ 800425c:	00000008 00000008 00000008 00000008     ................
 
-080042f4 <_init>:
- 80042f4:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
- 80042f6:	bf00      	nop
- 80042f8:	bcf8      	pop	{r3, r4, r5, r6, r7}
- 80042fa:	bc08      	pop	{r3}
- 80042fc:	469e      	mov	lr, r3
- 80042fe:	4770      	bx	lr
+0800426c <_init>:
+ 800426c:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 800426e:	bf00      	nop
+ 8004270:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 8004272:	bc08      	pop	{r3}
+ 8004274:	469e      	mov	lr, r3
+ 8004276:	4770      	bx	lr
 
-08004300 <_fini>:
- 8004300:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
- 8004302:	bf00      	nop
- 8004304:	bcf8      	pop	{r3, r4, r5, r6, r7}
- 8004306:	bc08      	pop	{r3}
- 8004308:	469e      	mov	lr, r3
- 800430a:	4770      	bx	lr
+08004278 <_fini>:
+ 8004278:	b5f8      	push	{r3, r4, r5, r6, r7, lr}
+ 800427a:	bf00      	nop
+ 800427c:	bcf8      	pop	{r3, r4, r5, r6, r7}
+ 800427e:	bc08      	pop	{r3}
+ 8004280:	469e      	mov	lr, r3
+ 8004282:	4770      	bx	lr
