@@ -146,6 +146,8 @@ functionality.
 #include "../FreeRTOS_Source/include/semphr.h"
 #include "../FreeRTOS_Source/include/task.h"
 #include "../FreeRTOS_Source/include/timers.h"
+/* I think this should switch it to use heap 4 memory */
+#include "../FreeRTOS_Source/portable/MemMang/heap_4.c"
 
 /*-----------------------------------------------------------*/
 //#define mainQUEUE_LENGTH 100
@@ -178,6 +180,10 @@ functionality.
 #define TASK_1_PERIOD 500
 #define TASK_3_EXECUTION_TIME 200
 #define TASK_1_PERIOD 500 */
+
+/* this is done to be able to use vTaskGetRunTimeStats() */
+#define configGENERATE_RUN_TIME_STATS 1
+// there are two more macros that will need to be added: https://www.freertos.org/rtos-run-time-stats.html
 
 /* Initializer functions for hardware */
 static void prvSetupHardware( void );
@@ -264,9 +270,14 @@ int main(void)
 	prvSetupHardware();
 
 	//active_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
-	STM_EVAL_LEDInit(amber_led); // look into here for how to initialize the LEDs with GPIOC
+	STM_EVAL_LEDInit(amber_led); 
 	STM_EVAL_LEDInit(green_led);
 	STM_EVAL_LEDInit(blue_led);
+
+	// test if LEDs work
+	STM_EVAL_LEDOn(amber_led);
+	STM_EVAL_LEDOn(green_led);
+	STM_EVAL_LEDOn(blue_led);
 
 	// create queue to send and receive potentiometer value
 	xQueue_request_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message *));
@@ -411,6 +422,8 @@ static void DD_Scheduler_Task( void *pvParameters )
 				}
 			}
 		}
+
+		vPortFree(received_message);
 	}
 }
 
@@ -549,12 +562,13 @@ static void Monitor_Task( void *pvParameters )
 		int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
 
 		// print to console number of tasks in each list
+		printf("In Monitoring Task\n");
 		printf("Active task list count: %d\n", active_list_count);
 		printf("Complete task list count: %d\n", complete_list_count);
 		printf("Overdue task list count: %d\n", overdue_list_count);
 
 		// additional challenge: measure and report processor utilization and system overhead (to do this check status and avilability of CPU using FreeRTOS APIs)
-
+		//vTaskGetRunTimeStats( char *pcWriteBuffer ); // this task 
 	}
 }
 
@@ -593,7 +607,7 @@ void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t the_ta
 
 	}
 
-	//vPortFree(this_task);
+	//vPortFree(this_message);
 }
 
 void delete_dd_task(uint32_t task_id)
@@ -610,6 +624,8 @@ void delete_dd_task(uint32_t task_id)
 		// wait for reply from DDS (obtain reply message)
 
 	}
+
+	//vPortFree(this_message);
 }
 
 struct dd_task_list* get_active_dd_task_list(void)
@@ -630,7 +646,7 @@ struct dd_task_list* get_active_dd_task_list(void)
 	// wait for reply from DDS (obtain reply message)
 	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
-	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
+	if (xQueueReceive(xQueue_response_handle, &reply_message, portMAX_DELAY))
 	{
 		// check for message type
 		if (reply_message->type == get_active_dd_list)
@@ -646,6 +662,8 @@ struct dd_task_list* get_active_dd_task_list(void)
 			}
 		}
 	}
+
+	vPortFree(this_message);
 
 	return reply_message->task_list;
 }
@@ -666,7 +684,7 @@ struct dd_task_list* get_complete_dd_task_list(void)
 	// wait for reply from DDS (obtain reply message)
 	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
-	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
+	if (xQueueReceive(xQueue_response_handle, &reply_message, portMAX_DELAY))
 	{
 		// check for message type
 		if (reply_message->type == get_completed_dd_list)
@@ -682,6 +700,8 @@ struct dd_task_list* get_complete_dd_task_list(void)
 			}
 		}
 	}
+
+	vPortFree(this_message);
 
 	return reply_message->task_list;
 }
@@ -701,7 +721,7 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 	// wait for reply from DDS (obtain reply message)
 	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
 	// when response is received from DDS, function returns the list
-	if (xQueueReceive(xQueue_response_handle, &reply_message, 1000))
+	if (xQueueReceive(xQueue_response_handle, &reply_message, portMAX_DELAY))
 	{
 		// check for message type
 		if (reply_message->type == get_overdue_dd_list)
@@ -717,6 +737,8 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 			}
 		}
 	}
+
+	vPortFree(this_message);
 
 	return reply_message->task_list;
 }
@@ -829,23 +851,27 @@ dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 // assign task priorities
 dd_task_list * assign_task_priorities ( dd_task_list * dd_task_list_head )
 {
-	int size = configMAX_PRIORITIES-4;
+	int priority = 2; // start priority 
 
 	if (dd_task_list_head == NULL){
 		return dd_task_list_head;
 	}
 	else {
 		struct dd_task_list *temp = dd_task_list_head;
-		vTaskPrioritySet(dd_task_list_head->task.t_handle, 3); // highest priority (but what happens if size is as big as max priority?)
-		if (size - 1 != 0)
+		vTaskPrioritySet(dd_task_list_head->task.t_handle, 3); // highest priority without being in way of monitor task
+		if (priority - 1 != 0)
 		{
-			size--; // can't make priority lower than one
+			priority--; // can't make priority lower than one
 		}
 
 		// set the rest of tasks priorities
 		while(temp != NULL){
-			vTaskPrioritySet(temp->task.t_handle, 1); // each task is 1 level priority lower than prev task (should they go from 3 to 1 or is 2 and 1 okay?)
+			vTaskPrioritySet(temp->task.t_handle, priority); // each task is 1 level priority lower than prev task (should they go from 3 to 1 or is 2 and 1 okay?)
 			temp = temp->next_task;
+			if (priority - 1 != 0)
+			{
+				priority--; // can't make priority lower than one
+			}
 		}
 	}
 
