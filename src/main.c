@@ -137,8 +137,9 @@ functionality.
 /* Standard includes. */
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include "stm32f4_discovery.h"
+
 /* Kernel includes. */
 #include "stm32f4xx.h"
 #include "../FreeRTOS_Source/include/FreeRTOS.h"
@@ -147,7 +148,8 @@ functionality.
 #include "../FreeRTOS_Source/include/task.h"
 #include "../FreeRTOS_Source/include/timers.h"
 /* I think this should switch it to use heap 4 memory */
-#include "../FreeRTOS_Source/portable/MemMang/heap_4.c"
+/* ended up making heap1 use heap4 code */
+//#include "../FreeRTOS_Source/portable/MemMang/heap_4.c"
 
 /*-----------------------------------------------------------*/
 //#define mainQUEUE_LENGTH 100
@@ -180,10 +182,6 @@ functionality.
 #define TASK_1_PERIOD 500
 #define TASK_3_EXECUTION_TIME 200
 #define TASK_1_PERIOD 500 */
-
-/* this is done to be able to use vTaskGetRunTimeStats() */
-#define configGENERATE_RUN_TIME_STATS 1
-// there are two more macros that will need to be added: https://www.freertos.org/rtos-run-time-stats.html
 
 /* Initializer functions for hardware */
 static void prvSetupHardware( void );
@@ -233,6 +231,7 @@ dd_task_list * delete_task( struct dd_task_list * list_head, struct dd_task * do
 int print_count_of_list ( struct dd_task_list* dd_task_list_head );
 dd_task_list * order_tasks_deadline_first( dd_task_list* dd_task_list_head );
 dd_task_list * assign_task_priorities ( dd_task_list* dd_task_list_head );
+struct dd_task get_dd_task(struct dd_task_list * list_head, uint32_t task_id);
 
 /* tasks */
 static void DD_Scheduler_Task( void *pvParameters );
@@ -269,30 +268,24 @@ int main(void)
 	/* Configure the system. */
 	prvSetupHardware();
 
-	//active_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
 	STM_EVAL_LEDInit(amber_led); 
 	STM_EVAL_LEDInit(green_led);
 	STM_EVAL_LEDInit(blue_led);
 
-	// test if LEDs work
-	STM_EVAL_LEDOn(amber_led);
-	STM_EVAL_LEDOn(green_led);
-	STM_EVAL_LEDOn(blue_led);
-
 	// create queue to send and receive potentiometer value
-	xQueue_request_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message *));
-	xQueue_response_handle = xQueueCreate( QUEUE_LENGTH, sizeof(struct message *));
+	xQueue_request_handle = xQueueCreate( QUEUE_LENGTH, sizeof(message *));
+	xQueue_response_handle = xQueueCreate( QUEUE_LENGTH, sizeof(message *));
 
 	// add potentiometer queue to registry for debugging
 	vQueueAddToRegistry( xQueue_request_handle, "RequestQueue" );
 	vQueueAddToRegistry( xQueue_response_handle, "ResponseQueue" );
 
 	// need to decide priority and stack size
-	xTaskCreate(DD_Scheduler_Task, "DD Scheduler", configMINIMAL_STACK_SIZE, NULL, 3, NULL);
-	xTaskCreate(DD_Task_Generator_1, "DD Task Generator 1", configMINIMAL_STACK_SIZE, NULL, 2, xGenerator1TaskHandle);
-	xTaskCreate(DD_Task_Generator_2, "DD Task Generator 2", configMINIMAL_STACK_SIZE, NULL, 2, xGenerator2TaskHandle);
-	xTaskCreate(DD_Task_Generator_3, "DD Task Generator 3", configMINIMAL_STACK_SIZE, NULL, 2, xGenerator3TaskHandle);
-	xTaskCreate(Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+	xTaskCreate(DD_Scheduler_Task, "DD Scheduler", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
+	xTaskCreate(DD_Task_Generator_1, "DD Task Generator 1", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator1TaskHandle);
+	//xTaskCreate(DD_Task_Generator_2, "DD Task Generator 2", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator2TaskHandle);
+	//xTaskCreate(DD_Task_Generator_3, "DD Task Generator 3", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator3TaskHandle);
+	xTaskCreate(Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 
 	// create software timers for controlling traffic lights
 	xGenerator1Timer = xTimerCreate("Generator 1", TASK_1_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator1CallbackFunction);
@@ -310,33 +303,35 @@ int main(void)
 static void DD_Scheduler_Task( void *pvParameters )
 {
 	// waits for scheduling task (usually should be suspended until scheduling task exists)
-	// idk if this is correct for while loop
 
+	// initialize task lists (only available to scheduler)
 	struct dd_task_list* active_list = NULL;
 	struct dd_task_list* complete_list = NULL;
 	struct dd_task_list* overdue_list = NULL;
 
 	while(1)
 	{
-		struct message* received_message = (struct message *)pvPortMalloc(sizeof(struct message *));
-		this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-		this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
-		this_message->task_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
+		message* received_message;// = (message *)pvPortMalloc(sizeof(message *));
+		//received_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+		//received_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+		//received_message->task_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
 		// add check for overdue tasks (could use software timers instead, would be better to accomodate for aperiodic but kinda redundant for periodic)
 
 		// adjusts user task priorities  (Set earliest deadline task priority to high and the rest to low so first completes that and then so on)
-		while(xQueueReceive(xQueue_request_handle, &received_message, 500)){
+		if(xQueueReceive(xQueue_request_handle, &received_message, 500)){
 			// cases based on what message type is received
 			if (received_message->type == create_dd)
 			{
 				// assign release time to new task
-				struct dd_task *new_task = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-				new_task = received_message->task_info;
-				new_task->release_time = xTaskGetTickCount();
-				new_task->completion_time = 0;
+				//struct dd_task *new_task = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+				//new_task = received_message->task_info;
+				//new_task->release_time = xTaskGetTickCount();
+				//new_task->completion_time = 0;
+				 received_message->task_info->release_time = xTaskGetTickCount();
+				 received_message->task_info->completion_time = 0;
 
 				// add DD task to active task list
-				active_list = add_task(active_list, new_task);
+				active_list = add_task(active_list, received_message->task_info);
 
 				// sort list by deadline
 				active_list = order_tasks_deadline_first(active_list);
@@ -345,15 +340,19 @@ static void DD_Scheduler_Task( void *pvParameters )
 				// head (first of list) set to high priority, rest set to low priority
 				active_list = assign_task_priorities(active_list);
 
+				//vPortFree(received_message);
+
 				// start task
-				vTaskResume(new_task->t_handle);
+				vTaskResume(received_message->task_info->t_handle);
 
 				// MAYBE: start software timer, callback function will be to check if overdue time is passed, when callback is called: send new message type (overdue_dd_task)
 			}
 			else if (received_message->type == delete_dd)
 			{
 				// assign completion time to newly completed DD-task
-				struct dd_task done_task = *received_message->task_info;
+				//struct dd_task done_task = *received_message->task_info;
+				struct dd_task done_task = get_dd_task(active_list, received_message->task_id);
+
 				done_task.completion_time = xTaskGetTickCount();
 
 				// remove DD task from active task list
@@ -380,14 +379,18 @@ static void DD_Scheduler_Task( void *pvParameters )
 			*/
 			else if (received_message->type == get_active_dd_list)
 			{
+				received_message->task_list = active_list;
 
-				if (xQueueSend(xQueue_response_handle, &active_list, 500)){
+				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
 					// sent message successfully
 				}
+
+				//vPortFree(received_message);
 			}
 			else if (received_message->type == get_completed_dd_list)
 			{
-				struct dd_task_list *currentList = active_list;
+				// i think this should be handled by message with delete_dd ?
+				/*struct dd_task_list *currentList = active_list;
 				while (currentList != NULL) {
 					// if completion_time is 0, that means task hasn't been completed
 					if( currentList->task.completion_time != 0) {
@@ -396,15 +399,20 @@ static void DD_Scheduler_Task( void *pvParameters )
 						active_list = delete_task(active_list, &currentList->task);
 						currentList = currentList->next_task;
 					}
-				}
+				}*/
+
+				received_message->task_list = complete_list;
+
 				// get complete task list and send to a queue
-				if (xQueueSend(xQueue_response_handle, &complete_list, 500)){
+				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
 					// sent message successfully
 				}
+
+				//vPortFree(received_message);
 			}
 			else if (received_message->type == get_overdue_dd_list)
 			{
-				struct dd_task_list *currentList = active_list;
+				/*struct dd_task_list *currentList = active_list;
 				uint32_t timeRightNow = xTaskGetTickCount();
 
 				while (currentList != NULL) {
@@ -415,15 +423,18 @@ static void DD_Scheduler_Task( void *pvParameters )
 						active_list = delete_task(active_list, &currentList->task);
 						currentList = currentList->next_task;
 					}
-				}
+				}*/
+
+				received_message->task_list = overdue_list;
+
 				// get complete task list and send to a queue
-				if (xQueueSend(xQueue_response_handle, &overdue_list, 500)){
+				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
 					// sent message successfully
 				}
+
+				//vPortFree(received_message);
 			}
 		}
-
-		vPortFree(received_message);
 	}
 }
 
@@ -493,16 +504,19 @@ static void User_Task_1( void *pvParameters )
 	STM_EVAL_LEDOn(amber_led);
 
 	// execute an empty loop for duration of execution time
-	while ( end_time > xTaskGetTickCount())
+	/*while ( end_time > xTaskGetTickCount())
 	{
 		// loop for TASK_1_EXECUTION_TIME
-	}
+	}*/
 
 	// turn off LED here
 	STM_EVAL_LEDOff(amber_led);
 
 	// execution time is done, delete task
 	delete_dd_task(1);
+
+	// ends its task
+	vTaskDelete(NULL);
 }
 
 static void User_Task_2( void *pvParameters )
@@ -524,6 +538,9 @@ static void User_Task_2( void *pvParameters )
 
 	// execution time is done, delete task
 	delete_dd_task(2);
+
+	// ends its task
+	vTaskDelete(NULL);
 }
 
 static void User_Task_3( void *pvParameters )
@@ -545,6 +562,9 @@ static void User_Task_3( void *pvParameters )
 
 	// execution time is done, delete task
 	delete_dd_task(3);
+
+	// ends its task
+	vTaskDelete(NULL);
 }
 
 static void Monitor_Task( void *pvParameters )
@@ -559,13 +579,13 @@ static void Monitor_Task( void *pvParameters )
 		// call get_complete_dd_task_list
 		int complete_list_count = print_count_of_list(get_complete_dd_task_list());
 		// call get_overdue_dd_task_list
-		int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
+		//int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
 
 		// print to console number of tasks in each list
 		printf("In Monitoring Task\n");
 		printf("Active task list count: %d\n", active_list_count);
 		printf("Complete task list count: %d\n", complete_list_count);
-		printf("Overdue task list count: %d\n", overdue_list_count);
+		//printf("Overdue task list count: %d\n", overdue_list_count);
 
 		// additional challenge: measure and report processor utilization and system overhead (to do this check status and avilability of CPU using FreeRTOS APIs)
 		//vTaskGetRunTimeStats( char *pcWriteBuffer ); // this task 
@@ -585,13 +605,11 @@ void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t the_ta
 	this_task->completion_time = 0;*/
 
 	// struct is packaged as message and
-	message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	message* this_message = (message *)pvPortMalloc(sizeof(message *));
 	this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
 	this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 
 	this_message->type = create_dd;
-	//this_message->task_id = the_task_id;
-	//this_message->task_info = this_task;
 	this_message->task_info->t_handle = t_handle;
 	this_message->task_info->type = type;
 	this_message->task_info->task_id = the_task_id;
@@ -607,14 +625,17 @@ void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t the_ta
 
 	}
 
-	//vPortFree(this_message);
+	//vPortFree(this_message->task_info);
+	vPortFree(this_message);
+	//vPortFree(this_message->type);
 }
 
 void delete_dd_task(uint32_t task_id)
 {
 	// receive ID of DD-Task when it has completed its execution (from user task)
 	// struct with id is packaged as message
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	message* this_message = (message *)pvPortMalloc(sizeof(message *));
+	this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 	this_message->type = delete_dd;
 	this_message->task_id = task_id;
 
@@ -631,9 +652,9 @@ void delete_dd_task(uint32_t task_id)
 struct dd_task_list* get_active_dd_task_list(void)
 {
 	// sends message to queue requesting Active Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
-	this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-	this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+	message* this_message = (message *)pvPortMalloc(sizeof(message *));
+	//this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+	//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 	this_message->type = get_active_dd_list;
 
 	//sends to queue (for DDS to receive)
@@ -643,8 +664,10 @@ struct dd_task_list* get_active_dd_task_list(void)
 
 	}
 
+	vPortFree(this_message);
+
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	message* reply_message = (message *)pvPortMalloc(sizeof(message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, portMAX_DELAY))
 	{
@@ -663,7 +686,7 @@ struct dd_task_list* get_active_dd_task_list(void)
 		}
 	}
 
-	vPortFree(this_message);
+	//vPortFree(this_message);
 
 	return reply_message->task_list;
 }
@@ -671,7 +694,7 @@ struct dd_task_list* get_active_dd_task_list(void)
 struct dd_task_list* get_complete_dd_task_list(void)
 {
 	// sends message to queue requesting Complete Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	message* this_message = (message *)pvPortMalloc(sizeof(message *));
 	this_message->type = get_completed_dd_list;
 
 	//sends to queue (for DDS to receive)
@@ -681,14 +704,17 @@ struct dd_task_list* get_complete_dd_task_list(void)
 
 	}
 
+	//vPortFree(this_message);
+
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	message* reply_message = (message *)pvPortMalloc(sizeof(message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, portMAX_DELAY))
 	{
 		// check for message type
 		if (reply_message->type == get_completed_dd_list)
 		{
+			//vPortFree(this_message);
 			return reply_message->task_list;
 		}
 		else {
@@ -701,7 +727,7 @@ struct dd_task_list* get_complete_dd_task_list(void)
 		}
 	}
 
-	vPortFree(this_message);
+	//vPortFree(this_message);
 
 	return reply_message->task_list;
 }
@@ -709,7 +735,7 @@ struct dd_task_list* get_complete_dd_task_list(void)
 struct dd_task_list* get_overdue_dd_task_list(void)
 {
 	// sends message to queue requesting Overdue Task list from DDS
-	struct message* this_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	message* this_message = (message *)pvPortMalloc(sizeof(message *));
 	this_message->type = get_overdue_dd_list;
 
 	// sends to queue (for DDS to receive)
@@ -718,8 +744,10 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 		// sent successfully
 	}
 
+	//vPortFree(this_message);
+
 	// wait for reply from DDS (obtain reply message)
-	struct message* reply_message = (struct message *)pvPortMalloc(sizeof(struct message *));
+	message* reply_message = (message *)pvPortMalloc(sizeof(message *));
 	// when response is received from DDS, function returns the list
 	if (xQueueReceive(xQueue_response_handle, &reply_message, portMAX_DELAY))
 	{
@@ -738,7 +766,7 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 		}
 	}
 
-	vPortFree(this_message);
+	//vPortFree(this_message);
 
 	return reply_message->task_list;
 }
@@ -747,20 +775,21 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 // add new task
 dd_task_list * add_task( dd_task_list * list_head, struct dd_task * new_dd_task )
 {
-	dd_task_list *temp = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
-	temp->task = *new_dd_task;
-	temp->next_task = NULL;
-
+	/*dd_task_list *temp = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
 	struct dd_task_list *p;
 
 	if (list_head == NULL)
 	{
 		list_head = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
-		list_head->task = temp->task;
+		list_head->task = *new_dd_task;
 		list_head->next_task = NULL;
 	}
 	else {
 		p = list_head;
+
+		temp->task = *new_dd_task;
+		temp->next_task = NULL;
+
 		while (p->next_task != NULL)
 		{
 			p = p->next_task;
@@ -768,7 +797,13 @@ dd_task_list * add_task( dd_task_list * list_head, struct dd_task * new_dd_task 
 		p->next_task = temp;
 	}
 
-	return list_head;
+	vPortFree(temp);*/
+	dd_task_list* new_node = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
+	//new_node->task = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
+	new_node->task = *new_dd_task;
+	new_node->next_task = list_head;
+
+	return new_node;
 }
 
 // delete task
@@ -781,7 +816,7 @@ dd_task_list * delete_task ( struct dd_task_list * list_head, struct dd_task * d
     // If head node itself holds the key to be deleted
     if (temp != NULL && temp->task.t_handle == done_dd_task->t_handle) {
         list_head = temp->next_task; // Changed head
-        free(temp); // free old head
+        //free(temp); // free old head
         //return;
     }
 
@@ -800,7 +835,7 @@ dd_task_list * delete_task ( struct dd_task_list * list_head, struct dd_task * d
     // Unlink the node from linked list
     prev->next_task = temp->next_task;
 
-    free(temp); // Free memory
+    //vPortFree(temp); // Free memory
 
     return list_head;
 }
@@ -842,8 +877,9 @@ dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 			}
 			current = current->next_task;
 		}
-
 	}
+
+	//vPortFree(index);
 
 	return dd_task_list_head;
 }
@@ -851,13 +887,14 @@ dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 // assign task priorities
 dd_task_list * assign_task_priorities ( dd_task_list * dd_task_list_head )
 {
-	int priority = 2; // start priority 
+	int priority = 3; // start priority
 
 	if (dd_task_list_head == NULL){
 		return dd_task_list_head;
 	}
 	else {
-		struct dd_task_list *temp = dd_task_list_head;
+		struct dd_task_list *temp; // = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
+		temp = dd_task_list_head->next_task;
 		vTaskPrioritySet(dd_task_list_head->task.t_handle, 3); // highest priority without being in way of monitor task
 		if (priority - 1 != 0)
 		{
@@ -873,9 +910,29 @@ dd_task_list * assign_task_priorities ( dd_task_list * dd_task_list_head )
 				priority--; // can't make priority lower than one
 			}
 		}
+
+		//vPortFree(temp);
 	}
 
 	return dd_task_list_head;
+}
+
+struct dd_task get_dd_task(struct dd_task_list * list_head, uint32_t the_task_id)
+{
+	// Store head node
+	struct dd_task_list *current = list_head;
+
+	// If head node itself holds the key to be deleted
+	if (current != NULL && current->task.task_id == the_task_id) {
+		current = list_head; // Changed head
+	}
+
+	// Search for the earliest task with matching task id
+	while (current != NULL && current->task.task_id != the_task_id) {
+		current = current->next_task;
+	}
+
+	return current->task;
 }
 
 /*------------------ software timer callbacks -----------------------------------------*/
