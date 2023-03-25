@@ -575,7 +575,7 @@ static void Monitor_Task( void *pvParameters )
 		vTaskDelay(1000); // probably need to change delay later to appropriate amount
 
 		// call get_active_dd_task_list
-		int active_list_count = print_count_of_list (get_active_dd_task_list());
+		int active_list_count = print_count_of_list (get_active_dd_task_list()); // ISSUE: this doesnt past correct list
 		// call get_complete_dd_task_list
 		int complete_list_count = print_count_of_list(get_complete_dd_task_list());
 		// call get_overdue_dd_task_list
@@ -856,7 +856,7 @@ int print_count_of_list ( struct dd_task_list * dd_task_list_head )
 	return count;
 }
 
-// reorder by deadline first
+// reorder by deadline first (this isnt ordering them properly)
 dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 {
 	struct dd_task_list *current = dd_task_list_head;
@@ -871,7 +871,7 @@ dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 			index = current->next_task;
 
 			while (index != NULL){
-				if (current->task.absolute_deadline < index->task.absolute_deadline){
+				if (current->task.absolute_deadline > index->task.absolute_deadline){
 					temp = current->task;
 					current->task = index->task;
 					index->task = temp;
