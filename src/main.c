@@ -283,8 +283,8 @@ int main(void)
 	// need to decide priority and stack size
 	xTaskCreate(DD_Scheduler_Task, "DD Scheduler", configMINIMAL_STACK_SIZE, NULL, 4, NULL);
 	xTaskCreate(DD_Task_Generator_1, "DD Task Generator 1", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator1TaskHandle);
-	//xTaskCreate(DD_Task_Generator_2, "DD Task Generator 2", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator2TaskHandle);
-	//xTaskCreate(DD_Task_Generator_3, "DD Task Generator 3", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator3TaskHandle);
+	xTaskCreate(DD_Task_Generator_2, "DD Task Generator 2", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator2TaskHandle);
+	xTaskCreate(DD_Task_Generator_3, "DD Task Generator 3", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator3TaskHandle);
 	xTaskCreate(Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
 
 	// create software timers for controlling traffic lights
@@ -327,8 +327,8 @@ static void DD_Scheduler_Task( void *pvParameters )
 				//new_task = received_message->task_info;
 				//new_task->release_time = xTaskGetTickCount();
 				//new_task->completion_time = 0;
-				 received_message->task_info->release_time = xTaskGetTickCount();
-				 received_message->task_info->completion_time = 0;
+				received_message->task_info->release_time = xTaskGetTickCount();
+				received_message->task_info->completion_time = 0;
 
 				// add DD task to active task list
 				active_list = add_task(active_list, received_message->task_info);
@@ -589,6 +589,9 @@ static void Monitor_Task( void *pvParameters )
 
 		// additional challenge: measure and report processor utilization and system overhead (to do this check status and avilability of CPU using FreeRTOS APIs)
 		//vTaskGetRunTimeStats( char *pcWriteBuffer ); // this task 
+
+		// periodically reports processor utilization
+		vTaskDelay(1000); // probably need to change delay later to appropriate amount
 	}
 }
 
@@ -605,9 +608,9 @@ void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t the_ta
 	this_task->completion_time = 0;*/
 
 	// struct is packaged as message and
-	message* this_message = (message *)pvPortMalloc(sizeof(message *));
-	this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-	this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
+	message* this_message = (message *)pvPortMalloc(sizeof(message));
+	this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task));
+	//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 
 	this_message->type = create_dd;
 	this_message->task_info->t_handle = t_handle;
@@ -625,7 +628,7 @@ void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t the_ta
 
 	}
 
-	//vPortFree(this_message->task_info);
+	vPortFree(this_message->task_info);
 	vPortFree(this_message);
 	//vPortFree(this_message->type);
 }
@@ -634,7 +637,7 @@ void delete_dd_task(uint32_t task_id)
 {
 	// receive ID of DD-Task when it has completed its execution (from user task)
 	// struct with id is packaged as message
-	message* this_message = (message *)pvPortMalloc(sizeof(message *));
+	message* this_message = (message *)pvPortMalloc(sizeof(message));
 	this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 	this_message->type = delete_dd;
 	this_message->task_id = task_id;
@@ -798,7 +801,7 @@ dd_task_list * add_task( dd_task_list * list_head, struct dd_task * new_dd_task 
 	}
 
 	vPortFree(temp);*/
-	dd_task_list* new_node = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
+	dd_task_list* new_node = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list));
 	//new_node->task = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
 	new_node->task = *new_dd_task;
 	new_node->next_task = list_head;
@@ -939,6 +942,7 @@ struct dd_task get_dd_task(struct dd_task_list * list_head, uint32_t the_task_id
 void vGenerator1CallbackFunction( TimerHandle_t xGenerator1Timer )
 {
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
+	// (might not work cause of same reason xTickGetCount() doesnt work)
 	vTaskResume(xGenerator1TaskHandle);
 }
 
