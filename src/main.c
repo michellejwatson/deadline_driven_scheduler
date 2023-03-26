@@ -257,9 +257,9 @@ TimerHandle_t xGenerator1Timer;
 TimerHandle_t xGenerator2Timer;
 TimerHandle_t xGenerator3Timer;
 
-void vGenerator1CallbackFunction( TimerHandle_t xGenerator1Timer );
-void vGenerator2CallbackFunction( TimerHandle_t xGenerator2Timer );
-void vGenerator3CallbackFunction( TimerHandle_t xGenerator3Timer );
+void vGenerator1CallbackFunction( TimerHandle_t xTimer );
+void vGenerator2CallbackFunction( TimerHandle_t xTimer );
+void vGenerator3CallbackFunction( TimerHandle_t xTimer );
 
 /*-----------------------------------------------------------*/
 
@@ -292,6 +292,11 @@ int main(void)
 	xGenerator2Timer = xTimerCreate("Generator 2", TASK_2_PERIOD  / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator2CallbackFunction);
 	xGenerator3Timer = xTimerCreate("Generator 3", TASK_3_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator3CallbackFunction);
 
+	// start the timers
+	xTimerStart(xGenerator1Timer);
+	xTimerStart(xGenerator2Timer);
+	xTimerStart(xGenerator3Timer);
+	
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
 
@@ -315,10 +320,32 @@ static void DD_Scheduler_Task( void *pvParameters )
 		//received_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
 		//received_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 		//received_message->task_list = (struct dd_task_list *)pvPortMalloc(sizeof(struct dd_task_list *));
-		// add check for overdue tasks (could use software timers instead, would be better to accomodate for aperiodic but kinda redundant for periodic)
 
 		// adjusts user task priorities  (Set earliest deadline task priority to high and the rest to low so first completes that and then so on)
 		if(xQueueReceive(xQueue_request_handle, &received_message, 500)){
+			// NOT TESTED: OVERDUE TASK CHECK (wrote this outside of lab)
+			// check for overdue tasks (could have used software timers instead, would be better to accomodate for aperiodic but kinda redundant for periodic)
+			dd_task_list* temp = active_list;
+			dd_task_list* overdue_task;
+			
+			// loop through active task list, check for overdue, if overdue remove and add to overdue list 
+			while(temp != NULL){
+				if (temp->task->absolute_deadline < xTickGetCount() && temp->task->completion_time == 0){
+					overdue_task = temp;
+					temp = temp->next_task;
+					active_list = delete_task(active_list, overdue_task);
+					overdue_list = add_task(overdue_list, overdue_task);
+				}
+				else {
+					temp = temp->next_task;
+				}
+			}
+
+			// re-sort active task list by deadline
+			active_list = order_tasks_deadline_first(active_list);
+			// reset priorities of tasks accordingly
+			active_list = assign_task_priorities(active_list);
+
 			// cases based on what message type is received
 			if (received_message->type == create_dd)
 			{
@@ -368,15 +395,6 @@ static void DD_Scheduler_Task( void *pvParameters )
 				// head (first of list) set to high priority, rest set to low priority
 				active_list = assign_task_priorities(active_list);
 			}
-			/* else if (message.message_type = overdue_dd_task)
-			* {
-			* 		//from call back function
-			* 		// remove DD task from active task list
-			* 		// add DD task to overdue task list
-			* 		// re-sort overdue task list by deadline
-			* 		// set priorities of user defined tasks accordingly
-			* }
-			*/
 			else if (received_message->type == get_active_dd_list)
 			{
 				received_message->task_list = active_list;
@@ -389,18 +407,6 @@ static void DD_Scheduler_Task( void *pvParameters )
 			}
 			else if (received_message->type == get_completed_dd_list)
 			{
-				// i think this should be handled by message with delete_dd ?
-				/*struct dd_task_list *currentList = active_list;
-				while (currentList != NULL) {
-					// if completion_time is 0, that means task hasn't been completed
-					if( currentList->task.completion_time != 0) {
-						complete_list = add_task(complete_list, &currentList->task);
-						// delete the completed task from active task list
-						active_list = delete_task(active_list, &currentList->task);
-						currentList = currentList->next_task;
-					}
-				}*/
-
 				received_message->task_list = complete_list;
 
 				// get complete task list and send to a queue
@@ -939,20 +945,20 @@ struct dd_task get_dd_task(struct dd_task_list * list_head, uint32_t the_task_id
 }
 
 /*------------------ software timer callbacks -----------------------------------------*/
-void vGenerator1CallbackFunction( TimerHandle_t xGenerator1Timer )
+void vGenerator1CallbackFunction( TimerHandle_t xTimer )
 {
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	// (might not work cause of same reason xTickGetCount() doesnt work)
 	vTaskResume(xGenerator1TaskHandle);
 }
 
-void vGenerator2CallbackFunction( TimerHandle_t xGenerator2Timer )
+void vGenerator2CallbackFunction( TimerHandle_t xTimer )
 {
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	vTaskResume(xGenerator2TaskHandle);
 }
 
-void vGenerator3CallbackFunction( TimerHandle_t xGenerator3Timer )
+void vGenerator3CallbackFunction( TimerHandle_t xTimer )
 {
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	vTaskResume(xGenerator3TaskHandle);
