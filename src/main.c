@@ -149,7 +149,7 @@ functionality.
 #include "../FreeRTOS_Source/include/timers.h"
 /* I think this should switch it to use heap 4 memory */
 /* ended up making heap1 use heap4 code */
-//#include "../FreeRTOS_Source/portable/MemMang/heap_4.c"
+#include "../FreeRTOS_Source/portable/MemMang/heap_4.c"
 
 /*-----------------------------------------------------------*/
 //#define mainQUEUE_LENGTH 100
@@ -187,7 +187,7 @@ functionality.
 static void prvSetupHardware( void );
 
 /* data types */
-enum task_type {PERIODIC,APERIODIC};
+enum task_type {PERIODIC,APERIODIC,BADVALUE};
 
 struct dd_task {
 	TaskHandle_t t_handle;
@@ -285,7 +285,7 @@ int main(void)
 	xTaskCreate(DD_Task_Generator_1, "DD Task Generator 1", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator1TaskHandle);
 	xTaskCreate(DD_Task_Generator_2, "DD Task Generator 2", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator2TaskHandle);
 	xTaskCreate(DD_Task_Generator_3, "DD Task Generator 3", configMINIMAL_STACK_SIZE, NULL, 3, xGenerator3TaskHandle);
-	xTaskCreate(Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 2, NULL);
+	xTaskCreate(Monitor_Task, "Monitor", configMINIMAL_STACK_SIZE, NULL, 4, NULL); // high priority or else will never run
 
 	// create software timers for controlling traffic lights
 	xGenerator1Timer = xTimerCreate("Generator 1", TASK_1_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator1CallbackFunction);
@@ -293,9 +293,9 @@ int main(void)
 	xGenerator3Timer = xTimerCreate("Generator 3", TASK_3_PERIOD / portTICK_PERIOD_MS, pdTRUE, (void *) 0, vGenerator3CallbackFunction);
 
 	// start the timers
-	xTimerStart(xGenerator1Timer);
-	xTimerStart(xGenerator2Timer);
-	xTimerStart(xGenerator3Timer);
+	xTimerStart(xGenerator1Timer, 0); // maybe these shouldn't be 0?
+	xTimerStart(xGenerator2Timer, 0);
+	xTimerStart(xGenerator3Timer, 0);
 	
 	/* Start the tasks and timer running. */
 	vTaskStartScheduler();
@@ -323,28 +323,31 @@ static void DD_Scheduler_Task( void *pvParameters )
 
 		// adjusts user task priorities  (Set earliest deadline task priority to high and the rest to low so first completes that and then so on)
 		if(xQueueReceive(xQueue_request_handle, &received_message, 500)){
-			// NOT TESTED: OVERDUE TASK CHECK (wrote this outside of lab)
-			// check for overdue tasks (could have used software timers instead, would be better to accomodate for aperiodic but kinda redundant for periodic)
+			// check for overdue tasks (could have used software timers instead, would be better to accommodate for aperiodic but kinda redundant for periodic)
 			dd_task_list* temp = active_list;
-			dd_task_list* overdue_task;
 			
 			// loop through active task list, check for overdue, if overdue remove and add to overdue list 
 			while(temp != NULL){
-				if (temp->task->absolute_deadline < xTickGetCount() && temp->task->completion_time == 0){
-					overdue_task = temp;
+				if (temp->task.absolute_deadline < xTaskGetTickCount() && temp->task.completion_time == 0){
+					active_list = delete_task(active_list, &temp->task);
+					overdue_list = add_task(overdue_list, &temp->task);
+					//vTaskSuspend(temp->task.t_handle);
+					//vTaskDelete(temp->task.t_handle);
 					temp = temp->next_task;
-					active_list = delete_task(active_list, overdue_task);
-					overdue_list = add_task(overdue_list, overdue_task);
 				}
 				else {
-					temp = temp->next_task;
+					//temp = temp->next_task;
+					break;
 				}
 			}
 
+			temp = NULL;
+			vPortFree(temp);
+
 			// re-sort active task list by deadline
-			active_list = order_tasks_deadline_first(active_list);
+			//active_list = order_tasks_deadline_first(active_list);
 			// reset priorities of tasks accordingly
-			active_list = assign_task_priorities(active_list);
+			//active_list = assign_task_priorities(active_list);
 
 			// cases based on what message type is received
 			if (received_message->type == create_dd)
@@ -359,6 +362,24 @@ static void DD_Scheduler_Task( void *pvParameters )
 
 				// add DD task to active task list
 				active_list = add_task(active_list, received_message->task_info);
+
+				//dd_task_list* temp = active_list;
+
+				// loop through active task list, check for overdue, if overdue remove and add to overdue list
+				/* while(temp != NULL){
+					if (temp->task.absolute_deadline < xTaskGetTickCount() && temp->task.completion_time == 0){
+						active_list = delete_task(active_list, &temp->task);
+						overdue_list = add_task(overdue_list, &temp->task);
+						temp = temp->next_task;
+						//vTaskDelete(temp->task.t_handle);
+					}
+					else {
+						temp = temp->next_task;
+						break;
+					}
+				}
+
+				vPortFree(temp); */
 
 				// sort list by deadline
 				active_list = order_tasks_deadline_first(active_list);
@@ -380,20 +401,24 @@ static void DD_Scheduler_Task( void *pvParameters )
 				//struct dd_task done_task = *received_message->task_info;
 				struct dd_task done_task = get_dd_task(active_list, received_message->task_id);
 
-				done_task.completion_time = xTaskGetTickCount();
+				if (done_task.type != BADVALUE){
+					done_task.completion_time = xTaskGetTickCount();
 
-				// remove DD task from active task list
-				active_list = delete_task(active_list, &done_task);
+					// remove DD task from active task list
+					active_list = delete_task(active_list, &done_task);
 
-				// add DD task to complete task list
-				complete_list = add_task(complete_list, &done_task);
+					// add DD task to complete task list
+					complete_list = add_task(complete_list, &done_task);
 
-				// re-sort active task list by deadline
-				active_list = order_tasks_deadline_first(active_list);
+					// re-sort active task list by deadline
+					active_list = order_tasks_deadline_first(active_list);
 
-				// set priorities of user defined tasks accordingly
-				// head (first of list) set to high priority, rest set to low priority
-				active_list = assign_task_priorities(active_list);
+					// set priorities of user defined tasks accordingly
+					// head (first of list) set to high priority, rest set to low priority
+					active_list = assign_task_priorities(active_list);
+
+					//vPortFree(received_message);
+				}
 			}
 			else if (received_message->type == get_active_dd_list)
 			{
@@ -418,87 +443,89 @@ static void DD_Scheduler_Task( void *pvParameters )
 			}
 			else if (received_message->type == get_overdue_dd_list)
 			{
-				/*struct dd_task_list *currentList = active_list;
-				uint32_t timeRightNow = xTaskGetTickCount();
-
-				while (currentList != NULL) {
-					// if completion_time is 0, that means task hasn't been completed
-					if( currentList->task.absolute_deadline <= timeRightNow) {
-						overdue_list = add_task(overdue_list, &currentList->task);
-						// delete overdue task from active task list
-						active_list = delete_task(active_list, &currentList->task);
-						currentList = currentList->next_task;
-					}
-				}*/
-
 				received_message->task_list = overdue_list;
 
 				// get complete task list and send to a queue
 				if (xQueueSend(xQueue_response_handle, &received_message, 500)){
 					// sent message successfully
 				}
-
-				//vPortFree(received_message);
 			}
 		}
+		//vPortFree(received_message->task_info);
+		//vPortFree(received_message->task_list);
+		//vPortFree(received_message);
 	}
 }
 
 // task generator for DD_User_Task_1 (will have one for each DD task)
 static void DD_Task_Generator_1( void *pvParameters )
 {
-	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_1_PERIOD
-	// should reuse F-Task handles inside each DD task
-	// periodically generate user tasks for DD_Scheduler
-	TaskHandle_t task_1_handle;
-	xTaskCreate( User_Task_1, "User Task 1", configMINIMAL_STACK_SIZE, NULL, 1, &task_1_handle); // start it at lowest priority
-	vTaskSuspend(task_1_handle); // DD scheduler will start it when it should be run
+	while(1){
+		// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_1_PERIOD
+		// should reuse F-Task handles inside each DD task
+		// periodically generate user tasks for DD_Scheduler
+		TaskHandle_t task_1_handle;
+		xTaskCreate( User_Task_1, "User Task 1", configMINIMAL_STACK_SIZE, NULL, 1, &task_1_handle); // start it at lowest priority
+		vTaskSuspend(task_1_handle); // DD scheduler will start it when it should be run
 
-	// prepares all information needed for creating specific instance of DD-tasks
-	// calls create_dd_task
-	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-	create_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount() + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS);
+		// prepares all information needed for creating specific instance of DD-tasks
+		// calls create_dd_task
+		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
+		create_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount() + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS);
 
-	// needs to suspend itself (NULL means suspends itself)
-	vTaskSuspend( NULL );
+		// needs to suspend itself (NULL means suspends itself)
+		//vTaskSuspend( NULL );
+
+		vTaskDelay(TASK_1_EXECUTION_TIME);
+	}
+
 }
 
 // task generator for DD_User_Task_1 (will have one for each DD task)
 static void DD_Task_Generator_2( void *pvParameters )
 {
-	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_2_PERIOD
-	// should reuse F-Task handles inside each DD task
-	// periodically generate user tasks for DD_Scheduler
-	TaskHandle_t task_2_handle;
-	xTaskCreate( User_Task_2, "User Task 2", configMINIMAL_STACK_SIZE, NULL, 1, &task_2_handle); // start it at lowest priority
-	vTaskSuspend(task_2_handle); // DD scheduler will start it when it should be run
+	while(1){
+		// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_2_PERIOD
+		// should reuse F-Task handles inside each DD task
+		// periodically generate user tasks for DD_Scheduler
+		TaskHandle_t task_2_handle;
+		xTaskCreate( User_Task_2, "User Task 2", configMINIMAL_STACK_SIZE, NULL, 1, &task_2_handle); // start it at lowest priority
+		vTaskSuspend(task_2_handle); // DD scheduler will start it when it should be run
 
-	// prepares all information needed for creating specific instance of DD-tasks
-	// calls create_dd_task
-	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-	create_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount() + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS);
+		// prepares all information needed for creating specific instance of DD-tasks
+		// calls create_dd_task
+		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
+		create_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount() + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS);
 
-	// needs to suspend itself (NULL means suspends itself)
-	vTaskSuspend( NULL );
+		// needs to suspend itself (NULL means suspends itself)
+		//vTaskSuspend( NULL );
+
+		vTaskDelay(TASK_2_EXECUTION_TIME);
+	}
 }
 
 // task generator for DD_User_Task_1 (will have one for each DD task)
 static void DD_Task_Generator_3( void *pvParameters )
 {
-	// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_3_PERIOD
-	// should reuse F-Task handles inside each DD task
-	// periodically generate user tasks for DD_Scheduler
-	TaskHandle_t task_3_handle;
-	xTaskCreate( User_Task_3, "User Task 3", configMINIMAL_STACK_SIZE, NULL, 1, &task_3_handle); // start it at lowest priority
-	vTaskSuspend(task_3_handle); // DD scheduler will start it when it should be run
+	while(1){
+		// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_3_PERIOD
+		// should reuse F-Task handles inside each DD task
+		// periodically generate user tasks for DD_Scheduler
+		TaskHandle_t task_3_handle;
+		xTaskCreate( User_Task_3, "User Task 3", configMINIMAL_STACK_SIZE, NULL, 1, &task_3_handle); // start it at lowest priority
+		vTaskSuspend(task_3_handle); // DD scheduler will start it when it should be run
 
-	// prepares all information needed for creating specific instance of DD-tasks
-	// calls create_dd_task
-	// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-	create_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount() + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS);
+		// prepares all information needed for creating specific instance of DD-tasks
+		// calls create_dd_task
+		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
+		create_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount() + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS);
 
-	// needs to suspend itself (NULL means suspends itself)
-	vTaskSuspend( NULL );
+		// needs to suspend itself (NULL means suspends itself)
+		//vTaskSuspend( NULL );
+
+		vTaskDelay(TASK_3_EXECUTION_TIME);
+	}
+
 }
 
 static void User_Task_1( void *pvParameters )
@@ -510,13 +537,15 @@ static void User_Task_1( void *pvParameters )
 	STM_EVAL_LEDOn(amber_led);
 
 	// execute an empty loop for duration of execution time
-	/*while ( end_time > xTaskGetTickCount())
+	while ( end_time > xTaskGetTickCount())
 	{
 		// loop for TASK_1_EXECUTION_TIME
-	}*/
+	}
 
 	// turn off LED here
 	STM_EVAL_LEDOff(amber_led);
+
+	vTaskPrioritySet(NULL, 4);
 
 	// execution time is done, delete task
 	delete_dd_task(1);
@@ -541,6 +570,8 @@ static void User_Task_2( void *pvParameters )
 
 	// turn off LED here
 	STM_EVAL_LEDOff(green_led);
+
+	vTaskPrioritySet(NULL, 4);
 
 	// execution time is done, delete task
 	delete_dd_task(2);
@@ -578,26 +609,27 @@ static void Monitor_Task( void *pvParameters )
 	while(1)
 	{
 		// periodically reports processor utilization
-		vTaskDelay(1000); // probably need to change delay later to appropriate amount
+		vTaskDelay(500); // probably need to change delay later to appropriate amount
 
 		// call get_active_dd_task_list
+		//dd_task_list*
 		int active_list_count = print_count_of_list (get_active_dd_task_list()); // ISSUE: this doesnt past correct list
 		// call get_complete_dd_task_list
 		int complete_list_count = print_count_of_list(get_complete_dd_task_list());
 		// call get_overdue_dd_task_list
-		//int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
+		int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
 
 		// print to console number of tasks in each list
 		printf("In Monitoring Task\n");
 		printf("Active task list count: %d\n", active_list_count);
 		printf("Complete task list count: %d\n", complete_list_count);
-		//printf("Overdue task list count: %d\n", overdue_list_count);
+		printf("Overdue task list count: %d\n", overdue_list_count);
 
 		// additional challenge: measure and report processor utilization and system overhead (to do this check status and avilability of CPU using FreeRTOS APIs)
 		//vTaskGetRunTimeStats( char *pcWriteBuffer ); // this task 
 
 		// periodically reports processor utilization
-		vTaskDelay(1000); // probably need to change delay later to appropriate amount
+		//vTaskDelay(500); // probably need to change delay later to appropriate amount
 	}
 }
 
@@ -655,7 +687,8 @@ void delete_dd_task(uint32_t task_id)
 
 	}
 
-	//vPortFree(this_message);
+	vPortFree(this_message->task_info);
+	vPortFree(this_message);
 }
 
 struct dd_task_list* get_active_dd_task_list(void)
@@ -695,8 +728,6 @@ struct dd_task_list* get_active_dd_task_list(void)
 		}
 	}
 
-	//vPortFree(this_message);
-
 	return reply_message->task_list;
 }
 
@@ -713,7 +744,8 @@ struct dd_task_list* get_complete_dd_task_list(void)
 
 	}
 
-	//vPortFree(this_message);
+	//vPortFree(this_message->task_info);
+	vPortFree(this_message);
 
 	// wait for reply from DDS (obtain reply message)
 	message* reply_message = (message *)pvPortMalloc(sizeof(message *));
@@ -753,7 +785,8 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 		// sent successfully
 	}
 
-	//vPortFree(this_message);
+	//vPortFree(this_message->task_info);
+	vPortFree(this_message);
 
 	// wait for reply from DDS (obtain reply message)
 	message* reply_message = (message *)pvPortMalloc(sizeof(message *));
@@ -844,7 +877,7 @@ dd_task_list * delete_task ( struct dd_task_list * list_head, struct dd_task * d
     // Unlink the node from linked list
     prev->next_task = temp->next_task;
 
-    //vPortFree(temp); // Free memory
+    //vPortFree(temp);
 
     return list_head;
 }
@@ -859,10 +892,12 @@ int print_count_of_list ( struct dd_task_list * dd_task_list_head )
 	    count++;
 	}
 
+	vPortFree(p);
+
 	return count;
 }
 
-// reorder by deadline first (this isnt ordering them properly)
+// reorder by deadline first (this isn't ordering them properly)
 dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 {
 	struct dd_task_list *current = dd_task_list_head;
@@ -873,18 +908,31 @@ dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 		return dd_task_list_head;
 	}
 	else {
+		int first_run = 1;
 		while (current != NULL){
 			index = current->next_task;
 
 			while (index != NULL){
-				if (current->task.absolute_deadline > index->task.absolute_deadline){
-					temp = current->task;
-					current->task = index->task;
-					index->task = temp;
+				if (index->task.absolute_deadline < 50000){
+					if (current->task.absolute_deadline > index->task.absolute_deadline){
+						temp = current->task;
+						current->task = index->task;
+						index->task = temp;
+					}
+				}
+				else {
+					break;
 				}
 				index = index->next_task;
 			}
+
+			if (first_run){
+				dd_task_list_head = current;
+				first_run = 0;
+			}
+
 			current = current->next_task;
+
 		}
 	}
 
@@ -920,7 +968,7 @@ dd_task_list * assign_task_priorities ( dd_task_list * dd_task_list_head )
 			}
 		}
 
-		//vPortFree(temp);
+		vPortFree(temp);
 	}
 
 	return dd_task_list_head;
@@ -933,12 +981,18 @@ struct dd_task get_dd_task(struct dd_task_list * list_head, uint32_t the_task_id
 
 	// If head node itself holds the key to be deleted
 	if (current != NULL && current->task.task_id == the_task_id) {
-		current = list_head; // Changed head
+		current = list_head;
 	}
 
 	// Search for the earliest task with matching task id
 	while (current != NULL && current->task.task_id != the_task_id) {
 		current = current->next_task;
+	}
+
+	if (current == NULL){
+		struct dd_task null_task;
+		null_task.type = BADVALUE;
+		return null_task;
 	}
 
 	return current->task;
@@ -949,19 +1003,19 @@ void vGenerator1CallbackFunction( TimerHandle_t xTimer )
 {
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	// (might not work cause of same reason xTickGetCount() doesnt work)
-	vTaskResume(xGenerator1TaskHandle);
+	//vTaskResume(xGenerator1TaskHandle);
 }
 
 void vGenerator2CallbackFunction( TimerHandle_t xTimer )
 {
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
-	vTaskResume(xGenerator2TaskHandle);
+	//vTaskResume(xGenerator2TaskHandle);
 }
 
 void vGenerator3CallbackFunction( TimerHandle_t xTimer )
 {
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
-	vTaskResume(xGenerator3TaskHandle);
+	//vTaskResume(xGenerator3TaskHandle);
 }
 
 // could add another timer callback for overdue tasks (would be started each time a task is created?)
