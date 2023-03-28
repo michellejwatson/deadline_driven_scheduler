@@ -620,7 +620,7 @@ static void Monitor_Task( void *pvParameters )
 		int overdue_list_count = print_count_of_list(get_overdue_dd_task_list());
 
 		// print to console number of tasks in each list
-		printf("In Monitoring Task\n");
+		printf("In Monitoring Task, current time: %u\n", (unsigned int)xTaskGetTickCount());
 		printf("Active task list count: %d\n", active_list_count);
 		printf("Complete task list count: %d\n", complete_list_count);
 		printf("Overdue task list count: %d\n", overdue_list_count);
