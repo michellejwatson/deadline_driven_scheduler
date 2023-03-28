@@ -471,7 +471,7 @@ static void DD_Task_Generator_1( void *pvParameters )
 		// prepares all information needed for creating specific instance of DD-tasks
 		// calls create_dd_task
 		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-		create_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount() + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS);
+		create_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount() + TASK_1_PERIOD);
 
 		// needs to suspend itself (NULL means suspends itself)
 		//vTaskSuspend( NULL );
@@ -495,7 +495,7 @@ static void DD_Task_Generator_2( void *pvParameters )
 		// prepares all information needed for creating specific instance of DD-tasks
 		// calls create_dd_task
 		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-		create_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount() + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS);
+		create_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount() + TASK_2_PERIOD);
 
 		// needs to suspend itself (NULL means suspends itself)
 		//vTaskSuspend( NULL );
@@ -518,7 +518,7 @@ static void DD_Task_Generator_3( void *pvParameters )
 		// prepares all information needed for creating specific instance of DD-tasks
 		// calls create_dd_task
 		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
-		create_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount() + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS);
+		create_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount() + TASK_3_PERIOD);
 
 		// needs to suspend itself (NULL means suspends itself)
 		//vTaskSuspend( NULL );
