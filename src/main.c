@@ -311,7 +311,7 @@ static void DD_Scheduler_Task( void *pvParameters )
 
 		// adjusts user task priorities  (Set earliest deadline task priority to high and the rest to low so first completes that and then so on)
 		if(xQueueReceive(xQueue_request_handle, &received_message, 500)){
-			// check for overdue tasks (could have used software timers instead, would be better to accommodate for aperiodic but kinda redundant for periodic)
+			// check for overdue tasks 
 			dd_task_list* temp = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list));
 			temp = active_list;
 			
@@ -344,7 +344,6 @@ static void DD_Scheduler_Task( void *pvParameters )
 				active_list = order_tasks_deadline_first(active_list);
 
 				// set priorities of user defined task according to sorted list
-				// head (first of list) set to high priority, rest set to low priority
 				active_list = assign_task_priorities(active_list);
 
 				// start task
@@ -368,7 +367,6 @@ static void DD_Scheduler_Task( void *pvParameters )
 					active_list = order_tasks_deadline_first(active_list);
 
 					// set priorities of user defined tasks accordingly
-					// head (first of list) set to high priority, rest set to low priority
 					active_list = assign_task_priorities(active_list);
 				}
 			}
@@ -459,7 +457,7 @@ static void User_Task_1( void *pvParameters )
 	TickType_t start_time = xTaskGetTickCount();
 	TickType_t end_time = start_time + TASK_1_EXECUTION_TIME / portTICK_PERIOD_MS;
 
-	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
+	// turn on LED on discovery board to provide visual indication of what user-defined task is executing
 	STM_EVAL_LEDOn(amber_led);
 
 	// execute an empty loop for duration of execution time
@@ -486,7 +484,7 @@ static void User_Task_2( void *pvParameters )
 	TickType_t start_time = xTaskGetTickCount();
 	TickType_t end_time = start_time + TASK_2_EXECUTION_TIME / portTICK_PERIOD_MS;
 
-	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
+	// turn on LED on discovery board to provide visual indication of what user-defined task is executing
 	STM_EVAL_LEDOn(green_led);
 
 	// execute an empty loop for duration of execution time
@@ -513,7 +511,7 @@ static void User_Task_3( void *pvParameters )
 	TickType_t start_time = xTaskGetTickCount();
 	TickType_t end_time = start_time + TASK_3_EXECUTION_TIME / portTICK_PERIOD_MS;
 
-	// could turn on LED on discovery board to provide visual indication of what user-defined task is executing
+	// turn on LED on discovery board to provide visual indication of what user-defined task is executing
 	STM_EVAL_LEDOn(blue_led);
 
 	// execute an empty loop for duration of execution time
@@ -758,7 +756,7 @@ int print_count_of_list ( struct dd_task_list * dd_task_list_head )
 	return count;
 }
 
-// reorder by deadline first (this isn't ordering them properly)
+// reorder by deadline first 
 dd_task_list * order_tasks_deadline_first( dd_task_list * dd_task_list_head )
 {
 	struct dd_task_list *current = dd_task_list_head;
@@ -809,9 +807,9 @@ dd_task_list * assign_task_priorities ( dd_task_list * dd_task_list_head )
 		return dd_task_list_head;
 	}
 	else {
-		struct dd_task_list *temp; // = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list *));
+		struct dd_task_list *temp;
 		temp = dd_task_list_head->next_task;
-		vTaskPrioritySet(dd_task_list_head->task.t_handle, 3); // highest priority without being in way of monitor task
+		vTaskPrioritySet(dd_task_list_head->task.t_handle, 3); 
 		if (priority - 1 != 0)
 		{
 			priority--; // can't make priority lower than one
@@ -819,7 +817,7 @@ dd_task_list * assign_task_priorities ( dd_task_list * dd_task_list_head )
 
 		// set the rest of tasks priorities
 		while(temp != NULL){
-			vTaskPrioritySet(temp->task.t_handle, priority); // each task is 1 level priority lower than prev task (should they go from 3 to 1 or is 2 and 1 okay?)
+			vTaskPrioritySet(temp->task.t_handle, priority); // each task is 1 level priority lower 
 			temp = temp->next_task;
 			if (priority - 1 != 0)
 			{
