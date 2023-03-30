@@ -320,8 +320,6 @@ static void DD_Scheduler_Task( void *pvParameters )
 				if (temp->task.absolute_deadline < xTaskGetTickCount() && temp->task.completion_time == 0){
 					active_list = delete_task(active_list, &temp->task);
 					overdue_list = add_task(overdue_list, &temp->task);
-					//vTaskSuspend(temp->task.t_handle);
-					//vTaskDelete(temp->task.t_handle);
 					temp = temp->next_task;
 				}
 				else {
@@ -331,11 +329,6 @@ static void DD_Scheduler_Task( void *pvParameters )
 
 			temp = NULL;
 			vPortFree(temp);
-
-			// re-sort active task list by deadline
-			//active_list = order_tasks_deadline_first(active_list);
-			// reset priorities of tasks accordingly
-			//active_list = assign_task_priorities(active_list);
 
 			// cases based on what message type is received
 			if (received_message->type == create_dd)
@@ -409,20 +402,16 @@ static void DD_Scheduler_Task( void *pvParameters )
 	}
 }
 
-// task generator for DD_User_Task_1 (will have one for each DD task)
+// task generator for DD_User_Task_1 
 static void DD_Task_Generator_1( void *pvParameters )
 {
 	while(1){
-		// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_1_PERIOD
-		// should reuse F-Task handles inside each DD task
-		// periodically generate user tasks for DD_Scheduler
+		// create new user task 1
 		TaskHandle_t task_1_handle;
 		xTaskCreate( User_Task_1, "User Task 1", configMINIMAL_STACK_SIZE, NULL, 1, &task_1_handle); // start it at lowest priority
 		vTaskSuspend(task_1_handle); // DD scheduler will start it when it should be run
 
 		// prepares all information needed for creating specific instance of DD-tasks
-		// calls create_dd_task
-		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
 		create_dd_task(task_1_handle, PERIODIC, 1,  xTaskGetTickCount() + TASK_1_PERIOD / portTICK_PERIOD_MS);
 
 		// needs to suspend itself
@@ -431,40 +420,32 @@ static void DD_Task_Generator_1( void *pvParameters )
 
 }
 
-// task generator for DD_User_Task_1 (will have one for each DD task)
+// task generator for DD_User_Task_2
 static void DD_Task_Generator_2( void *pvParameters )
 {
 	while(1){
-		// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_2_PERIOD
-		// should reuse F-Task handles inside each DD task
-		// periodically generate user tasks for DD_Scheduler
+		// create new user task 2
 		TaskHandle_t task_2_handle;
 		xTaskCreate( User_Task_2, "User Task 2", configMINIMAL_STACK_SIZE, NULL, 1, &task_2_handle); // start it at lowest priority
 		vTaskSuspend(task_2_handle); // DD scheduler will start it when it should be run
 
 		// prepares all information needed for creating specific instance of DD-tasks
-		// calls create_dd_task
-		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
 		create_dd_task(task_2_handle, PERIODIC, 2,  xTaskGetTickCount() + TASK_2_PERIOD / portTICK_PERIOD_MS);
 
 		vTaskDelay(TASK_2_PERIOD);
 	}
 }
 
-// task generator for DD_User_Task_1 (will have one for each DD task)
+// task generator for DD_User_Task_3
 static void DD_Task_Generator_3( void *pvParameters )
 {
 	while(1){
-		// normal state: suspended, resumed when software timer callback is triggered, timer period would be TASK_3_PERIOD
-		// should reuse F-Task handles inside each DD task
-		// periodically generate user tasks for DD_Scheduler
+		// create new user task 3
 		TaskHandle_t task_3_handle;
 		xTaskCreate( User_Task_3, "User Task 3", configMINIMAL_STACK_SIZE, NULL, 1, &task_3_handle); // start it at lowest priority
 		vTaskSuspend(task_3_handle); // DD scheduler will start it when it should be run
 
 		// prepares all information needed for creating specific instance of DD-tasks
-		// calls create_dd_task
-		// xTaskGetTickCount: The count of ticks since vTaskStartScheduler was called
 		create_dd_task(task_3_handle, PERIODIC, 3,  xTaskGetTickCount() + TASK_3_PERIOD / portTICK_PERIOD_MS);
 
 		// needs to suspend itself
@@ -490,6 +471,7 @@ static void User_Task_1( void *pvParameters )
 	// turn off LED here
 	STM_EVAL_LEDOff(amber_led);
 
+	// set highest priority to ensure it gets deleted
 	vTaskPrioritySet(NULL, 4);
 
 	// execution time is done, delete task
@@ -516,6 +498,7 @@ static void User_Task_2( void *pvParameters )
 	// turn off LED here
 	STM_EVAL_LEDOff(green_led);
 
+	// set highest priority to ensure it gets deleted
 	vTaskPrioritySet(NULL, 4);
 
 	// execution time is done, delete task
@@ -541,6 +524,9 @@ static void User_Task_3( void *pvParameters )
 
 	// turn off LED here
 	STM_EVAL_LEDOff(blue_led);
+
+	// set highest priority to ensure it gets deleted
+	vTaskPrioritySet(NULL, 4);
 
 	// execution time is done, delete task
 	delete_dd_task(3);
@@ -568,9 +554,6 @@ static void Monitor_Task( void *pvParameters )
 		printf("Active task list count: %d\n", active_list_count);
 		printf("Complete task list count: %d\n", complete_list_count);
 		printf("Overdue task list count: %d\n", overdue_list_count);
-
-		// additional challenge: measure and report processor utilization and system overhead (to do this check status and availability of CPU using FreeRTOS APIs)
-		//vTaskGetRunTimeStats( char *pcWriteBuffer ); // this task 
 	}
 }
 
@@ -580,7 +563,6 @@ void create_dd_task( TaskHandle_t t_handle, enum task_type type, uint32_t the_ta
 	// receive information needed to create new dd_task struct (minus release time and completion time)
 	message* this_message = (message *)pvPortMalloc(sizeof(message));
 	this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task));
-	//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 
 	this_message->type = create_dd;
 	this_message->task_info->t_handle = t_handle;
@@ -607,7 +589,6 @@ void delete_dd_task(uint32_t task_id)
 	// receive ID of DD-Task when it has completed its execution (from user task)
 	// struct with id is packaged as message
 	message* this_message = (message *)pvPortMalloc(sizeof(message));
-	//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 	this_message->type = delete_dd;
 	this_message->task_id = task_id;
 
@@ -615,7 +596,6 @@ void delete_dd_task(uint32_t task_id)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
 	{
 		// wait for reply from DDS (obtain reply message)
-
 	}
 
 	vPortFree(this_message);
@@ -625,15 +605,12 @@ struct dd_task_list* get_active_dd_task_list(void)
 {
 	// sends message to queue requesting Active Task list from DDS
 	message* this_message = (message *)pvPortMalloc(sizeof(message *));
-	//this_message->task_info = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
-	//this_message->type = (enum message_type)pvPortMalloc(sizeof(enum message_type));
 	this_message->type = get_active_dd_list;
 
 	//sends to queue (for DDS to receive)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
 	{
 		// wait for reply from DDS (obtain reply message)
-
 	}
 
 	vPortFree(this_message);
@@ -653,7 +630,6 @@ struct dd_task_list* get_active_dd_task_list(void)
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
 			{
 				// wait for reply from DDS (obtain reply message)
-
 			}
 		}
 	}
@@ -671,10 +647,8 @@ struct dd_task_list* get_complete_dd_task_list(void)
 	if (xQueueSend(xQueue_request_handle, &this_message, 1000))
 	{
 		// wait for reply from DDS (obtain reply message)
-
 	}
 
-	//vPortFree(this_message->task_info);
 	vPortFree(this_message);
 
 	// wait for reply from DDS (obtain reply message)
@@ -685,7 +659,6 @@ struct dd_task_list* get_complete_dd_task_list(void)
 		// check for message type
 		if (reply_message->type == get_completed_dd_list)
 		{
-			//vPortFree(this_message);
 			return reply_message->task_list;
 		}
 		else {
@@ -693,12 +666,9 @@ struct dd_task_list* get_complete_dd_task_list(void)
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
 			{
 				// wait for reply from DDS (obtain reply message)
-
 			}
 		}
 	}
-
-	//vPortFree(this_message);
 
 	return reply_message->task_list;
 }
@@ -715,7 +685,6 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 		// sent successfully
 	}
 
-	//vPortFree(this_message->task_info);
 	vPortFree(this_message);
 
 	// wait for reply from DDS (obtain reply message)
@@ -733,12 +702,9 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 			if (xQueueSend(xQueue_response_handle, &reply_message, 1000))
 			{
 				// wait for reply from DDS (obtain reply message)
-
 			}
 		}
 	}
-
-	//vPortFree(this_message);
 
 	return reply_message->task_list;
 }
@@ -748,7 +714,6 @@ struct dd_task_list* get_overdue_dd_task_list(void)
 dd_task_list * add_task( dd_task_list * list_head, struct dd_task * new_dd_task )
 {
 	dd_task_list* new_node = (dd_task_list *)pvPortMalloc(sizeof(dd_task_list));
-	//new_node->task = (struct dd_task *)pvPortMalloc(sizeof(struct dd_task *));
 	new_node->task = *new_dd_task;
 	new_node->next_task = list_head;
 
@@ -767,8 +732,7 @@ dd_task_list * delete_task ( struct dd_task_list * list_head, struct dd_task * d
         list_head = temp->next_task; // Changed head
     }
 
-    // Search for the task to be deleted, keep track of the
-    // previous node as we need to change 'prev->next'
+    // Search for the task to be deleted, keep track of the prev node 
     while (temp != NULL && temp->task.t_handle != done_dd_task->t_handle) {
         prev = temp;
         temp = temp->next_task;
@@ -776,8 +740,6 @@ dd_task_list * delete_task ( struct dd_task_list * list_head, struct dd_task * d
 
     // Unlink the node from linked list
     prev->next_task = temp->next_task;
-
-    //vPortFree(temp);
 
     return list_head;
 }
@@ -793,7 +755,6 @@ int print_count_of_list ( struct dd_task_list * dd_task_list_head )
 	}
 
 	vPortFree(p);
-
 	return count;
 }
 
@@ -900,7 +861,6 @@ struct dd_task get_dd_task(struct dd_task_list * list_head, uint32_t the_task_id
 void vGenerator1CallbackFunction( TimerHandle_t xTimer )
 {
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
-	// (might not work cause of same reason xTickGetCount() doesnt work)
 	//vTaskResume(xGenerator1TaskHandle);
 }
 
@@ -915,8 +875,6 @@ void vGenerator3CallbackFunction( TimerHandle_t xTimer )
 	// this function gets called when task 1 period complete --> need to call task generator to create new user task 1
 	//vTaskResume(xGenerator3TaskHandle);
 }
-
-// could add another timer callback for overdue tasks (would be started each time a task is created?)
 
 /*-----------------------------------------------------------*/
 
